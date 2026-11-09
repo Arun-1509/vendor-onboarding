@@ -1,0 +1,872 @@
+{
+  "_note": "Labelled test cases. 'expect' is what a correct pipeline must produce.",
+  "cases": [
+    {
+      "id": "H1_happy_india",
+      "group": "happy",
+      "title": "Clean Indian vendor (everything consistent)",
+      "form": {
+        "legal_name": "Kestrel Analytics Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Mumbai",
+        "city": "Mumbai",
+        "postal_code": "400001",
+        "tax_id": "07AAFCK2231L1ZL",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@kestrelanalyticspriv.in",
+        "bank_name": "HDFC Bank",
+        "account_holder": "Kestrel Analytics Private Limited",
+        "account_number": "50200098765432",
+        "ifsc": "HDFC0003321",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/H1_happy_india/tax_cert.pdf",
+        "bank_proof": "samples/docs/H1_happy_india/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "approved",
+        "substatus": "approved",
+        "max_risk": 0,
+        "must_not_have": [
+          "NAME_VARIANT",
+          "LOOKALIKE_VENDOR"
+        ]
+      }
+    },
+    {
+      "id": "H2_happy_germany",
+      "group": "happy",
+      "title": "Clean German vendor (VAT ID + IBAN valid)",
+      "form": {
+        "legal_name": "Rheinwerk Maschinenbau GmbH",
+        "trade_name": "",
+        "entity_type": "gmbh",
+        "country": "DE",
+        "address": "Industriestrasse 22, 60311 Frankfurt",
+        "city": "Frankfurt",
+        "postal_code": "60311",
+        "tax_id": "DE812345673",
+        "contact_name": "Jonas Weber",
+        "contact_email": "buchhaltung@rheinwerkmaschinenba.de",
+        "bank_name": "Deutsche Bank",
+        "account_holder": "Rheinwerk Maschinenbau GmbH",
+        "iban": "DE44500105175407324931",
+        "currency": "EUR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/H2_happy_germany/tax_cert.pdf",
+        "bank_proof": "samples/docs/H2_happy_germany/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "approved",
+        "max_risk": 0
+      }
+    },
+    {
+      "id": "H3_happy_uk",
+      "group": "happy",
+      "title": "Clean UK vendor",
+      "form": {
+        "legal_name": "Harbourline Marine Ltd",
+        "trade_name": "",
+        "entity_type": "ltd",
+        "country": "GB",
+        "address": "12 Quay Street, Bristol",
+        "city": "Bristol",
+        "postal_code": "BS1 4ST",
+        "tax_id": "GB555123459",
+        "contact_name": "Hannah Cole",
+        "contact_email": "finance@harbourlinemarineltd.co.uk",
+        "bank_name": "Barclays Bank",
+        "account_holder": "Harbourline Marine Ltd",
+        "sort_code": "40-47-84",
+        "account_number": "70872490",
+        "currency": "GBP"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/H3_happy_uk/tax_cert.pdf",
+        "bank_proof": "samples/docs/H3_happy_uk/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "approved",
+        "max_risk": 0
+      }
+    },
+    {
+      "id": "H4_happy_us",
+      "group": "happy",
+      "title": "Clean US vendor (W-9 + routing number valid)",
+      "form": {
+        "legal_name": "Prairie Wind Energy LLC",
+        "trade_name": "",
+        "entity_type": "llc",
+        "country": "US",
+        "address": "900 Main St, Omaha, NE",
+        "city": "Omaha",
+        "postal_code": "68102",
+        "tax_id": "47-1234567",
+        "contact_name": "Marcus Hill",
+        "contact_email": "ap@prairiewindenergyllc.com",
+        "bank_name": "Bank of America",
+        "account_holder": "Prairie Wind Energy LLC",
+        "routing_number": "011401533",
+        "account_number": "004455667788",
+        "currency": "USD"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/H4_happy_us/tax_cert.pdf",
+        "bank_proof": "samples/docs/H4_happy_us/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "approved",
+        "max_risk": 0
+      }
+    },
+    {
+      "id": "H5_happy_india_gmail",
+      "group": "happy",
+      "title": "Clean vendor, but uses a free email address (small flag, still approved)",
+      "form": {
+        "legal_name": "Gamma Fabrics Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Gurugram",
+        "city": "Gurugram",
+        "postal_code": "122001",
+        "tax_id": "06AAGCG8812C1ZU",
+        "contact_name": "Priya Nair",
+        "contact_email": "gamma.fabrics@gmail.com",
+        "bank_name": "Axis Bank",
+        "account_holder": "Gamma Fabrics Private Limited",
+        "account_number": "30112233445566",
+        "ifsc": "UTIB0001987",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/H5_happy_india_gmail/tax_cert.pdf",
+        "bank_proof": "samples/docs/H5_happy_india_gmail/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "approved",
+        "must_have": [
+          "FREE_EMAIL_DOMAIN"
+        ],
+        "max_risk": 10
+      }
+    },
+    {
+      "id": "E1a_lookalike_new_bank",
+      "group": "edge1",
+      "title": "Lookalike of approved vendor 'Globex Logistics Solutions' with a different tax ID and new bank",
+      "form": {
+        "legal_name": "Globex Logistic Solutions Pvt Ltd",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Ahmedabad",
+        "city": "Ahmedabad",
+        "postal_code": "380001",
+        "tax_id": "24AABCG9981P1ZU",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@globexlogisticsoluti.in",
+        "bank_name": "State Bank of India",
+        "account_holder": "Globex Logistic Solutions Pvt Ltd",
+        "account_number": "91400056781234",
+        "ifsc": "SBIN0004512",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/E1a_lookalike_new_bank/tax_cert.pdf",
+        "bank_proof": "samples/docs/E1a_lookalike_new_bank/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_reviewer",
+        "must_have": [
+          "LOOKALIKE_VENDOR"
+        ]
+      }
+    },
+    {
+      "id": "E1b_bank_change_request",
+      "group": "edge1",
+      "title": "Approved vendor 'Northwind' suddenly sends NEW bank details (classic payment-fraud route)",
+      "form": {
+        "legal_name": "Northwind Components GmbH",
+        "trade_name": "",
+        "entity_type": "gmbh",
+        "country": "DE",
+        "address": "Industriestrasse 22, 60311 Frankfurt",
+        "city": "Frankfurt",
+        "postal_code": "60311",
+        "tax_id": "DE136695976",
+        "contact_name": "Jonas Weber",
+        "contact_email": "buchhaltung@northwindcomponentsg.de",
+        "bank_name": "Berliner Volksbank",
+        "account_holder": "Northwind Components GmbH",
+        "iban": "DE93100900002111223344",
+        "currency": "EUR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/E1b_bank_change_request/tax_cert.pdf",
+        "bank_proof": "samples/docs/E1b_bank_change_request/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_reviewer",
+        "must_have": [
+          "BANK_CHANGE_REQUEST"
+        ]
+      }
+    },
+    {
+      "id": "E1c_shared_bank_account",
+      "group": "edge1",
+      "title": "New vendor whose bank account already belongs to 'Brightpath Consulting'",
+      "form": {
+        "legal_name": "Willowbrook Textiles Ltd",
+        "trade_name": "",
+        "entity_type": "ltd",
+        "country": "GB",
+        "address": "12 Quay Street, Bristol",
+        "city": "Bristol",
+        "postal_code": "BS1 4ST",
+        "tax_id": "GB440012321",
+        "contact_name": "Hannah Cole",
+        "contact_email": "finance@willowbrooktextilesl.co.uk",
+        "bank_name": "Barclays Bank",
+        "account_holder": "Willowbrook Textiles Ltd",
+        "sort_code": "20-00-00",
+        "account_number": "55779911",
+        "currency": "GBP"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/E1c_shared_bank_account/tax_cert.pdf",
+        "bank_proof": "samples/docs/E1c_shared_bank_account/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_reviewer",
+        "must_have": [
+          "BANK_ACCOUNT_SHARED"
+        ]
+      }
+    },
+    {
+      "id": "E2a_variant_pvt_ltd",
+      "group": "edge2",
+      "title": "'Private Limited' vs 'PVT. LTD.' vs 'Pvt Ltd' across form, certificate and bank letter",
+      "form": {
+        "legal_name": "Ardent Tools Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Chennai",
+        "city": "Chennai",
+        "postal_code": "600001",
+        "tax_id": "33AAACA9911B1Z9",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@ardenttoolsprivateli.in",
+        "bank_name": "ICICI Bank",
+        "account_holder": "Ardent Tools Private Limited",
+        "account_number": "11220033445566",
+        "ifsc": "ICIC0000771",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/E2a_variant_pvt_ltd/tax_cert.pdf",
+        "bank_proof": "samples/docs/E2a_variant_pvt_ltd/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "approved",
+        "must_have": [
+          "NAME_VARIANT"
+        ],
+        "must_not_have": [
+          "ACCOUNT_HOLDER_MISMATCH",
+          "NAME_MISMATCH_TAXCERT"
+        ]
+      }
+    },
+    {
+      "id": "E2b_variant_trade_name",
+      "group": "edge2",
+      "title": "Bank account is in the declared trade name, not the legal name",
+      "form": {
+        "legal_name": "Nimbus Cloud Services LLP",
+        "trade_name": "NimbusCloud",
+        "entity_type": "llp",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Bengaluru",
+        "city": "Bengaluru",
+        "postal_code": "560001",
+        "tax_id": "29AAEFN3345Q1ZO",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@nimbuscloudservicesl.in",
+        "bank_name": "Kotak Mahindra Bank",
+        "account_holder": "NimbusCloud",
+        "account_number": "77001122334455",
+        "ifsc": "KKBK0002231",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/E2b_variant_trade_name/tax_cert.pdf",
+        "bank_proof": "samples/docs/E2b_variant_trade_name/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "approved",
+        "must_have": [
+          "NAME_TRADE_NAME"
+        ],
+        "must_not_have": [
+          "ACCOUNT_HOLDER_MISMATCH"
+        ]
+      }
+    },
+    {
+      "id": "E2c_variant_abbreviation_ai",
+      "group": "edge2",
+      "title": "Grey-zone name: 'Fabrication' vs 'Fab' (needs the AI judge, then a recorded explanation)",
+      "form": {
+        "legal_name": "Delta Fabrication Engineering Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Vadodara",
+        "city": "Vadodara",
+        "postal_code": "390001",
+        "tax_id": "24AADCD5521P1ZJ",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@deltafabricationengi.in",
+        "bank_name": "IDFC First Bank",
+        "account_holder": "Delta Fabrication Engineering Private Limited",
+        "account_number": "88112233445566",
+        "ifsc": "IDFB0040101",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/E2c_variant_abbreviation_ai/tax_cert.pdf",
+        "bank_proof": "samples/docs/E2c_variant_abbreviation_ai/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "approved",
+        "must_have": [
+          "NAME_VARIANT_AI"
+        ],
+        "max_risk": 19
+      }
+    },
+    {
+      "id": "E2d_extra_word_is_a_different_company",
+      "group": "edge2",
+      "title": "NEGATIVE: form name has an extra word vs the certificate; this must NOT be waved through as a 'variant'",
+      "form": {
+        "legal_name": "Kestrel Analytics Technologies Pvt Ltd",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Bengaluru",
+        "city": "Bengaluru",
+        "postal_code": "560002",
+        "tax_id": "29AAFCK2231M1ZD",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@kestrelanalyticstech.in",
+        "bank_name": "HDFC Bank",
+        "account_holder": "Kestrel Analytics Technologies Pvt Ltd",
+        "account_number": "50200011112222",
+        "ifsc": "HDFC0003321",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/E2d_extra_word_is_a_different_company/tax_cert.pdf",
+        "bank_proof": "samples/docs/E2d_extra_word_is_a_different_company/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_vendor",
+        "must_have": [
+          "NAME_UNRESOLVED"
+        ],
+        "must_not_have": [
+          "NAME_VARIANT_AI"
+        ]
+      }
+    },
+    {
+      "id": "E3a_missing_bank_letter_then_resubmit",
+      "group": "edge3",
+      "title": "Bank letter missing -> email -> vendor uploads it -> only the failed check clears -> approved",
+      "form": {
+        "legal_name": "Orchid Packaging Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Pune",
+        "city": "Pune",
+        "postal_code": "411001",
+        "tax_id": "27AAHCO6677R1ZB",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@orchidpackagingpriva.in",
+        "bank_name": "HDFC Bank",
+        "account_holder": "Orchid Packaging Private Limited",
+        "account_number": "44556677889900",
+        "ifsc": "HDFC0002290",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/E3a_missing_bank_letter_then_resubmit/tax_cert.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_vendor",
+        "must_have": [
+          "MISSING_DOC"
+        ]
+      },
+      "follow_up": {
+        "add_docs": {
+          "bank_proof": "samples/docs/E3a_missing_bank_letter_then_resubmit/bank_proof.pdf"
+        },
+        "expect": {
+          "status": "approved",
+          "resolved_includes": [
+            "MISSING_DOC:bank_proof"
+          ]
+        }
+      }
+    },
+    {
+      "id": "E3b_missing_fields",
+      "group": "edge3",
+      "title": "Form incomplete (no PIN code, no contact email)",
+      "form": {
+        "legal_name": "Sundarban Spices Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Kolkata",
+        "city": "Kolkata",
+        "postal_code": "",
+        "tax_id": "19AAJCS3344T1ZG",
+        "contact_name": "Priya Nair",
+        "contact_email": "",
+        "bank_name": "HDFC Bank",
+        "account_holder": "Sundarban Spices Private Limited",
+        "account_number": "66778899001122",
+        "ifsc": "HDFC0006655",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/E3b_missing_fields/tax_cert.pdf",
+        "bank_proof": "samples/docs/E3b_missing_fields/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_vendor",
+        "must_have": [
+          "MISSING_FIELD"
+        ]
+      }
+    },
+    {
+      "id": "E4a_pan_is_individual",
+      "group": "edge4",
+      "title": "Claims to be a Pvt Ltd, but its PAN is an INDIVIDUAL's; IFSC bank != named bank",
+      "form": {
+        "legal_name": "Sapphire Interiors Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Mumbai",
+        "city": "Mumbai",
+        "postal_code": "400050",
+        "tax_id": "27ABCPR1234F1ZY",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@sapphireinteriorspri.in",
+        "bank_name": "HDFC Bank",
+        "account_holder": "Sapphire Interiors Private Limited",
+        "account_number": "12312312312312",
+        "ifsc": "ICIC0000771",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/E4a_pan_is_individual/tax_cert.pdf",
+        "bank_proof": "samples/docs/E4a_pan_is_individual/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_reviewer",
+        "must_have": [
+          "ENTITY_TYPE_MISMATCH_PAN",
+          "BANK_NAME_IFSC_MISMATCH"
+        ]
+      }
+    },
+    {
+      "id": "E4b_country_contradiction",
+      "group": "edge4",
+      "title": "Form says Germany, but the tax ID, IFSC bank code and account are all Indian",
+      "form": {
+        "legal_name": "Teutonic Precision GmbH",
+        "trade_name": "",
+        "entity_type": "gmbh",
+        "country": "DE",
+        "address": "Plot 14, MIDC Industrial Area, Berlin",
+        "city": "Berlin",
+        "postal_code": "10115",
+        "tax_id": "29AAKCT4455U1Z5",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@teutonicprecisiongmb.in",
+        "bank_name": "HDFC Bank",
+        "account_holder": "Teutonic Precision GmbH",
+        "account_number": "99887766554433",
+        "ifsc": "HDFC0001010",
+        "currency": "EUR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/E4b_country_contradiction/tax_cert.pdf",
+        "bank_proof": "samples/docs/E4b_country_contradiction/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_reviewer",
+        "must_have": [
+          "COUNTRY_CONTRADICTION"
+        ]
+      }
+    },
+    {
+      "id": "V1_bad_gstin_checksum",
+      "group": "fixable",
+      "title": "GSTIN has a wrong check character (typo)",
+      "form": {
+        "legal_name": "Sunrise Print Works Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Kolkata",
+        "city": "Kolkata",
+        "postal_code": "700001",
+        "tax_id": "19AALCP9988V1ZA",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@sunriseprintworkspri.in",
+        "bank_name": "HDFC Bank",
+        "account_holder": "Sunrise Print Works Private Limited",
+        "account_number": "55443322110099",
+        "ifsc": "HDFC0004455",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/V1_bad_gstin_checksum/tax_cert.pdf",
+        "bank_proof": "samples/docs/V1_bad_gstin_checksum/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_vendor",
+        "must_have": [
+          "TAXID_CHECKSUM"
+        ]
+      }
+    },
+    {
+      "id": "V2_bad_iban_checksum",
+      "group": "fixable",
+      "title": "IBAN check digits fail",
+      "form": {
+        "legal_name": "Elbtal Werkzeuge GmbH",
+        "trade_name": "",
+        "entity_type": "gmbh",
+        "country": "DE",
+        "address": "Industriestrasse 22, 60311 Frankfurt",
+        "city": "Frankfurt",
+        "postal_code": "60311",
+        "tax_id": "DE298456121",
+        "contact_name": "Jonas Weber",
+        "contact_email": "buchhaltung@elbtalwerkzeugegmbh.de",
+        "bank_name": "Deutsche Bank",
+        "account_holder": "Elbtal Werkzeuge GmbH",
+        "iban": "DE79700700100123456780",
+        "currency": "EUR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/V2_bad_iban_checksum/tax_cert.pdf",
+        "bank_proof": "samples/docs/V2_bad_iban_checksum/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_vendor",
+        "must_have": [
+          "BANK_CHECKSUM"
+        ]
+      }
+    },
+    {
+      "id": "V3_account_in_other_name",
+      "group": "fixable",
+      "title": "Bank account is in a different party's name",
+      "form": {
+        "legal_name": "Crestline Hardware Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Jaipur",
+        "city": "Jaipur",
+        "postal_code": "302001",
+        "tax_id": "08AAMCC1122W1Z2",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@crestlinehardwarepri.in",
+        "bank_name": "State Bank of India",
+        "account_holder": "Rajesh Kumar Enterprises",
+        "account_number": "22334455667788",
+        "ifsc": "SBIN0001234",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/V3_account_in_other_name/tax_cert.pdf",
+        "bank_proof": "samples/docs/V3_account_in_other_name/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_vendor",
+        "must_have": [
+          "ACCOUNT_HOLDER_MISMATCH"
+        ]
+      }
+    },
+    {
+      "id": "V4_taxid_form_vs_certificate",
+      "group": "fixable",
+      "title": "Tax ID typed on the form differs from the one on the certificate",
+      "form": {
+        "legal_name": "Bihar Brothers Traders Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Patna",
+        "city": "Patna",
+        "postal_code": "800001",
+        "tax_id": "10AANCB5566X1ZR",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@biharbrotherstraders.in",
+        "bank_name": "Punjab National Bank",
+        "account_holder": "Bihar Brothers Traders Private Limited",
+        "account_number": "33445566778899",
+        "ifsc": "PUNB0123400",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/V4_taxid_form_vs_certificate/tax_cert.pdf",
+        "bank_proof": "samples/docs/V4_taxid_form_vs_certificate/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_vendor",
+        "must_have": [
+          "TAXID_MISMATCH_DOC"
+        ]
+      }
+    },
+    {
+      "id": "V5_wrong_document",
+      "group": "fixable",
+      "title": "Vendor attached an electricity bill instead of the tax certificate",
+      "form": {
+        "legal_name": "Quilon Coir Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Kochi",
+        "city": "Kochi",
+        "postal_code": "682001",
+        "tax_id": "32AAPCQ2211Z1ZO",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@quiloncoirprivatelim.in",
+        "bank_name": "HDFC Bank",
+        "account_holder": "Quilon Coir Private Limited",
+        "account_number": "11002200330044",
+        "ifsc": "HDFC0007788",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/V5_wrong_document/tax_cert.pdf",
+        "bank_proof": "samples/docs/V5_wrong_document/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_vendor",
+        "must_have": [
+          "WRONG_DOCUMENT"
+        ]
+      }
+    },
+    {
+      "id": "V6_stale_bank_letter",
+      "group": "fixable",
+      "title": "Bank letter is ~200 days old",
+      "form": {
+        "legal_name": "Deccan Cables Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Hyderabad",
+        "city": "Hyderabad",
+        "postal_code": "500001",
+        "tax_id": "36AAQCR3300A1ZT",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@deccancablesprivatel.in",
+        "bank_name": "HDFC Bank",
+        "account_holder": "Deccan Cables Private Limited",
+        "account_number": "55660077889911",
+        "ifsc": "HDFC0009900",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/V6_stale_bank_letter/tax_cert.pdf",
+        "bank_proof": "samples/docs/V6_stale_bank_letter/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_vendor",
+        "must_have": [
+          "DOC_STALE"
+        ]
+      }
+    },
+    {
+      "id": "V7_blurry_scan",
+      "group": "fixable",
+      "title": "Bank letter is a blurry phone photo",
+      "form": {
+        "legal_name": "Punjab Agro Foods Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Ludhiana",
+        "city": "Ludhiana",
+        "postal_code": "141001",
+        "tax_id": "03AARCS7766B1Z4",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@punjabagrofoodspriva.in",
+        "bank_name": "Punjab National Bank",
+        "account_holder": "Punjab Agro Foods Private Limited",
+        "account_number": "88990011223344",
+        "ifsc": "PUNB0555500",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/V7_blurry_scan/tax_cert.pdf",
+        "bank_proof": "samples/docs/V7_blurry_scan/bank_proof.png"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_vendor",
+        "must_have": [
+          "DOC_UNREADABLE"
+        ]
+      }
+    },
+    {
+      "id": "V8_certificate_for_other_company",
+      "group": "fixable",
+      "title": "Tax certificate belongs to a different company",
+      "form": {
+        "legal_name": "Mosaic Healthcare Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Nagpur",
+        "city": "Nagpur",
+        "postal_code": "440001",
+        "tax_id": "27AASCZ9090D1ZL",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@mosaichealthcarepriv.in",
+        "bank_name": "HDFC Bank",
+        "account_holder": "Mosaic Healthcare Private Limited",
+        "account_number": "21436587092143",
+        "ifsc": "HDFC0003344",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/V8_certificate_for_other_company/tax_cert.pdf",
+        "bank_proof": "samples/docs/V8_certificate_for_other_company/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_vendor",
+        "must_have": [
+          "NAME_MISMATCH_TAXCERT"
+        ]
+      }
+    },
+    {
+      "id": "R1_sanctions_match",
+      "group": "reject",
+      "title": "Name matches an entry on the (fictional) sanctions list",
+      "form": {
+        "legal_name": "Meridian Crest Shipping Company Pvt Ltd",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Mumbai",
+        "city": "Mumbai",
+        "postal_code": "400001",
+        "tax_id": "27AATCM1212E1ZN",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@meridiancrestshippin.in",
+        "bank_name": "HDFC Bank",
+        "account_holder": "Meridian Crest Shipping Company Pvt Ltd",
+        "account_number": "13572468091357",
+        "ifsc": "HDFC0001122",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/R1_sanctions_match/tax_cert.pdf",
+        "bank_proof": "samples/docs/R1_sanctions_match/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "rejected",
+        "substatus": "rejected_compliance",
+        "must_have": [
+          "SANCTIONS_HIT"
+        ]
+      }
+    },
+    {
+      "id": "R2_sanctions_near_match",
+      "group": "reject",
+      "title": "Name is CLOSE to a sanctions entry: a human must rule out a false positive",
+      "form": {
+        "legal_name": "Meridian Crest Shipments Pvt Ltd",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Mumbai",
+        "city": "Mumbai",
+        "postal_code": "400002",
+        "tax_id": "27AAUCM3434F1Z8",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@meridiancrestshipmen.in",
+        "bank_name": "HDFC Bank",
+        "account_holder": "Meridian Crest Shipments Pvt Ltd",
+        "account_number": "24681357902468",
+        "ifsc": "HDFC0001133",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples/docs/R2_sanctions_near_match/tax_cert.pdf",
+        "bank_proof": "samples/docs/R2_sanctions_near_match/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_reviewer",
+        "must_have": [
+          "SANCTIONS_NEAR"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "_note": "FICTIONAL demo list. Names are invented and match no real person or company. A production system would use a maintained feed (OFAC/UN/EU/UK).",
+  "entries": [
+    {"id": "DEMO-001", "name": "Meridian Crest Shipping Co", "aliases": ["MC Shipping"], "note": "Invented entry for demo"},
+    {"id": "DEMO-002", "name": "Blackthorn Offshore Trading Ltd", "aliases": [], "note": "Invented entry for demo"},
+    {"id": "DEMO-003", "name": "Orion Vale Metals LLC", "aliases": ["Orion Vale Metallurgy"], "note": "Invented entry for demo"}
+  ]
+}

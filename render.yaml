@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: vendor-onboarding
+    runtime: docker
+    plan: starter            # a persistent disk needs a paid instance; free tier works but loses data on restart
+    healthCheckPath: /api/health
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false           # free key from aistudio.google.com
+      - key: ANTHROPIC_API_KEY
+        sync: false           # optional: if set, Claude is used instead
+      - key: BASE_URL
+        sync: false           # set to your public URL, e.g. https://vendor-onboarding.onrender.com
+      - key: ADMIN_KEY
+        generateValue: true
+      - key: DAILY_RUN_CAP
+        value: "300"
+      - key: RESEND_API_KEY
+        sync: false
+      - key: DEMO_INBOX
+        sync: false           # your own email address: the app only ever sends here

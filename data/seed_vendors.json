@@ -1,0 +1,109 @@
+{
+  "_note": "Already-approved vendors that screening compares against.",
+  "vendors": [
+    {
+      "vendor_id": "V-0001",
+      "status": "approved",
+      "form": {
+        "legal_name": "Globex Logistics Solutions Pvt Ltd",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Mumbai",
+        "city": "Mumbai",
+        "postal_code": "400001",
+        "tax_id": "27AABCG4411K1ZR",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@globexlogisticssolut.in",
+        "bank_name": "HDFC Bank",
+        "account_holder": "Globex Logistics Solutions Pvt Ltd",
+        "account_number": "50100234567890",
+        "ifsc": "HDFC0000123",
+        "currency": "INR"
+      }
+    },
+    {
+      "vendor_id": "V-0002",
+      "status": "approved",
+      "form": {
+        "legal_name": "Northwind Components GmbH",
+        "trade_name": "",
+        "entity_type": "gmbh",
+        "country": "DE",
+        "address": "Industriestrasse 22, 60311 Frankfurt",
+        "city": "Frankfurt",
+        "postal_code": "60311",
+        "tax_id": "DE136695976",
+        "contact_name": "Jonas Weber",
+        "contact_email": "buchhaltung@northwindcomponentsg.de",
+        "bank_name": "Deutsche Bank",
+        "account_holder": "Northwind Components GmbH",
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    },
+    {
+      "vendor_id": "V-0003",
+      "status": "approved",
+      "form": {
+        "legal_name": "Brightpath Consulting Ltd",
+        "trade_name": "",
+        "entity_type": "ltd",
+        "country": "GB",
+        "address": "12 Quay Street, Bristol",
+        "city": "Bristol",
+        "postal_code": "BS1 4ST",
+        "tax_id": "GB123456782",
+        "contact_name": "Hannah Cole",
+        "contact_email": "finance@brightpathconsulting.co.uk",
+        "bank_name": "Barclays Bank",
+        "account_holder": "Brightpath Consulting Ltd",
+        "sort_code": "20-00-00",
+        "account_number": "55779911",
+        "currency": "GBP"
+      }
+    },
+    {
+      "vendor_id": "V-0004",
+      "status": "approved",
+      "form": {
+        "legal_name": "Summit Office Supplies LLC",
+        "trade_name": "",
+        "entity_type": "llc",
+        "country": "US",
+        "address": "900 Main St, Omaha, NE",
+        "city": "Omaha",
+        "postal_code": "68102",
+        "tax_id": "12-3456789",
+        "contact_name": "Marcus Hill",
+        "contact_email": "ap@summitofficesupplies.com",
+        "bank_name": "JPMorgan Chase",
+        "account_holder": "Summit Office Supplies LLC",
+        "routing_number": "021000021",
+        "account_number": "123456789012",
+        "currency": "USD"
+      }
+    },
+    {
+      "vendor_id": "V-0005",
+      "status": "approved",
+      "form": {
+        "legal_name": "Acme Technologies Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Mumbai",
+        "city": "Mumbai",
+        "postal_code": "400001",
+        "tax_id": "29AABCA7788M1ZV",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@acmetechnologiespriv.in",
+        "bank_name": "ICICI Bank",
+        "account_holder": "Acme Technologies Private Limited",
+        "account_number": "60200011223344",
+        "ifsc": "ICIC0000456",
+        "currency": "INR"
+      }
+    }
+  ]
+}
