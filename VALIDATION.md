@@ -72,6 +72,49 @@ python scripts/summarize_quality.py          # -> reports/summary.json, shown on
 ```
 In the app, **Model quality → Spot-check 12 fresh vendors now** generates brand-new vendors with a random seed and scores them live.
 
+## Harder tests: a blind answer key and messy documents (2026-11-09)
+The 1,900 synthetic vendors share two weaknesses: I wrote both the generator and the rules, and every document has the same look. So I added two sets that don't (`bench/`, `python scripts/bench.py`):
+
+| Set | What it is | First look | After fixes |
+|---|---|---|---|
+| **Blind answer key** (56) | Scenarios and expected outcomes written by an independent author (a separate AI agent) who was not allowed to see the code or rules. It was given only the business policy, the vendor master and the sanctions list. Its documents were rendered in varied layouts. | **62.5%**: 9 unsafe approvals, 1 missed sanctions reject | 100% |
+| **Messy documents** (60) | The usual decisions, but every document is drawn differently: tables, prose letters, multi-page, stamps over text, German, country date styles, phone photos (skewed, shadowed, JPEG), value-only paste-overs. | **81.7%**: 11 unsafe approvals | 100% |
+
+"First look" and "after fixes" both use a perfect reader (exactly what is printed) to isolate the rules. The live model is measured separately; see below.
+
+**What the first look found (all of it was invisible to the 1,900-vendor set):**
+1. **Dates.** A bank letter dated "10/07/2026" or "9 November 2026" never matched the ISO date the reader returns. Grounding dropped the date, and the 90-day check silently skipped it.
+   - Fix: dates are compared as dates.
+   - Fix: an undated letter now asks the vendor (`DOC_UNDATED`).
+2. **Value-only edits.** Pasting over just the account *number* (not the whole "IBAN: …" line) was not detected.
+   - Fix: two different texts drawn at the same point of a page are flagged, whatever the field.
+3. **The payee was never screened.** A clean company asking to be paid into a sanctioned party's account was not rejected.
+   - Fix: account holders are screened.
+4. **A sanctioned entity's distinctive name** plus another industry word ("Meridian Crest Logistics") was approved.
+   - Fix: such names go to compliance review.
+   - Unchanged: "Orion Valley Bakery" is still approved.
+5. **Third-party payees** (a factoring company, a director's personal account) were sent back to the vendor.
+   - Fix: they now go to a reviewer, with four-eyes approval.
+   - This is a **policy change**, and it changed my own earlier labels (the generator's holder-is-a-person scenario and demo case V3). I relabelled them openly rather than keep the old answer.
+6. **A wholly different account** on the form versus the bank letter was treated as a typo.
+   - Fix: a typo (one or two characters, swapped neighbours) asks the vendor; a different account goes to a reviewer.
+   - Also fixed: a tax ID registered to a differently named company now goes to a reviewer (demo case V8 relabelled, consistent with E5b).
+7. **False alarms on honest vendors.**
+   - "M/s" prefix, "DBA" account titles, "UG (haftungsbeschränkt)" and swapped upload slots are now accepted as variants.
+   - A company PAN with the wrong dropdown is now a vendor fix, not fraud.
+8. **Documents and currency.**
+   - A bank statement is not accepted as bank proof, so the vendor is asked for a letter.
+   - A foreign currency on a domestic-only account asks the vendor to confirm.
+
+**Unchanged after the fixes:**
+- The dev, held-out and stress sets are still at 100% (0 unsafe approvals). The two over-escalations the fixes briefly introduced were traced to a name-containment bug and fixed.
+- All 29 demo cases pass.
+- All 101 tests pass, including `tests/test_robustness_fixes.py`.
+
+**Honest caveat:** "after fixes = 100%" is measured on the same sets that revealed the gaps, so treat it as "the gaps are closed", not as an accuracy claim. The accuracy claim is the first look.
+
+**Live model on these sets:** Model quality → *Run live benchmark* (admin key). It runs all 116 vendors through the deployed model, paced under the free-tier limit (about 25 minutes). It reports decision accuracy plus **reading accuracy**: each printed field read by the model, compared with the ground truth, by document style.
+
 ## Live AI check (real Gemini on the deployed site, 2026-11-09)
 All 29 demo cases were run against the public URL with a real Gemini key.
 

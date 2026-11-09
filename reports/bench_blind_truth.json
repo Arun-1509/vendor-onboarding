@@ -1,0 +1,102 @@
+{
+ "set": "blind",
+ "reader": "truth",
+ "n": 56,
+ "metrics": {
+  "n": 56,
+  "decision_accuracy": 1.0,
+  "strict_accuracy": 1.0,
+  "macro_f1": 1.0,
+  "unsafe_approval_rate": 0.0,
+  "straight_through_rate": 1.0,
+  "errors": {
+   "unsafe_approvals": 0,
+   "missed_rejects": 0,
+   "disclosure_leaks": 0,
+   "over_escalations": 0,
+   "false_holds": 0,
+   "other": 0
+  },
+  "weighted_cost": 0,
+  "confusion": {
+   "approved": {
+    "approved": 18,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_vendor": {
+    "approved": 0,
+    "awaiting_vendor": 16,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_reviewer": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 17,
+    "rejected": 0
+   },
+   "rejected": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 5
+   }
+  },
+  "per_class": {
+   "approved": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 18
+   },
+   "awaiting_vendor": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 16
+   },
+   "awaiting_reviewer": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 17
+   },
+   "rejected": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 5
+   }
+  },
+  "per_scenario": {
+   "approved": {
+    "n": 18,
+    "decision_ok": 18,
+    "strict_ok": 18,
+    "failed_ids": []
+   },
+   "awaiting_reviewer": {
+    "n": 17,
+    "decision_ok": 17,
+    "strict_ok": 17,
+    "failed_ids": []
+   },
+   "awaiting_vendor": {
+    "n": 16,
+    "decision_ok": 16,
+    "strict_ok": 16,
+    "failed_ids": []
+   },
+   "rejected": {
+    "n": 5,
+    "decision_ok": 5,
+    "strict_ok": 5,
+    "failed_ids": []
+   }
+  },
+  "median_ms": 33
+ },
+ "failures": []
+}

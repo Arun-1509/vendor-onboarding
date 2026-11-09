@@ -24,7 +24,7 @@ BANK_PROOF_FIELDS = ["account_holder", "bank_name", "account_number", "iban", "i
                      "swift", "routing_number", "sort_code", "issue_date"]
 INCORP_FIELDS = ["legal_name", "registration_number", "issue_date"]
 DOC_FIELDS = {"tax_cert": TAX_CERT_FIELDS, "bank_proof": BANK_PROOF_FIELDS, "incorporation": INCORP_FIELDS}
-DOC_TYPES = ["tax_cert", "bank_proof", "incorporation", "other"]
+DOC_TYPES = ["tax_cert", "bank_proof", "bank_statement", "incorporation", "other"]
 
 
 class LLMError(Exception):
@@ -70,6 +70,8 @@ def _mock_doc_type(text: str) -> str:
     t = text.lower()
     if "incorporation" in t:
         return "incorporation"
+    if "statement of account" in t or "kontoauszug" in t or "account statement" in t:
+        return "bank_statement"
     if any(k in t for k in ("registration certificate", "vat registration", "form w-9", "certificate of registration")):
         return "tax_cert"
     if "bank" in t and any(k in t for k in ("letter", "cheque", "confirmation")):
@@ -185,6 +187,7 @@ class AnthropicLLM:
                   "If the page is too blurry/cropped to read reliably, set legible=false. "
                   "Dates as YYYY-MM-DD. Say what kind of document this really is in doc_type_detected "
                   "(tax_cert = tax/VAT/GST registration or W-9; bank_proof = bank letter or cancelled cheque; "
+                  "bank_statement = an account statement listing transactions; "
                   "incorporation; or other, e.g. a utility bill).")
         content = [_doc_block(path), {"type": "text", "text":
                    f"The vendor says this is a '{doc_type}'. Extract: {', '.join(fields)}."}]

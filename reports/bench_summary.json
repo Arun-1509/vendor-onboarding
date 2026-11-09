@@ -1,0 +1,780 @@
+{
+ "sets": {
+  "blind": {
+   "n": 56,
+   "description": "Written by an independent author who never saw the code or rules: 56 scenarios with expected outcomes from business judgment.",
+   "document_styles": {
+    "table": 13,
+    "kv/de": 6,
+    "prose/de": 7,
+    "kv": 16,
+    "stamped": 10,
+    "twocol": 15,
+    "prose": 13,
+    "photo": 7,
+    "stamped/de": 4,
+    "multipage": 10,
+    "table/de": 3,
+    "twocol/de": 2,
+    "multipage/de": 3
+   },
+   "first_look": {
+    "n": 56,
+    "decision_accuracy": 0.625,
+    "strict_accuracy": 0.625,
+    "macro_f1": 0.6627,
+    "unsafe_approval_rate": 0.2368,
+    "straight_through_rate": 0.7778,
+    "errors": {
+     "unsafe_approvals": 9,
+     "missed_rejects": 1,
+     "disclosure_leaks": 6,
+     "over_escalations": 1,
+     "false_holds": 4,
+     "other": 0
+    },
+    "weighted_cost": 566,
+    "confusion": {
+     "approved": {
+      "approved": 14,
+      "awaiting_vendor": 4,
+      "awaiting_reviewer": 0,
+      "rejected": 0
+     },
+     "awaiting_vendor": {
+      "approved": 4,
+      "awaiting_vendor": 11,
+      "awaiting_reviewer": 1,
+      "rejected": 0
+     },
+     "awaiting_reviewer": {
+      "approved": 5,
+      "awaiting_vendor": 6,
+      "awaiting_reviewer": 6,
+      "rejected": 0
+     },
+     "rejected": {
+      "approved": 0,
+      "awaiting_vendor": 1,
+      "awaiting_reviewer": 0,
+      "rejected": 4
+     }
+    },
+    "per_class": {
+     "approved": {
+      "precision": 0.6087,
+      "recall": 0.7778,
+      "f1": 0.6829,
+      "support": 18
+     },
+     "awaiting_vendor": {
+      "precision": 0.5,
+      "recall": 0.6875,
+      "f1": 0.5789,
+      "support": 16
+     },
+     "awaiting_reviewer": {
+      "precision": 0.8571,
+      "recall": 0.3529,
+      "f1": 0.5,
+      "support": 17
+     },
+     "rejected": {
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1": 0.8889,
+      "support": 5
+     }
+    },
+    "per_scenario": {
+     "approved": {
+      "n": 18,
+      "decision_ok": 14,
+      "strict_ok": 14,
+      "failed_ids": [
+       "B09",
+       "B10",
+       "B14",
+       "B18"
+      ]
+     },
+     "awaiting_reviewer": {
+      "n": 17,
+      "decision_ok": 6,
+      "strict_ok": 6,
+      "failed_ids": [
+       "B38",
+       "B39",
+       "B40",
+       "B41",
+       "B42"
+      ]
+     },
+     "awaiting_vendor": {
+      "n": 16,
+      "decision_ok": 11,
+      "strict_ok": 11,
+      "failed_ids": [
+       "B20",
+       "B27",
+       "B30",
+       "B33",
+       "B34"
+      ]
+     },
+     "rejected": {
+      "n": 5,
+      "decision_ok": 4,
+      "strict_ok": 4,
+      "failed_ids": [
+       "B55"
+      ]
+     }
+    },
+    "median_ms": 18
+   },
+   "first_look_failures": [
+    {
+     "id": "B09",
+     "title": "US account titled with DBA",
+     "expected": "approved",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "B10",
+     "title": "IN partnership firm with M/s prefix",
+     "expected": "approved",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "B14",
+     "title": "DE UG without (haftungsbeschraenkt) on form",
+     "expected": "approved",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "B18",
+     "title": "IN swapped upload slots, common contact name",
+     "expected": "approved",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "B20",
+     "title": "DE bank letter too old",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    },
+    {
+     "id": "B27",
+     "title": "IN bank statement as bank proof",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    },
+    {
+     "id": "B30",
+     "title": "US vendor selects EUR currency",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    },
+    {
+     "id": "B33",
+     "title": "GB bank letter 91 days old",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    },
+    {
+     "id": "B34",
+     "title": "IN wrong entity type picked",
+     "expected": "awaiting_vendor",
+     "got": "awaiting_reviewer"
+    },
+    {
+     "id": "B38",
+     "title": "US bank letter digitally altered",
+     "expected": "awaiting_reviewer",
+     "got": "approved"
+    },
+    {
+     "id": "B39",
+     "title": "IN bank letter holder name overwritten",
+     "expected": "awaiting_reviewer",
+     "got": "approved"
+    },
+    {
+     "id": "B40",
+     "title": "DE payments to a third-party factoring company",
+     "expected": "awaiting_reviewer",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "B41",
+     "title": "GB company paid into director's personal account",
+     "expected": "awaiting_reviewer",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "B42",
+     "title": "US form bank differs from bank letter",
+     "expected": "awaiting_reviewer",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "B43",
+     "title": "IN GSTIN belongs to another company",
+     "expected": "awaiting_reviewer",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "B45",
+     "title": "GB name shares core of sanctioned shipper",
+     "expected": "awaiting_reviewer",
+     "got": "approved"
+    },
+    {
+     "id": "B47",
+     "title": "GB missing VAT cert and payee is a different company",
+     "expected": "awaiting_reviewer",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "B48",
+     "title": "IN stale and altered bank letter",
+     "expected": "awaiting_reviewer",
+     "got": "approved"
+    },
+    {
+     "id": "B49",
+     "title": "US W-9 for a different company",
+     "expected": "awaiting_reviewer",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "B51",
+     "title": "DE Bankbestaetigung with edited IBAN",
+     "expected": "awaiting_reviewer",
+     "got": "approved"
+    },
+    {
+     "id": "B55",
+     "title": "DE clean vendor, payee is sanctioned",
+     "expected": "rejected",
+     "got": "awaiting_vendor"
+    }
+   ],
+   "after_fixes": {
+    "n": 56,
+    "decision_accuracy": 1.0,
+    "strict_accuracy": 1.0,
+    "macro_f1": 1.0,
+    "unsafe_approval_rate": 0.0,
+    "straight_through_rate": 1.0,
+    "errors": {
+     "unsafe_approvals": 0,
+     "missed_rejects": 0,
+     "disclosure_leaks": 0,
+     "over_escalations": 0,
+     "false_holds": 0,
+     "other": 0
+    },
+    "weighted_cost": 0,
+    "confusion": {
+     "approved": {
+      "approved": 18,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 0,
+      "rejected": 0
+     },
+     "awaiting_vendor": {
+      "approved": 0,
+      "awaiting_vendor": 16,
+      "awaiting_reviewer": 0,
+      "rejected": 0
+     },
+     "awaiting_reviewer": {
+      "approved": 0,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 17,
+      "rejected": 0
+     },
+     "rejected": {
+      "approved": 0,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 0,
+      "rejected": 5
+     }
+    },
+    "per_class": {
+     "approved": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 18
+     },
+     "awaiting_vendor": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 16
+     },
+     "awaiting_reviewer": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 17
+     },
+     "rejected": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 5
+     }
+    },
+    "per_scenario": {
+     "approved": {
+      "n": 18,
+      "decision_ok": 18,
+      "strict_ok": 18,
+      "failed_ids": []
+     },
+     "awaiting_reviewer": {
+      "n": 17,
+      "decision_ok": 17,
+      "strict_ok": 17,
+      "failed_ids": []
+     },
+     "awaiting_vendor": {
+      "n": 16,
+      "decision_ok": 16,
+      "strict_ok": 16,
+      "failed_ids": []
+     },
+     "rejected": {
+      "n": 5,
+      "decision_ok": 5,
+      "strict_ok": 5,
+      "failed_ids": []
+     }
+    },
+    "median_ms": 33
+   }
+  },
+  "diverse": {
+   "n": 60,
+   "description": "60 vendors whose documents come in many shapes: tables, prose letters, multi-page, stamps, German, country date formats, phone photos, value-only edits.",
+   "document_styles": {
+    "table": 17,
+    "photo": 32,
+    "stamped": 15,
+    "kv": 13,
+    "twocol": 11,
+    "multipage": 11,
+    "photo/de": 3,
+    "table/de": 1,
+    "stamped/de": 2,
+    "prose": 13,
+    "twocol/de": 1,
+    "prose/de": 1
+   },
+   "first_look": {
+    "n": 60,
+    "decision_accuracy": 0.8167,
+    "strict_accuracy": 0.8167,
+    "macro_f1": 0.8538,
+    "unsafe_approval_rate": 0.2895,
+    "straight_through_rate": 1.0,
+    "errors": {
+     "unsafe_approvals": 11,
+     "missed_rejects": 0,
+     "disclosure_leaks": 0,
+     "over_escalations": 0,
+     "false_holds": 0,
+     "other": 0
+    },
+    "weighted_cost": 550,
+    "confusion": {
+     "approved": {
+      "approved": 22,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 0,
+      "rejected": 0
+     },
+     "awaiting_vendor": {
+      "approved": 7,
+      "awaiting_vendor": 18,
+      "awaiting_reviewer": 0,
+      "rejected": 0
+     },
+     "awaiting_reviewer": {
+      "approved": 4,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 7,
+      "rejected": 0
+     },
+     "rejected": {
+      "approved": 0,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 0,
+      "rejected": 2
+     }
+    },
+    "per_class": {
+     "approved": {
+      "precision": 0.6667,
+      "recall": 1.0,
+      "f1": 0.8,
+      "support": 22
+     },
+     "awaiting_vendor": {
+      "precision": 1.0,
+      "recall": 0.72,
+      "f1": 0.8372,
+      "support": 25
+     },
+     "awaiting_reviewer": {
+      "precision": 1.0,
+      "recall": 0.6364,
+      "f1": 0.7778,
+      "support": 11
+     },
+     "rejected": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 2
+     }
+    },
+    "per_scenario": {
+     "account_vs_letter": {
+      "n": 5,
+      "decision_ok": 5,
+      "strict_ok": 5,
+      "failed_ids": []
+     },
+     "blurry_photo": {
+      "n": 4,
+      "decision_ok": 4,
+      "strict_ok": 4,
+      "failed_ids": []
+     },
+     "clean": {
+      "n": 22,
+      "decision_ok": 22,
+      "strict_ok": 22,
+      "failed_ids": []
+     },
+     "edited_value_only": {
+      "n": 5,
+      "decision_ok": 1,
+      "strict_ok": 1,
+      "failed_ids": [
+       "D002-edited_value_only",
+       "D028-edited_value_only",
+       "D039-edited_value_only",
+       "D045-edited_value_only"
+      ]
+     },
+     "holder_is_person": {
+      "n": 3,
+      "decision_ok": 3,
+      "strict_ok": 3,
+      "failed_ids": []
+     },
+     "lookalike_vendor": {
+      "n": 3,
+      "decision_ok": 3,
+      "strict_ok": 3,
+      "failed_ids": []
+     },
+     "sanctions_exact": {
+      "n": 2,
+      "decision_ok": 2,
+      "strict_ok": 2,
+      "failed_ids": []
+     },
+     "shared_account": {
+      "n": 3,
+      "decision_ok": 3,
+      "strict_ok": 3,
+      "failed_ids": []
+     },
+     "stale_bank_letter": {
+      "n": 6,
+      "decision_ok": 2,
+      "strict_ok": 2,
+      "failed_ids": [
+       "D011-stale_bank_letter",
+       "D013-stale_bank_letter",
+       "D044-stale_bank_letter",
+       "D054-stale_bank_letter"
+      ]
+     },
+     "undated_bank_letter": {
+      "n": 3,
+      "decision_ok": 0,
+      "strict_ok": 0,
+      "failed_ids": [
+       "D036-undated_bank_letter",
+       "D038-undated_bank_letter",
+       "D057-undated_bank_letter"
+      ]
+     },
+     "wrong_doc": {
+      "n": 4,
+      "decision_ok": 4,
+      "strict_ok": 4,
+      "failed_ids": []
+     }
+    },
+    "median_ms": 17
+   },
+   "first_look_failures": [
+    {
+     "id": "D002-edited_value_only",
+     "title": "edited value only: tax doc stamped/en, bank doc bank_letter stamped/en (account_number pasted over)",
+     "expected": "awaiting_reviewer",
+     "got": "approved"
+    },
+    {
+     "id": "D011-stale_bank_letter",
+     "title": "stale bank letter: tax doc kv/en, bank doc bank_letter table/en (121 days old)",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    },
+    {
+     "id": "D013-stale_bank_letter",
+     "title": "stale bank letter: tax doc stamped/en, bank doc bank_letter stamped/en (349 days old)",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    },
+    {
+     "id": "D028-edited_value_only",
+     "title": "edited value only: tax doc photo/en, bank doc bank_letter stamped/en (account_number pasted over)",
+     "expected": "awaiting_reviewer",
+     "got": "approved"
+    },
+    {
+     "id": "D036-undated_bank_letter",
+     "title": "undated bank letter: tax doc kv/en, bank doc bank_letter prose/en",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    },
+    {
+     "id": "D038-undated_bank_letter",
+     "title": "undated bank letter: tax doc table/en, bank doc cancelled_cheque stamped/en",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    },
+    {
+     "id": "D039-edited_value_only",
+     "title": "edited value only: tax doc photo/en, bank doc bank_letter stamped/en (account_number pasted over)",
+     "expected": "awaiting_reviewer",
+     "got": "approved"
+    },
+    {
+     "id": "D044-stale_bank_letter",
+     "title": "stale bank letter: tax doc photo/en, bank doc cancelled_cheque stamped/en (132 days old)",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    },
+    {
+     "id": "D045-edited_value_only",
+     "title": "edited value only: tax doc kv/en, bank doc bank_letter stamped/en (account_number pasted over)",
+     "expected": "awaiting_reviewer",
+     "got": "approved"
+    },
+    {
+     "id": "D054-stale_bank_letter",
+     "title": "stale bank letter: tax doc photo/en, bank doc bank_letter stamped/en (177 days old)",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    },
+    {
+     "id": "D057-undated_bank_letter",
+     "title": "undated bank letter: tax doc kv/en, bank doc bank_letter twocol/en",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    }
+   ],
+   "after_fixes": {
+    "n": 60,
+    "decision_accuracy": 1.0,
+    "strict_accuracy": 1.0,
+    "macro_f1": 1.0,
+    "unsafe_approval_rate": 0.0,
+    "straight_through_rate": 1.0,
+    "errors": {
+     "unsafe_approvals": 0,
+     "missed_rejects": 0,
+     "disclosure_leaks": 0,
+     "over_escalations": 0,
+     "false_holds": 0,
+     "other": 0
+    },
+    "weighted_cost": 0,
+    "confusion": {
+     "approved": {
+      "approved": 22,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 0,
+      "rejected": 0
+     },
+     "awaiting_vendor": {
+      "approved": 0,
+      "awaiting_vendor": 22,
+      "awaiting_reviewer": 0,
+      "rejected": 0
+     },
+     "awaiting_reviewer": {
+      "approved": 0,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 14,
+      "rejected": 0
+     },
+     "rejected": {
+      "approved": 0,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 0,
+      "rejected": 2
+     }
+    },
+    "per_class": {
+     "approved": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 22
+     },
+     "awaiting_vendor": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 22
+     },
+     "awaiting_reviewer": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 14
+     },
+     "rejected": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 2
+     }
+    },
+    "per_scenario": {
+     "account_vs_letter": {
+      "n": 5,
+      "decision_ok": 5,
+      "strict_ok": 5,
+      "failed_ids": []
+     },
+     "blurry_photo": {
+      "n": 4,
+      "decision_ok": 4,
+      "strict_ok": 4,
+      "failed_ids": []
+     },
+     "clean": {
+      "n": 22,
+      "decision_ok": 22,
+      "strict_ok": 22,
+      "failed_ids": []
+     },
+     "edited_value_only": {
+      "n": 5,
+      "decision_ok": 5,
+      "strict_ok": 5,
+      "failed_ids": []
+     },
+     "holder_is_person": {
+      "n": 3,
+      "decision_ok": 3,
+      "strict_ok": 3,
+      "failed_ids": []
+     },
+     "lookalike_vendor": {
+      "n": 3,
+      "decision_ok": 3,
+      "strict_ok": 3,
+      "failed_ids": []
+     },
+     "sanctions_exact": {
+      "n": 2,
+      "decision_ok": 2,
+      "strict_ok": 2,
+      "failed_ids": []
+     },
+     "shared_account": {
+      "n": 3,
+      "decision_ok": 3,
+      "strict_ok": 3,
+      "failed_ids": []
+     },
+     "stale_bank_letter": {
+      "n": 6,
+      "decision_ok": 6,
+      "strict_ok": 6,
+      "failed_ids": []
+     },
+     "undated_bank_letter": {
+      "n": 3,
+      "decision_ok": 3,
+      "strict_ok": 3,
+      "failed_ids": []
+     },
+     "wrong_doc": {
+      "n": 4,
+      "decision_ok": 4,
+      "strict_ok": 4,
+      "failed_ids": []
+     }
+    },
+    "median_ms": 29
+   }
+  }
+ },
+ "findings": [
+  {
+   "set": "diverse",
+   "found": "Bank-letter dates printed as 10/07/2026 or 9 November 2026 were not matched to the ISO date the reader returns, so the 90-day check silently skipped them.",
+   "fix": "Dates are compared as dates (all common styles); a bank letter without a verifiable date now asks the vendor (DOC_UNDATED)."
+  },
+  {
+   "set": "diverse",
+   "found": "A fraudster pasting over only the account NUMBER (not the whole 'IBAN: ...' line) was not detected.",
+   "fix": "Two different texts drawn at the same spot of a page are flagged as a pasted-over value, whatever the field."
+  },
+  {
+   "set": "blind",
+   "found": "The account holder was never screened: a clean company asking to be paid into a sanctioned party's account was not rejected.",
+   "fix": "Form and bank-letter account holders are screened against the sanctions list."
+  },
+  {
+   "set": "blind",
+   "found": "A name containing a sanctioned entity's whole distinctive name ('Meridian Crest Logistics') was approved.",
+   "fix": "Sharing the full distinctive part of a listed name goes to compliance review."
+  },
+  {
+   "set": "blind",
+   "found": "Payments to a third party (factoring company, a director personally) were sent back to the vendor instead of a reviewer.",
+   "fix": "Policy change: a clearly different account holder is a third-party payee -> reviewer with four-eyes (my own earlier labels were relabelled)."
+  },
+  {
+   "set": "blind",
+   "found": "A wholly different account on the form vs the bank letter was treated like a typo; another company's tax registration was treated like an upload slip.",
+   "fix": "Typo vs different account is measured; a tax ID registered to a differently named company -> reviewer."
+  },
+  {
+   "set": "blind",
+   "found": "Honest variants were held: 'M/s' prefix, 'DBA' account titles, 'UG (haftungsbeschraenkt)', swapped upload slots, company PAN with the wrong dropdown.",
+   "fix": "Recognised as variants or form slips (vendor asked to correct the type); swapped documents are read as what they are."
+  },
+  {
+   "set": "blind",
+   "found": "A bank statement was accepted as bank proof; a US domestic account in EUR was accepted.",
+   "fix": "Statements are recognised and the vendor is asked for a bank letter; a foreign currency on a domestic-only account asks the vendor to confirm."
+  }
+ ]
+}

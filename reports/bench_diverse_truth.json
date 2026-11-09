@@ -1,0 +1,144 @@
+{
+ "set": "diverse",
+ "reader": "truth",
+ "n": 60,
+ "metrics": {
+  "n": 60,
+  "decision_accuracy": 1.0,
+  "strict_accuracy": 1.0,
+  "macro_f1": 1.0,
+  "unsafe_approval_rate": 0.0,
+  "straight_through_rate": 1.0,
+  "errors": {
+   "unsafe_approvals": 0,
+   "missed_rejects": 0,
+   "disclosure_leaks": 0,
+   "over_escalations": 0,
+   "false_holds": 0,
+   "other": 0
+  },
+  "weighted_cost": 0,
+  "confusion": {
+   "approved": {
+    "approved": 22,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_vendor": {
+    "approved": 0,
+    "awaiting_vendor": 22,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_reviewer": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 14,
+    "rejected": 0
+   },
+   "rejected": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 2
+   }
+  },
+  "per_class": {
+   "approved": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 22
+   },
+   "awaiting_vendor": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 22
+   },
+   "awaiting_reviewer": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 14
+   },
+   "rejected": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 2
+   }
+  },
+  "per_scenario": {
+   "account_vs_letter": {
+    "n": 5,
+    "decision_ok": 5,
+    "strict_ok": 5,
+    "failed_ids": []
+   },
+   "blurry_photo": {
+    "n": 4,
+    "decision_ok": 4,
+    "strict_ok": 4,
+    "failed_ids": []
+   },
+   "clean": {
+    "n": 22,
+    "decision_ok": 22,
+    "strict_ok": 22,
+    "failed_ids": []
+   },
+   "edited_value_only": {
+    "n": 5,
+    "decision_ok": 5,
+    "strict_ok": 5,
+    "failed_ids": []
+   },
+   "holder_is_person": {
+    "n": 3,
+    "decision_ok": 3,
+    "strict_ok": 3,
+    "failed_ids": []
+   },
+   "lookalike_vendor": {
+    "n": 3,
+    "decision_ok": 3,
+    "strict_ok": 3,
+    "failed_ids": []
+   },
+   "sanctions_exact": {
+    "n": 2,
+    "decision_ok": 2,
+    "strict_ok": 2,
+    "failed_ids": []
+   },
+   "shared_account": {
+    "n": 3,
+    "decision_ok": 3,
+    "strict_ok": 3,
+    "failed_ids": []
+   },
+   "stale_bank_letter": {
+    "n": 6,
+    "decision_ok": 6,
+    "strict_ok": 6,
+    "failed_ids": []
+   },
+   "undated_bank_letter": {
+    "n": 3,
+    "decision_ok": 3,
+    "strict_ok": 3,
+    "failed_ids": []
+   },
+   "wrong_doc": {
+    "n": 4,
+    "decision_ok": 4,
+    "strict_ok": 4,
+    "failed_ids": []
+   }
+  },
+  "median_ms": 29
+ },
+ "failures": []
+}

@@ -1,0 +1,3224 @@
+{
+ "author_note": "Labelled purely from procurement business sense without seeing the system. Each case is built from valid identifiers from idgen.py (typos made by altering one digit / transposing). Approved cases deliberately include harmless variations (Pvt Ltd vs PRIVATE LIMITED, umlauts, M/s prefix, DBA titles, UG (haftungsbeschraenkt), IBAN-only GB, sole proprietor in own name, swapped upload slots, shared office building, near-miss sanctions name, 88-day letter, years-old GST certificate) to catch over-alerting. Reviewer cases target real fraud patterns: re-registration of existing vendors with new bank details, lookalike domains, shared bank accounts/EINs, altered PDFs, third-party or personal payee accounts, borrowed tax IDs, letterhead/IBAN inconsistency, and mixed fixable+fraud cases (fraud wins). Vendor-fixable cases are honest gaps: missing/wrong/old/blurry documents, blanks, checksum typos, wrong dropdowns. Rejections cover exact, alias, punctuation-variant and payee-side sanctions hits.",
+ "cases": [
+  {
+   "id": "B01",
+   "title": "IN clean private limited",
+   "story": "Mumbai packaging supplier submits a complete form with a GST certificate PDF and a recent bank confirmation letter; everything matches.",
+   "form": {
+    "legal_name": "Kaveri Packaging Solutions Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Unit 7, Andheri Industrial Estate, Andheri East",
+    "city": "Mumbai",
+    "postal_code": "400001",
+    "tax_id": "27KRWCK2207N1ZP",
+    "contact_name": "Sunil Deshmukh",
+    "contact_email": "accounts@kaveripackagingsolutions.in",
+    "bank_name": "HDFC Bank",
+    "account_holder": "Kaveri Packaging Solutions Pvt Ltd",
+    "currency": "INR",
+    "account_number": "50516317976318",
+    "ifsc": "HDFC0114598",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Kaveri Packaging Solutions Pvt Ltd",
+      "tax_id": "27KRWCK2207N1ZP",
+      "address": "Unit 7, Andheri Industrial Estate, Andheri East, Mumbai 400001"
+     },
+     "issued_days_ago": 400,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "HDFC Bank",
+      "account_holder": "Kaveri Packaging Solutions Pvt Ltd",
+      "account_number": "50516317976318",
+      "ifsc": "HDFC0114598"
+     },
+     "issued_days_ago": 12,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "All fields complete and consistent with both documents; nothing unusual.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B02",
+   "title": "DE clean GmbH, German documents",
+   "story": "Berlin electrical contractor; VAT confirmation from the Bundeszentralamt fuer Steuern and a Bankbestaetigung, both in German.",
+   "form": {
+    "legal_name": "Spreewald Elektrotechnik GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Am Treptower Park 41",
+    "city": "Berlin",
+    "postal_code": "10115",
+    "tax_id": "DE648137527",
+    "contact_name": "Katrin Lehmann",
+    "contact_email": "buchhaltung@spreewaldelektrotechnik.de",
+    "bank_name": "Deutsche Bank",
+    "account_holder": "Spreewald Elektrotechnik GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE40100700003882475444",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Spreewald Elektrotechnik GmbH",
+      "tax_id": "DE648137527",
+      "address": "Am Treptower Park 41, Berlin 10115"
+     },
+     "issued_days_ago": 700,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Deutsche Bank",
+      "account_holder": "Spreewald Elektrotechnik GmbH",
+      "iban": "DE40100700003882475444"
+     },
+     "issued_days_ago": 9,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "German-language documents are expected for a German vendor and every value matches the form.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B03",
+   "title": "GB clean Ltd",
+   "story": "Manchester metal fabricator with sort code and account number, HMRC VAT certificate and a Lloyds confirmation letter.",
+   "form": {
+    "legal_name": "Pennine Fabrication Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "Unit 3, Ancoats Works, Redhill Street",
+    "city": "Manchester",
+    "postal_code": "M1 1AE",
+    "tax_id": "GB135561573",
+    "contact_name": "Gareth Moss",
+    "contact_email": "finance@penninefabrication.co.uk",
+    "bank_name": "Lloyds Bank",
+    "account_holder": "Pennine Fabrication Ltd",
+    "currency": "GBP",
+    "account_number": "52981699",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "30-93-05",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Pennine Fabrication Ltd",
+      "tax_id": "GB135561573",
+      "address": "Unit 3, Ancoats Works, Redhill Street, Manchester M1 1AE"
+     },
+     "issued_days_ago": 900,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Lloyds Bank",
+      "account_holder": "Pennine Fabrication Ltd",
+      "account_number": "52981699",
+      "sort_code": "30-93-05"
+     },
+     "issued_days_ago": 30,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "Complete and consistent submission.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B04",
+   "title": "US clean LLC",
+   "story": "Austin fleet maintenance LLC submits W-9 and a bank account verification letter that match the form.",
+   "form": {
+    "legal_name": "Lonestar Fleet Services LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "2200 E Cesar Chavez St",
+    "city": "Austin, TX",
+    "postal_code": "78701",
+    "tax_id": "30-4407934",
+    "contact_name": "Dana Ortiz",
+    "contact_email": "ap@lonestarfleetservices.com",
+    "bank_name": "Wells Fargo Bank",
+    "account_holder": "Lonestar Fleet Services LLC",
+    "currency": "USD",
+    "account_number": "319859402435",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "097400435",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "w9",
+     "printed": {
+      "legal_name": "Lonestar Fleet Services LLC",
+      "tax_id": "30-4407934",
+      "address": "2200 E Cesar Chavez St, Austin, TX 78701"
+     },
+     "issued_days_ago": 60,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Wells Fargo Bank",
+      "account_holder": "Lonestar Fleet Services LLC",
+      "account_number": "319859402435",
+      "routing_number": "097400435"
+     },
+     "issued_days_ago": 15,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "Complete, consistent W-9 and bank letter.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B05",
+   "title": "Pvt Ltd vs PRIVATE LIMITED, old GST cert",
+   "story": "Form says 'Pvt Ltd'; the GST certificate (issued almost 4 years ago) and the photographed cancelled cheque print the name in capitals as 'PRIVATE LIMITED'.",
+   "form": {
+    "legal_name": "Tarang Textiles Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "14 Narol Road, Shahwadi",
+    "city": "Ahmedabad",
+    "postal_code": "380001",
+    "tax_id": "24BXOCT0613H1Z6",
+    "contact_name": "Hetal Patel",
+    "contact_email": "accounts@tarangtextiles.in",
+    "bank_name": "State Bank of India",
+    "account_holder": "Tarang Textiles Pvt Ltd",
+    "currency": "INR",
+    "account_number": "49605780248856",
+    "ifsc": "SBIN0260726",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "TARANG TEXTILES PRIVATE LIMITED",
+      "tax_id": "24BXOCT0613H1Z6",
+      "address": "14 Narol Road, Shahwadi, Ahmedabad 380001"
+     },
+     "issued_days_ago": 1400,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "cancelled_cheque",
+     "printed": {
+      "bank_name": "State Bank of India",
+      "account_holder": "TARANG TEXTILES PRIVATE LIMITED",
+      "account_number": "49605780248856",
+      "ifsc": "SBIN0260726"
+     },
+     "issued_days_ago": 25,
+     "language": "en",
+     "format": "photo",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "Abbreviation/case differences are harmless and a GST registration certificate does not expire; only the bank proof needs to be recent, and it is.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B06",
+   "title": "IN sole proprietor paid in own name",
+   "story": "Proprietorship 'Kumar Electricals'; GST certificate shows legal name Ramesh Kumar with that trade name, and the bank account is in Ramesh Kumar's own name. Uses a Gmail address.",
+   "form": {
+    "legal_name": "Ramesh Kumar",
+    "trade_name": "Kumar Electricals",
+    "entity_type": "sole_prop",
+    "country": "IN",
+    "address": "22 Aminabad Market",
+    "city": "Lucknow",
+    "postal_code": "226001",
+    "tax_id": "09IDVPK8571B1ZU",
+    "contact_name": "Ramesh Kumar",
+    "contact_email": "kumarelectricals.lko@gmail.com",
+    "bank_name": "Bank of Baroda",
+    "account_holder": "Ramesh Kumar",
+    "currency": "INR",
+    "account_number": "45280561605349",
+    "ifsc": "BARB0897170",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Ramesh Kumar",
+      "trade_name": "Kumar Electricals",
+      "tax_id": "09IDVPK8571B1ZU",
+      "address": "22 Aminabad Market, Lucknow 226001"
+     },
+     "issued_days_ago": 1100,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "cancelled_cheque",
+     "printed": {
+      "bank_name": "Bank of Baroda",
+      "account_holder": "Ramesh Kumar",
+      "account_number": "45280561605349",
+      "ifsc": "BARB0897170"
+     },
+     "issued_days_ago": 40,
+     "language": "en",
+     "format": "photo",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "For a sole proprietorship the proprietor is the legal entity, so a personal-name account and a free email address are normal; all identifiers agree.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B07",
+   "title": "DE umlaut transliteration",
+   "story": "Form typed with ASCII 'Mueller' and 'Strasse'; the German documents print 'Müller' and 'Straße'.",
+   "form": {
+    "legal_name": "Mueller Feinmechanik GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Heilbronner Strasse 150",
+    "city": "Stuttgart",
+    "postal_code": "70173",
+    "tax_id": "DE392784324",
+    "contact_name": "Stefan Mueller",
+    "contact_email": "buchhaltung@muellerfeinmechanik.de",
+    "bank_name": "HypoVereinsbank",
+    "account_holder": "Mueller Feinmechanik GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE26700202708826907620",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Müller Feinmechanik GmbH",
+      "tax_id": "DE392784324",
+      "address": "Heilbronner Straße 150, 70173 Stuttgart"
+     },
+     "issued_days_ago": 1500,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "HypoVereinsbank",
+      "account_holder": "Müller Feinmechanik GmbH",
+      "iban": "DE26700202708826907620"
+     },
+     "issued_days_ago": 18,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "ue/ü and ss/ß are the same name in German; everything else matches.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B08",
+   "title": "GB pays via IBAN only",
+   "story": "Edinburgh textile firm leaves sort code/account number blank and supplies an IBAN plus SWIFT instead; RBS letter shows IBAN and sort code.",
+   "form": {
+    "legal_name": "Thistle & Loom Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "8 Canongate",
+    "city": "Edinburgh",
+    "postal_code": "EH1 1YZ",
+    "tax_id": "GB735602051",
+    "contact_name": "Isla Fraser",
+    "contact_email": "finance@thistleloom.co.uk",
+    "bank_name": "Royal Bank of Scotland",
+    "account_holder": "Thistle & Loom Ltd",
+    "currency": "GBP",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "GB13RBOS83253654505115",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": "RBOSGB2L"
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Thistle & Loom Ltd",
+      "tax_id": "GB735602051",
+      "address": "8 Canongate, Edinburgh EH1 1YZ"
+     },
+     "issued_days_ago": 300,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Royal Bank of Scotland",
+      "account_holder": "Thistle & Loom Ltd",
+      "account_number": "54505115",
+      "iban": "GB13RBOS83253654505115",
+      "sort_code": "83-25-36",
+      "swift": "RBOSGB2L"
+     },
+     "issued_days_ago": 20,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "Policy explicitly allows an IBAN in place of sort code + account number, and the IBAN matches the letter.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B09",
+   "title": "US account titled with DBA",
+   "story": "Seattle company declares trade name 'CascadeSig'; the bank account title is 'Cascade Signal Systems Inc DBA CascadeSig'.",
+   "form": {
+    "legal_name": "Cascade Signal Systems Inc",
+    "trade_name": "CascadeSig",
+    "entity_type": "inc",
+    "country": "US",
+    "address": "1501 4th Ave Suite 900",
+    "city": "Seattle, WA",
+    "postal_code": "98101",
+    "tax_id": "27-4458127",
+    "contact_name": "Brian Okafor",
+    "contact_email": "ap@cascadesignalsystems.com",
+    "bank_name": "U.S. Bank",
+    "account_holder": "Cascade Signal Systems Inc DBA CascadeSig",
+    "currency": "USD",
+    "account_number": "2169262517",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "295390800",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "w9",
+     "printed": {
+      "legal_name": "Cascade Signal Systems Inc",
+      "trade_name": "CascadeSig",
+      "tax_id": "27-4458127",
+      "address": "1501 4th Ave Suite 900, Seattle, WA 98101"
+     },
+     "issued_days_ago": 120,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "U.S. Bank",
+      "account_holder": "Cascade Signal Systems Inc DBA CascadeSig",
+      "account_number": "2169262517",
+      "routing_number": "295390800"
+     },
+     "issued_days_ago": 10,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "The account is held by the same legal entity with its declared DBA; that is a normal title.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B10",
+   "title": "IN partnership firm with M/s prefix",
+   "story": "Jaipur partnership firm; the cancelled cheque reads 'M/S SHARMA AND SONS' and the GST certificate 'Sharma and Sons'.",
+   "form": {
+    "legal_name": "Sharma & Sons",
+    "trade_name": "",
+    "entity_type": "partnership",
+    "country": "IN",
+    "address": "45 Johari Bazar",
+    "city": "Jaipur",
+    "postal_code": "302001",
+    "tax_id": "08TKSFS4177S1ZT",
+    "contact_name": "Vikas Sharma",
+    "contact_email": "accounts@sharmasons.in",
+    "bank_name": "Axis Bank",
+    "account_holder": "Sharma & Sons",
+    "currency": "INR",
+    "account_number": "149852407957552",
+    "ifsc": "UTIB0334069",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Sharma and Sons",
+      "tax_id": "08TKSFS4177S1ZT",
+      "address": "45 Johari Bazar, Jaipur 302001"
+     },
+     "issued_days_ago": 800,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "cancelled_cheque",
+     "printed": {
+      "bank_name": "Axis Bank",
+      "account_holder": "M/S SHARMA AND SONS",
+      "account_number": "149852407957552",
+      "ifsc": "UTIB0334069"
+     },
+     "issued_days_ago": 14,
+     "language": "en",
+     "format": "photo",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "'M/s' is a customary Indian honorific for firms and '&' vs 'and' is cosmetic; identifiers match.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B11",
+   "title": "DE bank letter 88 days old",
+   "story": "Hamburg refrigeration AG; the Sparkasse confirmation letter is 88 days old, close to but inside the 90-day window.",
+   "form": {
+    "legal_name": "Hanseatische Kuehltechnik AG",
+    "trade_name": "",
+    "entity_type": "ag",
+    "country": "DE",
+    "address": "Grosse Elbstrasse 210",
+    "city": "Hamburg",
+    "postal_code": "20095",
+    "tax_id": "DE835781192",
+    "contact_name": "Frauke Petersen",
+    "contact_email": "buchhaltung@hanseatischekuehltechnik.de",
+    "bank_name": "Hamburger Sparkasse",
+    "account_holder": "Hanseatische Kuehltechnik AG",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE08200505505447058653",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Hanseatische Kuehltechnik AG",
+      "tax_id": "DE835781192",
+      "address": "Grosse Elbstrasse 210, Hamburg 20095"
+     },
+     "issued_days_ago": 2000,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Hamburger Sparkasse",
+      "account_holder": "Hanseatische Kuehltechnik AG",
+      "iban": "DE08200505505447058653"
+     },
+     "issued_days_ago": 88,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "88 days is within the 90-day validity window.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B12",
+   "title": "GB shares building with existing vendor",
+   "story": "New Bristol vendor is a tenant in the same office building as existing vendor Brightpath Consulting (12 Quay Street), but has its own VAT, bank and contact.",
+   "form": {
+    "legal_name": "Harbourside Translation Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "Suite 4, 12 Quay Street",
+    "city": "Bristol",
+    "postal_code": "BS1 4ST",
+    "tax_id": "GB237118082",
+    "contact_name": "Megan Price",
+    "contact_email": "finance@harboursidetranslation.co.uk",
+    "bank_name": "NatWest",
+    "account_holder": "Harbourside Translation Ltd",
+    "currency": "GBP",
+    "account_number": "86185034",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "60-36-75",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Harbourside Translation Ltd",
+      "tax_id": "GB237118082",
+      "address": "Suite 4, 12 Quay Street, Bristol BS1 4ST"
+     },
+     "issued_days_ago": 500,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "NatWest",
+      "account_holder": "Harbourside Translation Ltd",
+      "account_number": "86185034",
+      "sort_code": "60-36-75"
+     },
+     "issued_days_ago": 33,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "A shared multi-tenant address alone is not suspicious when name, tax ID, bank and contact are all distinct.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B13",
+   "title": "US punctuation and case differences",
+   "story": "Form says 'Redwood Analytics, Inc.'; W-9 says 'REDWOOD ANALYTICS INC' and the bank letter 'Redwood Analytics Incorporated'.",
+   "form": {
+    "legal_name": "Redwood Analytics, Inc.",
+    "trade_name": "",
+    "entity_type": "inc",
+    "country": "US",
+    "address": "1700 Lincoln St Fl 12",
+    "city": "Denver, CO",
+    "postal_code": "80202",
+    "tax_id": "02-6394337",
+    "contact_name": "Priya Raman",
+    "contact_email": "ap@redwoodanalytics.com",
+    "bank_name": "Wells Fargo Bank",
+    "account_holder": "Redwood Analytics, Inc.",
+    "currency": "USD",
+    "account_number": "964571607780",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "166081918",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "w9",
+     "printed": {
+      "legal_name": "REDWOOD ANALYTICS INC",
+      "tax_id": "02-6394337",
+      "address": "1700 Lincoln St Fl 12, Denver, CO 80202"
+     },
+     "issued_days_ago": 45,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Wells Fargo Bank",
+      "account_holder": "Redwood Analytics Incorporated",
+      "account_number": "964571607780",
+      "routing_number": "166081918"
+     },
+     "issued_days_ago": 5,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "Punctuation, capitalisation and Inc/Incorporated are the same entity.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B14",
+   "title": "DE UG without (haftungsbeschraenkt) on form",
+   "story": "Form says 'Kleinwerk UG'; documents print the full legal form 'Kleinwerk UG (haftungsbeschränkt)'.",
+   "form": {
+    "legal_name": "Kleinwerk UG",
+    "trade_name": "",
+    "entity_type": "ug",
+    "country": "DE",
+    "address": "Venloer Strasse 301",
+    "city": "Koeln",
+    "postal_code": "50667",
+    "tax_id": "DE393606680",
+    "contact_name": "Aylin Demir",
+    "contact_email": "buchhaltung@kleinwerk.de",
+    "bank_name": "Sparkasse KoelnBonn",
+    "account_holder": "Kleinwerk UG",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE42370501984294287726",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Kleinwerk UG (haftungsbeschränkt)",
+      "tax_id": "DE393606680",
+      "address": "Venloer Strasse 301, Koeln 50667"
+     },
+     "issued_days_ago": 250,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Sparkasse KoelnBonn",
+      "account_holder": "Kleinwerk UG (haftungsbeschränkt)",
+      "iban": "DE42370501984294287726"
+     },
+     "issued_days_ago": 21,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "The parenthetical is part of the legal-form suffix, not a different company.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B15",
+   "title": "GB clean plc with SWIFT",
+   "story": "Birmingham plc with sort code, account number and SWIFT; HSBC letter and VAT certificate all match.",
+   "form": {
+    "legal_name": "Severn Valley Water Engineering plc",
+    "trade_name": "",
+    "entity_type": "plc",
+    "country": "GB",
+    "address": "40 Colmore Row",
+    "city": "Birmingham",
+    "postal_code": "B2 4QA",
+    "tax_id": "GB641380751",
+    "contact_name": "Rajesh Kapoor",
+    "contact_email": "finance@severnvalleywaterengineering.co.uk",
+    "bank_name": "HSBC UK",
+    "account_holder": "Severn Valley Water Engineering plc",
+    "currency": "GBP",
+    "account_number": "75848654",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "40-58-33",
+    "routing_number": "",
+    "swift": "HBUKGB4B"
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Severn Valley Water Engineering plc",
+      "tax_id": "GB641380751",
+      "address": "40 Colmore Row, Birmingham B2 4QA"
+     },
+     "issued_days_ago": 1200,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "HSBC UK",
+      "account_holder": "Severn Valley Water Engineering plc",
+      "account_number": "75848654",
+      "sort_code": "40-58-33",
+      "swift": "HBUKGB4B"
+     },
+     "issued_days_ago": 50,
+     "language": "en",
+     "format": "photo",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "Complete and consistent; a clear photo of the letter is acceptable.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B16",
+   "title": "US voided check",
+   "story": "Atlanta coatings corporation uploads a W-9 PDF and a photographed voided check.",
+   "form": {
+    "legal_name": "Peachtree Industrial Coatings Corp",
+    "trade_name": "",
+    "entity_type": "corp",
+    "country": "US",
+    "address": "191 Peachtree St NE",
+    "city": "Atlanta, GA",
+    "postal_code": "30303",
+    "tax_id": "12-7419848",
+    "contact_name": "LaToya Simmons",
+    "contact_email": "ap@peachtreeindustrialcoatings.com",
+    "bank_name": "Wells Fargo Bank",
+    "account_holder": "Peachtree Industrial Coatings Corp",
+    "currency": "USD",
+    "account_number": "447180447251",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "248112970",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "w9",
+     "printed": {
+      "legal_name": "Peachtree Industrial Coatings Corp",
+      "tax_id": "12-7419848",
+      "address": "191 Peachtree St NE, Atlanta, GA 30303"
+     },
+     "issued_days_ago": 200,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "cancelled_cheque",
+     "printed": {
+      "bank_name": "Wells Fargo Bank",
+      "account_holder": "Peachtree Industrial Coatings Corp",
+      "account_number": "447180447251",
+      "routing_number": "248112970"
+     },
+     "issued_days_ago": 8,
+     "language": "en",
+     "format": "photo",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "A voided check is acceptable bank proof and matches the form.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B17",
+   "title": "US name resembles a sanctioned entity",
+   "story": "A Denver bakery whose name shares 'Orion Va...' with sanctioned 'Orion Vale Metals LLC', but nothing else in common.",
+   "form": {
+    "legal_name": "Orion Valley Bakery LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "2840 Larimer St",
+    "city": "Denver, CO",
+    "postal_code": "80202",
+    "tax_id": "01-8946584",
+    "contact_name": "Hector Alvarez",
+    "contact_email": "ap@orionvalleybakery.com",
+    "bank_name": "Wells Fargo Bank",
+    "account_holder": "Orion Valley Bakery LLC",
+    "currency": "USD",
+    "account_number": "789881753358",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "080585639",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "w9",
+     "printed": {
+      "legal_name": "Orion Valley Bakery LLC",
+      "tax_id": "01-8946584",
+      "address": "2840 Larimer St, Denver, CO 80202"
+     },
+     "issued_days_ago": 90,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Wells Fargo Bank",
+      "account_holder": "Orion Valley Bakery LLC",
+      "account_number": "789881753358",
+      "routing_number": "080585639"
+     },
+     "issued_days_ago": 30,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "A superficial name similarity to a sanctioned metals trader is not a match; different name, industry and identifiers.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B18",
+   "title": "IN swapped upload slots, common contact name",
+   "story": "Kochi exporter put the bank letter in the tax slot and the GST certificate in the bank slot; contact person is 'Priya Nair', the same common name as an existing vendor's contact.",
+   "form": {
+    "legal_name": "Malabar Spice Exports Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Bazaar Road, Mattancherry",
+    "city": "Kochi",
+    "postal_code": "682001",
+    "tax_id": "32BNJCM1622H1Z2",
+    "contact_name": "Priya Nair",
+    "contact_email": "accounts@malabarspiceexports.in",
+    "bank_name": "Canara Bank",
+    "account_holder": "Malabar Spice Exports Pvt Ltd",
+    "currency": "INR",
+    "account_number": "72561036019275",
+    "ifsc": "CNRB0093291",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Canara Bank",
+      "account_holder": "Malabar Spice Exports Pvt Ltd",
+      "account_number": "72561036019275",
+      "ifsc": "CNRB0093291"
+     },
+     "issued_days_ago": 17,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Malabar Spice Exports Pvt Ltd",
+      "tax_id": "32BNJCM1622H1Z2",
+      "address": "Bazaar Road, Mattancherry, Kochi 682001"
+     },
+     "issued_days_ago": 600,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "approved",
+   "why": "Both required documents were provided and match, just in each other's slots; a common personal name is not a duplicate signal.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B19",
+   "title": "IN missing bank proof",
+   "story": "Complete form and GST certificate, but no bank proof was uploaded.",
+   "form": {
+    "legal_name": "Deccan Agro Tools Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Plot 9, Balanagar IDA",
+    "city": "Hyderabad",
+    "postal_code": "500001",
+    "tax_id": "36IHKCD6587D1ZQ",
+    "contact_name": "Srinivas Reddy",
+    "contact_email": "accounts@deccanagrotools.in",
+    "bank_name": "ICICI Bank",
+    "account_holder": "Deccan Agro Tools Pvt Ltd",
+    "currency": "INR",
+    "account_number": "550719016247",
+    "ifsc": "ICIC0948421",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Deccan Agro Tools Pvt Ltd",
+      "tax_id": "36IHKCD6587D1ZQ",
+      "address": "Plot 9, Balanagar IDA, Hyderabad 500001"
+     },
+     "issued_days_ago": 300,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": null
+   },
+   "expected": "awaiting_vendor",
+   "why": "Required bank proof is missing; vendor just needs to upload it.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B20",
+   "title": "DE bank letter too old",
+   "story": "Munich print shop; Bankbestaetigung is 140 days old.",
+   "form": {
+    "legal_name": "Isar Druckerei GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Landsberger Strasse 88",
+    "city": "Muenchen",
+    "postal_code": "80331",
+    "tax_id": "DE807927416",
+    "contact_name": "Florian Huber",
+    "contact_email": "buchhaltung@isardruckerei.de",
+    "bank_name": "HypoVereinsbank",
+    "account_holder": "Isar Druckerei GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE17700202704892853077",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Isar Druckerei GmbH",
+      "tax_id": "DE807927416",
+      "address": "Landsberger Strasse 88, Muenchen 80331"
+     },
+     "issued_days_ago": 400,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "HypoVereinsbank",
+      "account_holder": "Isar Druckerei GmbH",
+      "iban": "DE17700202704892853077"
+     },
+     "issued_days_ago": 140,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "Bank proof older than 90 days; vendor must provide a recent one.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B21",
+   "title": "GB invoice uploaded instead of VAT certificate",
+   "story": "London caterer uploaded one of its sales invoices (which shows its VAT number) into the tax certificate slot.",
+   "form": {
+    "legal_name": "Copperleaf Catering Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "77 Clerkenwell Road",
+    "city": "London",
+    "postal_code": "EC1A 1BB",
+    "tax_id": "GB680129246",
+    "contact_name": "Oliver Grant",
+    "contact_email": "finance@copperleafcatering.co.uk",
+    "bank_name": "Santander UK",
+    "account_holder": "Copperleaf Catering Ltd",
+    "currency": "GBP",
+    "account_number": "74208505",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "09-63-05",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "invoice",
+     "printed": {
+      "legal_name": "Copperleaf Catering Ltd",
+      "tax_id": "GB680129246",
+      "address": "77 Clerkenwell Road, London EC1A 1BB"
+     },
+     "issued_days_ago": 15,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Santander UK",
+      "account_holder": "Copperleaf Catering Ltd",
+      "account_number": "74208505",
+      "sort_code": "09-63-05"
+     },
+     "issued_days_ago": 22,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "An invoice is not a VAT registration certificate; the vendor must upload the right document.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B22",
+   "title": "US blurry W-9 photo",
+   "story": "Columbus pallet supplier photographed its W-9 at an angle; the image is too blurry to read.",
+   "form": {
+    "legal_name": "Buckeye Pallet Co LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "455 W Mound St",
+    "city": "Columbus, OH",
+    "postal_code": "43215",
+    "tax_id": "72-6934433",
+    "contact_name": "Gary Kowalski",
+    "contact_email": "ap@buckeyepalletco.com",
+    "bank_name": "Truist Bank",
+    "account_holder": "Buckeye Pallet Co LLC",
+    "currency": "USD",
+    "account_number": "993345684884",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "169513470",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "w9",
+     "printed": {
+      "legal_name": "Buckeye Pallet Co LLC",
+      "tax_id": "72-6934433",
+      "address": "455 W Mound St, Columbus, OH 43215"
+     },
+     "issued_days_ago": 30,
+     "language": "en",
+     "format": "photo",
+     "quality": "blurry",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Truist Bank",
+      "account_holder": "Buckeye Pallet Co LLC",
+      "account_number": "993345684884",
+      "routing_number": "169513470"
+     },
+     "issued_days_ago": 11,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "Tax form is unreadable; vendor should re-upload a clear copy.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B23",
+   "title": "IN account number digits transposed",
+   "story": "Two adjacent digits of the account number are swapped on the form; the cancelled cheque (same bank, IFSC and holder) shows the correct number.",
+   "form": {
+    "legal_name": "Vindhya Fasteners Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Gat No 112, Chakan MIDC",
+    "city": "Pune",
+    "postal_code": "411001",
+    "tax_id": "27SDXCV6716I1ZU",
+    "contact_name": "Amol Kulkarni",
+    "contact_email": "accounts@vindhyafasteners.in",
+    "bank_name": "Kotak Mahindra Bank",
+    "account_holder": "Vindhya Fasteners Pvt Ltd",
+    "currency": "INR",
+    "account_number": "331600122037",
+    "ifsc": "KKBK0832647",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Vindhya Fasteners Pvt Ltd",
+      "tax_id": "27SDXCV6716I1ZU",
+      "address": "Gat No 112, Chakan MIDC, Pune 411001"
+     },
+     "issued_days_ago": 500,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "cancelled_cheque",
+     "printed": {
+      "bank_name": "Kotak Mahindra Bank",
+      "account_holder": "Vindhya Fasteners Pvt Ltd",
+      "account_number": "331600120237",
+      "ifsc": "KKBK0832647"
+     },
+     "issued_days_ago": 20,
+     "language": "en",
+     "format": "photo",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "Classic keying error with everything else matching; vendor should correct the form rather than anyone paying the typed number.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B24",
+   "title": "DE IBAN typo fails checksum",
+   "story": "One digit of the IBAN is mistyped on the form (fails the IBAN check); the bank letter shows the correct IBAN for the same holder.",
+   "form": {
+    "legal_name": "Ostwind Logistik GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Billstrasse 120",
+    "city": "Hamburg",
+    "postal_code": "20095",
+    "tax_id": "DE928601437",
+    "contact_name": "Malte Jensen",
+    "contact_email": "buchhaltung@ostwindlogistik.de",
+    "bank_name": "Hamburger Sparkasse",
+    "account_holder": "Ostwind Logistik GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE66200505500359346871",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Ostwind Logistik GmbH",
+      "tax_id": "DE928601437",
+      "address": "Billstrasse 120, Hamburg 20095"
+     },
+     "issued_days_ago": 300,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Hamburger Sparkasse",
+      "account_holder": "Ostwind Logistik GmbH",
+      "iban": "DE66200505500356346871"
+     },
+     "issued_days_ago": 14,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "Invalid IBAN from a typo is a vendor-fixable data error; nothing suspicious.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B25",
+   "title": "GB VAT number left blank",
+   "story": "Leeds joinery left the VAT number field empty though its VAT certificate is attached.",
+   "form": {
+    "legal_name": "Wharfedale Joinery Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "3 Wellington Place",
+    "city": "Leeds",
+    "postal_code": "LS1 4AP",
+    "tax_id": "",
+    "contact_name": "Tom Ackroyd",
+    "contact_email": "finance@wharfedalejoinery.co.uk",
+    "bank_name": "Barclays Bank",
+    "account_holder": "Wharfedale Joinery Ltd",
+    "currency": "GBP",
+    "account_number": "35196886",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "20-20-14",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Wharfedale Joinery Ltd",
+      "tax_id": "GB584143436",
+      "address": "3 Wellington Place, Leeds LS1 4AP"
+     },
+     "issued_days_ago": 400,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Barclays Bank",
+      "account_holder": "Wharfedale Joinery Ltd",
+      "account_number": "35196886",
+      "sort_code": "20-20-14"
+     },
+     "issued_days_ago": 35,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "Required form field missing; vendor fills it in.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B26",
+   "title": "US SSN-shaped number in EIN field",
+   "story": "The LLC typed what looks like a personal SSN (NNN-NN-NNNN) in the EIN field; the W-9 shows a proper company EIN.",
+   "form": {
+    "legal_name": "Lakeshore Event Rentals LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "1300 S Wabash Ave",
+    "city": "Chicago, IL",
+    "postal_code": "60601",
+    "tax_id": "418-62-3307",
+    "contact_name": "Monica Reyes",
+    "contact_email": "ap@lakeshoreeventrentals.com",
+    "bank_name": "U.S. Bank",
+    "account_holder": "Lakeshore Event Rentals LLC",
+    "currency": "USD",
+    "account_number": "8715866961",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "074625217",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "w9",
+     "printed": {
+      "legal_name": "Lakeshore Event Rentals LLC",
+      "tax_id": "90-9884836",
+      "address": "1300 S Wabash Ave, Chicago, IL 60601"
+     },
+     "issued_days_ago": 20,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "U.S. Bank",
+      "account_holder": "Lakeshore Event Rentals LLC",
+      "account_number": "8715866961",
+      "routing_number": "074625217"
+     },
+     "issued_days_ago": 12,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "Tax ID field is in the wrong format and doesn't match the W-9; vendor should enter the EIN.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B27",
+   "title": "IN bank statement as bank proof",
+   "story": "Chennai chemicals firm uploaded a recent bank statement instead of a bank letter or cancelled cheque.",
+   "form": {
+    "legal_name": "Coromandel Chemicals Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "88 Ennore High Road",
+    "city": "Chennai",
+    "postal_code": "600002",
+    "tax_id": "33GRUCC2273E1ZJ",
+    "contact_name": "Lakshmi Iyer",
+    "contact_email": "accounts@coromandelchemicals.in",
+    "bank_name": "Yes Bank",
+    "account_holder": "Coromandel Chemicals Pvt Ltd",
+    "currency": "INR",
+    "account_number": "66603343945",
+    "ifsc": "YESB0150842",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Coromandel Chemicals Pvt Ltd",
+      "tax_id": "33GRUCC2273E1ZJ",
+      "address": "88 Ennore High Road, Chennai 600002"
+     },
+     "issued_days_ago": 700,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_statement",
+     "printed": {
+      "bank_name": "Yes Bank",
+      "account_holder": "Coromandel Chemicals Pvt Ltd",
+      "account_number": "66603343945",
+      "ifsc": "YESB0150842"
+     },
+     "issued_days_ago": 10,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "Policy accepts only a bank confirmation letter or cancelled cheque; vendor should upload one of those.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B28",
+   "title": "DE utility bill as bank proof",
+   "story": "Cologne furniture maker uploaded an electricity bill (Stromrechnung) in the bank proof slot.",
+   "form": {
+    "legal_name": "Rheingold Moebelbau GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Aachener Strasse 500",
+    "city": "Koeln",
+    "postal_code": "50667",
+    "tax_id": "DE787161365",
+    "contact_name": "Sabine Krause",
+    "contact_email": "buchhaltung@rheingoldmoebelbau.de",
+    "bank_name": "Sparkasse KoelnBonn",
+    "account_holder": "Rheingold Moebelbau GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE84370501984278207959",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Rheingold Moebelbau GmbH",
+      "tax_id": "DE787161365",
+      "address": "Aachener Strasse 500, Koeln 50667"
+     },
+     "issued_days_ago": 350,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "utility_bill",
+     "printed": {
+      "account_holder": "Rheingold Moebelbau GmbH",
+      "address": "Aachener Strasse 500, 50667 Koeln"
+     },
+     "issued_days_ago": 20,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "Wrong document type for bank proof; vendor re-uploads.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B29",
+   "title": "GB contact email missing",
+   "story": "Everything provided except the contact email address.",
+   "form": {
+    "legal_name": "Glenmore Audio Visual Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "21 Old Street",
+    "city": "London",
+    "postal_code": "EC1A 1BB",
+    "tax_id": "GB257677806",
+    "contact_name": "Fiona Walsh",
+    "contact_email": "",
+    "bank_name": "HSBC UK",
+    "account_holder": "Glenmore Audio Visual Ltd",
+    "currency": "GBP",
+    "account_number": "47906634",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "40-58-43",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Glenmore Audio Visual Ltd",
+      "tax_id": "GB257677806",
+      "address": "21 Old Street, London EC1A 1BB"
+     },
+     "issued_days_ago": 180,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "HSBC UK",
+      "account_holder": "Glenmore Audio Visual Ltd",
+      "account_number": "47906634",
+      "sort_code": "40-58-43"
+     },
+     "issued_days_ago": 27,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "Required field missing.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B30",
+   "title": "US vendor selects EUR currency",
+   "story": "Denver surveying firm with a US bank account chose EUR as currency in the form dropdown.",
+   "form": {
+    "legal_name": "Front Range Surveying Inc",
+    "trade_name": "",
+    "entity_type": "inc",
+    "country": "US",
+    "address": "1550 Wewatta St",
+    "city": "Denver, CO",
+    "postal_code": "80202",
+    "tax_id": "92-6330302",
+    "contact_name": "Kyle Brennan",
+    "contact_email": "ap@frontrangesurveying.com",
+    "bank_name": "U.S. Bank",
+    "account_holder": "Front Range Surveying Inc",
+    "currency": "EUR",
+    "account_number": "68430892684",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "019244873",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "w9",
+     "printed": {
+      "legal_name": "Front Range Surveying Inc",
+      "tax_id": "92-6330302",
+      "address": "1550 Wewatta St, Denver, CO 80202"
+     },
+     "issued_days_ago": 75,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "U.S. Bank",
+      "account_holder": "Front Range Surveying Inc",
+      "account_number": "68430892684",
+      "routing_number": "019244873"
+     },
+     "issued_days_ago": 19,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "A domestic US ACH account in EUR is inconsistent; most likely a dropdown slip the vendor should correct.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B31",
+   "title": "IN GSTIN typo fails checksum",
+   "story": "One digit of the GSTIN is mistyped on the form; the GST certificate shows the valid GSTIN.",
+   "form": {
+    "legal_name": "Ganga Steel Traders Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "12 Strand Road",
+    "city": "Kolkata",
+    "postal_code": "700001",
+    "tax_id": "19BOVCG4188C1Z2",
+    "contact_name": "Arindam Bose",
+    "contact_email": "accounts@gangasteeltraders.in",
+    "bank_name": "State Bank of India",
+    "account_holder": "Ganga Steel Traders Pvt Ltd",
+    "currency": "INR",
+    "account_number": "88866116549",
+    "ifsc": "SBIN0717772",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Ganga Steel Traders Pvt Ltd",
+      "tax_id": "19BOVCG4888C1Z2",
+      "address": "12 Strand Road, Kolkata 700001"
+     },
+     "issued_days_ago": 900,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "State Bank of India",
+      "account_holder": "Ganga Steel Traders Pvt Ltd",
+      "account_number": "88866116549",
+      "ifsc": "SBIN0717772"
+     },
+     "issued_days_ago": 30,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "Invalid GSTIN from a typo; certificate shows the right one, vendor corrects the field.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B32",
+   "title": "DE no VAT certificate uploaded",
+   "story": "Form and bank letter fine, VAT registration certificate not uploaded.",
+   "form": {
+    "legal_name": "Neckartal Verpackung GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Ulmer Strasse 55",
+    "city": "Stuttgart",
+    "postal_code": "70173",
+    "tax_id": "DE569904261",
+    "contact_name": "Jens Bauer",
+    "contact_email": "buchhaltung@neckartalverpackung.de",
+    "bank_name": "Commerzbank",
+    "account_holder": "Neckartal Verpackung GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE18500400006902028520",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": null,
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Commerzbank",
+      "account_holder": "Neckartal Verpackung GmbH",
+      "iban": "DE18500400006902028520"
+     },
+     "issued_days_ago": 40,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "Required tax document missing.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B33",
+   "title": "GB bank letter 91 days old",
+   "story": "Bank letter is 91 days old, one day past the window.",
+   "form": {
+    "legal_name": "Saltire Office Interiors Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "50 Lothian Road",
+    "city": "Edinburgh",
+    "postal_code": "EH1 1YZ",
+    "tax_id": "GB181285165",
+    "contact_name": "Craig Murray",
+    "contact_email": "finance@saltireofficeinteriors.co.uk",
+    "bank_name": "Royal Bank of Scotland",
+    "account_holder": "Saltire Office Interiors Ltd",
+    "currency": "GBP",
+    "account_number": "19408478",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "83-16-41",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Saltire Office Interiors Ltd",
+      "tax_id": "GB181285165",
+      "address": "50 Lothian Road, Edinburgh EH1 1YZ"
+     },
+     "issued_days_ago": 600,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Royal Bank of Scotland",
+      "account_holder": "Saltire Office Interiors Ltd",
+      "account_number": "19408478",
+      "sort_code": "83-16-41"
+     },
+     "issued_days_ago": 91,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "Just outside the 90-day window; vendor needs a fresh letter.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B34",
+   "title": "IN wrong entity type picked",
+   "story": "A private limited company (PAN shows company type, name ends 'Pvt Ltd') selected 'sole_prop' in the entity-type dropdown.",
+   "form": {
+    "legal_name": "Aravalli Infra Projects Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "sole_prop",
+    "country": "IN",
+    "address": "Tower B, Sector 44",
+    "city": "Gurugram",
+    "postal_code": "122001",
+    "tax_id": "06KLVCA0370E1ZV",
+    "contact_name": "Neha Gupta",
+    "contact_email": "accounts@aravalliinfraprojects.in",
+    "bank_name": "Axis Bank",
+    "account_holder": "Aravalli Infra Projects Pvt Ltd",
+    "currency": "INR",
+    "account_number": "52797772644392",
+    "ifsc": "UTIB0444034",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Aravalli Infra Projects Pvt Ltd",
+      "tax_id": "06KLVCA0370E1ZV",
+      "address": "Tower B, Sector 44, Gurugram 122001"
+     },
+     "issued_days_ago": 450,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Axis Bank",
+      "account_holder": "Aravalli Infra Projects Pvt Ltd",
+      "account_number": "52797772644392",
+      "ifsc": "UTIB0444034"
+     },
+     "issued_days_ago": 16,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_vendor",
+   "why": "Entity type contradicts the name and GSTIN; a form error the vendor can fix.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B35",
+   "title": "IN existing vendor re-registers with new bank",
+   "story": "A submission using existing vendor Globex's exact name, GSTIN and address, but a new Yes Bank account and a Gmail contact.",
+   "form": {
+    "legal_name": "Globex Logistics Solutions Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Plot 14, MIDC Industrial Area, Mumbai",
+    "city": "Mumbai",
+    "postal_code": "400001",
+    "tax_id": "27AABCG4411K1ZR",
+    "contact_name": "Rohit Mehra",
+    "contact_email": "globex.accounts.dept@gmail.com",
+    "bank_name": "Yes Bank",
+    "account_holder": "Globex Logistics Solutions Pvt Ltd",
+    "currency": "INR",
+    "account_number": "64864353972716",
+    "ifsc": "YESB0124836",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Globex Logistics Solutions Pvt Ltd",
+      "tax_id": "27AABCG4411K1ZR",
+      "address": "Plot 14, MIDC Industrial Area, Mumbai, Mumbai 400001"
+     },
+     "issued_days_ago": 900,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Yes Bank",
+      "account_holder": "Globex Logistics Solutions Pvt Ltd",
+      "account_number": "64864353972716",
+      "ifsc": "YESB0124836"
+     },
+     "issued_days_ago": 6,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "Duplicate of an approved vendor with changed bank details is the classic payment-diversion pattern; must be verified with the known contact.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B36",
+   "title": "DE lookalike email domain for existing vendor",
+   "story": "Same name, VAT ID and contact person as existing vendor Northwind, but a hyphenated lookalike email domain and a new Commerzbank IBAN.",
+   "form": {
+    "legal_name": "Northwind Components GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Industriestrasse 22",
+    "city": "Frankfurt",
+    "postal_code": "60311",
+    "tax_id": "DE136695976",
+    "contact_name": "Jonas Weber",
+    "contact_email": "buchhaltung@northwind-components-gmbh.de",
+    "bank_name": "Commerzbank",
+    "account_holder": "Northwind Components GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE16500400004531502592",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Northwind Components GmbH",
+      "tax_id": "DE136695976",
+      "address": "Industriestrasse 22, Frankfurt 60311"
+     },
+     "issued_days_ago": 1000,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Commerzbank",
+      "account_holder": "Northwind Components GmbH",
+      "iban": "DE16500400004531502592"
+     },
+     "issued_days_ago": 4,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "Lookalike domain plus new bank account for an existing vendor indicates impersonation.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B37",
+   "title": "GB new vendor uses existing vendor's bank account",
+   "story": "New Bristol company whose sort code and account number are identical to those of existing vendor Brightpath Consulting.",
+   "form": {
+    "legal_name": "Avonmouth Data Services Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "Harbourside, 1 Canons Way",
+    "city": "Bristol",
+    "postal_code": "BS1 4ST",
+    "tax_id": "GB355534840",
+    "contact_name": "Liam Turner",
+    "contact_email": "finance@avonmouthdataservices.co.uk",
+    "bank_name": "Barclays Bank",
+    "account_holder": "Avonmouth Data Services Ltd",
+    "currency": "GBP",
+    "account_number": "55779911",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "20-00-00",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Avonmouth Data Services Ltd",
+      "tax_id": "GB355534840",
+      "address": "Harbourside, 1 Canons Way, Bristol BS1 4ST"
+     },
+     "issued_days_ago": 200,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Barclays Bank",
+      "account_holder": "Avonmouth Data Services Ltd",
+      "account_number": "55779911",
+      "sort_code": "20-00-00"
+     },
+     "issued_days_ago": 10,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "One bank account shared by two supposedly unrelated vendors suggests a shell or duplicate-payment scheme.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B38",
+   "title": "US bank letter digitally altered",
+   "story": "The bank letter looks perfect and shows the form's account number, but the PDF contains a different account number underneath the visible one.",
+   "form": {
+    "legal_name": "Great Plains Industrial Supply Inc",
+    "trade_name": "",
+    "entity_type": "inc",
+    "country": "US",
+    "address": "233 S Wacker Dr",
+    "city": "Chicago, IL",
+    "postal_code": "60601",
+    "tax_id": "60-0830200",
+    "contact_name": "Diane Fischer",
+    "contact_email": "ap@greatplainsindustrialsupply.com",
+    "bank_name": "Bank of America",
+    "account_holder": "Great Plains Industrial Supply Inc",
+    "currency": "USD",
+    "account_number": "33656455336",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "015048853",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "w9",
+     "printed": {
+      "legal_name": "Great Plains Industrial Supply Inc",
+      "tax_id": "60-0830200",
+      "address": "233 S Wacker Dr, Chicago, IL 60601"
+     },
+     "issued_days_ago": 100,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Bank of America",
+      "account_holder": "Great Plains Industrial Supply Inc",
+      "account_number": "33656455336",
+      "routing_number": "015048853"
+     },
+     "issued_days_ago": 7,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": {
+      "field": "account_number",
+      "visible_value": "33656455336",
+      "original_value": "30370609855"
+     }
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "A tampered bank document is a fraud signal regardless of everything matching on the surface.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B39",
+   "title": "IN bank letter holder name overwritten",
+   "story": "Bank letter shows the company as account holder, but the PDF's underlying text names an individual (Deepak Malhotra).",
+   "form": {
+    "legal_name": "Vanshika Polymers Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "B-22 Okhla Industrial Area Phase 1",
+    "city": "New Delhi",
+    "postal_code": "110001",
+    "tax_id": "07BHSCV6262M1Z1",
+    "contact_name": "Deepak Malhotra",
+    "contact_email": "accounts@vanshikapolymers.in",
+    "bank_name": "HDFC Bank",
+    "account_holder": "Vanshika Polymers Pvt Ltd",
+    "currency": "INR",
+    "account_number": "31921316341",
+    "ifsc": "HDFC0796824",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Vanshika Polymers Pvt Ltd",
+      "tax_id": "07BHSCV6262M1Z1",
+      "address": "B-22 Okhla Industrial Area Phase 1, New Delhi 110001"
+     },
+     "issued_days_ago": 500,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "HDFC Bank",
+      "account_holder": "Vanshika Polymers Pvt Ltd",
+      "account_number": "31921316341",
+      "ifsc": "HDFC0796824"
+     },
+     "issued_days_ago": 12,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": {
+      "field": "account_holder",
+      "visible_value": "Vanshika Polymers Pvt Ltd",
+      "original_value": "Deepak Malhotra"
+     }
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "Altered account-holder field means the account likely belongs to a person, not the vendor.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B40",
+   "title": "DE payments to a third-party factoring company",
+   "story": "Berlin solar installer asks to be paid into an account held by a factoring company; form and bank letter both name the factor.",
+   "form": {
+    "legal_name": "Lausitz Solartechnik GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Friedrichstrasse 95",
+    "city": "Berlin",
+    "postal_code": "10115",
+    "tax_id": "DE567648257",
+    "contact_name": "Uwe Schreiber",
+    "contact_email": "buchhaltung@lausitzsolartechnik.de",
+    "bank_name": "ING-DiBa",
+    "account_holder": "Elbe Treuhand Factoring GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE88500105178632054607",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Lausitz Solartechnik GmbH",
+      "tax_id": "DE567648257",
+      "address": "Friedrichstrasse 95, Berlin 10115"
+     },
+     "issued_days_ago": 300,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "ING-DiBa",
+      "account_holder": "Elbe Treuhand Factoring GmbH",
+      "iban": "DE88500105178632054607"
+     },
+     "issued_days_ago": 15,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "Third-party payee accounts need an assignment agreement and human verification before any payment set-up.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B41",
+   "title": "GB company paid into director's personal account",
+   "story": "Limited company gives bank details for an account held personally by its contact/director.",
+   "form": {
+    "legal_name": "Mersey Valve Supplies Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "10 Piccadilly Place",
+    "city": "Manchester",
+    "postal_code": "M1 1AE",
+    "tax_id": "GB595860094",
+    "contact_name": "Darren Hughes",
+    "contact_email": "finance@merseyvalvesupplies.co.uk",
+    "bank_name": "NatWest",
+    "account_holder": "Mr Darren Hughes",
+    "currency": "GBP",
+    "account_number": "12328075",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "60-87-97",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Mersey Valve Supplies Ltd",
+      "tax_id": "GB595860094",
+      "address": "10 Piccadilly Place, Manchester M1 1AE"
+     },
+     "issued_days_ago": 250,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "NatWest",
+      "account_holder": "Mr Darren Hughes",
+      "account_number": "12328075",
+      "sort_code": "60-87-97"
+     },
+     "issued_days_ago": 9,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "A Ltd's payments going to an individual's account is a fraud/compliance concern.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B42",
+   "title": "US form bank differs from bank letter",
+   "story": "Form lists one bank/routing/account; the bank letter (same holder name) is for an entirely different bank and account.",
+   "form": {
+    "legal_name": "Puget Marine Hardware LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "4500 Shilshole Ave NW",
+    "city": "Seattle, WA",
+    "postal_code": "98101",
+    "tax_id": "81-4553146",
+    "contact_name": "Erik Lindqvist",
+    "contact_email": "ap@pugetmarinehardware.com",
+    "bank_name": "Bank of America",
+    "account_holder": "Puget Marine Hardware LLC",
+    "currency": "USD",
+    "account_number": "78015372157",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "109585769",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "w9",
+     "printed": {
+      "legal_name": "Puget Marine Hardware LLC",
+      "tax_id": "81-4553146",
+      "address": "4500 Shilshole Ave NW, Seattle, WA 98101"
+     },
+     "issued_days_ago": 60,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Wells Fargo Bank",
+      "account_holder": "Puget Marine Hardware LLC",
+      "account_number": "32561345946",
+      "routing_number": "088602640"
+     },
+     "issued_days_ago": 13,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "Wholly different account (not a typo) on form vs proof means the form account is unverified - a diversion pattern.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B43",
+   "title": "IN GSTIN belongs to another company",
+   "story": "Valid GSTIN, but the attached GST certificate is for 'Zenith Castings Pvt Ltd' (and the PAN's name letter is Z, not P).",
+   "form": {
+    "legal_name": "Pioneer Castings Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "SIDCO Industrial Estate, Guindy",
+    "city": "Chennai",
+    "postal_code": "600002",
+    "tax_id": "33AADCZ0202M1ZK",
+    "contact_name": "Karthik Raman",
+    "contact_email": "accounts@pioneercastings.in",
+    "bank_name": "ICICI Bank",
+    "account_holder": "Pioneer Castings Pvt Ltd",
+    "currency": "INR",
+    "account_number": "33186447285",
+    "ifsc": "ICIC0746126",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Zenith Castings Pvt Ltd",
+      "tax_id": "33AADCZ0202M1ZK",
+      "address": "SIDCO Industrial Estate, Guindy, Chennai 600002"
+     },
+     "issued_days_ago": 700,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "ICICI Bank",
+      "account_holder": "Pioneer Castings Pvt Ltd",
+      "account_number": "33186447285",
+      "ifsc": "ICIC0746126"
+     },
+     "issued_days_ago": 20,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "Borrowing another entity's tax registration is identity misuse, not a simple upload mistake.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B44",
+   "title": "IN same name as existing vendor, different GSTIN",
+   "story": "Uses the same company name as existing vendor Acme Technologies Private Limited but a different (valid) Maharashtra GSTIN, new bank and a Gmail address.",
+   "form": {
+    "legal_name": "Acme Technologies Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Office 5, Baner Road",
+    "city": "Pune",
+    "postal_code": "411001",
+    "tax_id": "27DAHCA2495W1ZK",
+    "contact_name": "Vivek Joshi",
+    "contact_email": "acmetech.payments@gmail.com",
+    "bank_name": "Kotak Mahindra Bank",
+    "account_holder": "Acme Technologies Pvt Ltd",
+    "currency": "INR",
+    "account_number": "836310121639883",
+    "ifsc": "KKBK0148836",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Acme Technologies Pvt Ltd",
+      "tax_id": "27DAHCA2495W1ZK",
+      "address": "Office 5, Baner Road, Pune 411001"
+     },
+     "issued_days_ago": 25,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Kotak Mahindra Bank",
+      "account_holder": "Acme Technologies Pvt Ltd",
+      "account_number": "836310121639883",
+      "ifsc": "KKBK0148836"
+     },
+     "issued_days_ago": 3,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "Indian company names are unique, so a second 'Acme Technologies' with new tax ID and bank looks like impersonation.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B45",
+   "title": "GB name shares core of sanctioned shipper",
+   "story": "London logistics company called 'Meridian Crest Logistics Ltd' - closely resembling sanctioned 'Meridian Crest Shipping Co'.",
+   "form": {
+    "legal_name": "Meridian Crest Logistics Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "Unit 9, Royal Docks",
+    "city": "London",
+    "postal_code": "EC1A 1BB",
+    "tax_id": "GB608007273",
+    "contact_name": "Samuel Okoro",
+    "contact_email": "finance@meridiancrestlogistics.co.uk",
+    "bank_name": "Lloyds Bank",
+    "account_holder": "Meridian Crest Logistics Ltd",
+    "currency": "GBP",
+    "account_number": "31467202",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "30-70-41",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Meridian Crest Logistics Ltd",
+      "tax_id": "GB608007273",
+      "address": "Unit 9, Royal Docks, London EC1A 1BB"
+     },
+     "issued_days_ago": 150,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Lloyds Bank",
+      "account_holder": "Meridian Crest Logistics Ltd",
+      "account_number": "31467202",
+      "sort_code": "30-70-41"
+     },
+     "issued_days_ago": 18,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "Same distinctive name in a related industry could be an affiliate or front; needs a human sanctions check, not auto-approval or auto-rejection.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B46",
+   "title": "US reuses existing vendor's EIN",
+   "story": "New office-supplies LLC submits the same EIN as existing vendor Summit Office Supplies LLC.",
+   "form": {
+    "legal_name": "Prairie Wind Office Products LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "65 E State St",
+    "city": "Columbus, OH",
+    "postal_code": "43215",
+    "tax_id": "12-3456789",
+    "contact_name": "Janet Wu",
+    "contact_email": "ap@prairiewindofficeproducts.com",
+    "bank_name": "Wells Fargo Bank",
+    "account_holder": "Prairie Wind Office Products LLC",
+    "currency": "USD",
+    "account_number": "81892825564",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "167299259",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "w9",
+     "printed": {
+      "legal_name": "Prairie Wind Office Products LLC",
+      "tax_id": "12-3456789",
+      "address": "65 E State St, Columbus, OH 43215"
+     },
+     "issued_days_ago": 40,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Wells Fargo Bank",
+      "account_holder": "Prairie Wind Office Products LLC",
+      "account_number": "81892825564",
+      "routing_number": "167299259"
+     },
+     "issued_days_ago": 9,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "Two different names on one EIN indicates identity reuse or a duplicate vendor.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B47",
+   "title": "GB missing VAT cert and payee is a different company",
+   "story": "No VAT certificate uploaded (fixable) and the account is held by 'Kestrel Holdings Ltd', not the vendor.",
+   "form": {
+    "legal_name": "Kestrel Print Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "Jewellery Quarter, 14 Vyse Street",
+    "city": "Birmingham",
+    "postal_code": "B2 4QA",
+    "tax_id": "GB749042916",
+    "contact_name": "Anita Shah",
+    "contact_email": "finance@kestrelprint.co.uk",
+    "bank_name": "Santander UK",
+    "account_holder": "Kestrel Holdings Ltd",
+    "currency": "GBP",
+    "account_number": "59177379",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "09-87-13",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": null,
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Santander UK",
+      "account_holder": "Kestrel Holdings Ltd",
+      "account_number": "59177379",
+      "sort_code": "09-87-13"
+     },
+     "issued_days_ago": 11,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "A third-party payee needs review; per policy the fraud-shaped signal outranks the fixable gap.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B48",
+   "title": "IN stale and altered bank letter",
+   "story": "Bank letter is 120 days old (fixable) and its account number was digitally edited over a different original.",
+   "form": {
+    "legal_name": "Narmada Pumps Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Phase 2, GIDC Vatva",
+    "city": "Ahmedabad",
+    "postal_code": "380001",
+    "tax_id": "24UAGCN3744W1Z3",
+    "contact_name": "Jignesh Shah",
+    "contact_email": "accounts@narmadapumps.in",
+    "bank_name": "Bank of Baroda",
+    "account_holder": "Narmada Pumps Pvt Ltd",
+    "currency": "INR",
+    "account_number": "473356986152177",
+    "ifsc": "BARB0427341",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Narmada Pumps Pvt Ltd",
+      "tax_id": "24UAGCN3744W1Z3",
+      "address": "Phase 2, GIDC Vatva, Ahmedabad 380001"
+     },
+     "issued_days_ago": 900,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Bank of Baroda",
+      "account_holder": "Narmada Pumps Pvt Ltd",
+      "account_number": "473356986152177",
+      "ifsc": "BARB0427341"
+     },
+     "issued_days_ago": 120,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": {
+      "field": "account_number",
+      "visible_value": "473356986152177",
+      "original_value": "298660097080"
+     }
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "Tampering trumps the staleness; must not just ask the vendor for a new letter.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B49",
+   "title": "US W-9 for a different company",
+   "story": "Form is for Cobalt Ridge Logistics LLC; the W-9 carries the same EIN but names 'Harborline Freight Inc' at a Florida address.",
+   "form": {
+    "legal_name": "Cobalt Ridge Logistics LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "600 Congress Ave",
+    "city": "Austin, TX",
+    "postal_code": "78701",
+    "tax_id": "36-6480204",
+    "contact_name": "Travis Boone",
+    "contact_email": "ap@cobaltridgelogistics.com",
+    "bank_name": "Truist Bank",
+    "account_holder": "Cobalt Ridge Logistics LLC",
+    "currency": "USD",
+    "account_number": "961531188094",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "073759320",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "w9",
+     "printed": {
+      "legal_name": "Harborline Freight Inc",
+      "tax_id": "36-6480204",
+      "address": "88 Biscayne Blvd, Miami, FL 33132"
+     },
+     "issued_days_ago": 50,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Truist Bank",
+      "account_holder": "Cobalt Ridge Logistics LLC",
+      "account_number": "961531188094",
+      "routing_number": "073759320"
+     },
+     "issued_days_ago": 10,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "Tax document identifies a different taxpayer; identity is unverified and possibly borrowed.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B50",
+   "title": "DE letterhead bank differs from IBAN's bank",
+   "story": "Form and bank letter say Deutsche Bank, but the IBAN's bank code belongs to Commerzbank.",
+   "form": {
+    "legal_name": "Taunus Medizintechnik GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Mainzer Landstrasse 200",
+    "city": "Frankfurt",
+    "postal_code": "60311",
+    "tax_id": "DE951806752",
+    "contact_name": "Dr. Petra Vogel",
+    "contact_email": "buchhaltung@taunusmedizintechnik.de",
+    "bank_name": "Deutsche Bank",
+    "account_holder": "Taunus Medizintechnik GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE19500400008648995689",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Taunus Medizintechnik GmbH",
+      "tax_id": "DE951806752",
+      "address": "Mainzer Landstrasse 200, Frankfurt 60311"
+     },
+     "issued_days_ago": 800,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Deutsche Bank",
+      "account_holder": "Taunus Medizintechnik GmbH",
+      "iban": "DE19500400008648995689"
+     },
+     "issued_days_ago": 13,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "A bank letter whose letterhead can't have issued that IBAN looks forged.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B51",
+   "title": "DE Bankbestaetigung with edited IBAN",
+   "story": "German bank confirmation scan looks normal, but the IBAN text was replaced; the original IBAN is still in the PDF.",
+   "form": {
+    "legal_name": "Allgaeu Holzbau GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Leopoldstrasse 120",
+    "city": "Muenchen",
+    "postal_code": "80331",
+    "tax_id": "DE467424654",
+    "contact_name": "Martin Gruber",
+    "contact_email": "buchhaltung@allgaeuholzbau.de",
+    "bank_name": "HypoVereinsbank",
+    "account_holder": "Allgaeu Holzbau GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE53700202708328891286",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Allgaeu Holzbau GmbH",
+      "tax_id": "DE467424654",
+      "address": "Leopoldstrasse 120, Muenchen 80331"
+     },
+     "issued_days_ago": 500,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "HypoVereinsbank",
+      "account_holder": "Allgaeu Holzbau GmbH",
+      "iban": "DE53700202708328891286"
+     },
+     "issued_days_ago": 16,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": {
+      "field": "iban",
+      "visible_value": "DE53700202708328891286",
+      "original_value": "DE18700202701117688234"
+     }
+    }
+   },
+   "expected": "awaiting_reviewer",
+   "why": "Document tampering on the bank account field is a fraud signal.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B52",
+   "title": "GB exact sanctioned name",
+   "story": "Applicant's legal name exactly matches sanctioned entity DEMO-002.",
+   "form": {
+    "legal_name": "Blackthorn Offshore Trading Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "1 Canada Square, Canary Wharf",
+    "city": "London",
+    "postal_code": "EC1A 1BB",
+    "tax_id": "GB277562130",
+    "contact_name": "Victor Lane",
+    "contact_email": "finance@blackthornoffshoretrading.co.uk",
+    "bank_name": "HSBC UK",
+    "account_holder": "Blackthorn Offshore Trading Ltd",
+    "currency": "GBP",
+    "account_number": "65280258",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "40-31-39",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Blackthorn Offshore Trading Ltd",
+      "tax_id": "GB277562130",
+      "address": "1 Canada Square, Canary Wharf, London EC1A 1BB"
+     },
+     "issued_days_ago": 300,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "HSBC UK",
+      "account_holder": "Blackthorn Offshore Trading Ltd",
+      "account_number": "65280258",
+      "sort_code": "40-31-39"
+     },
+     "issued_days_ago": 10,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "rejected",
+   "why": "Sanctioned party; hard stop.",
+   "difficulty": "easy"
+  },
+  {
+   "id": "B53",
+   "title": "IN trade name is a sanctioned alias",
+   "story": "Innocuous legal name, but the declared trade name (also on the GST certificate) is 'MC Shipping', an alias of sanctioned Meridian Crest Shipping Co.",
+   "form": {
+    "legal_name": "Sagarmala Marine Services Pvt Ltd",
+    "trade_name": "MC Shipping",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Ballard Estate, 4 Shoorji Vallabhdas Marg",
+    "city": "Mumbai",
+    "postal_code": "400001",
+    "tax_id": "27LYCCS6297J1Z4",
+    "contact_name": "Imran Qureshi",
+    "contact_email": "accounts@sagarmalamarineservices.in",
+    "bank_name": "ICICI Bank",
+    "account_holder": "Sagarmala Marine Services Pvt Ltd",
+    "currency": "INR",
+    "account_number": "96566823236090",
+    "ifsc": "ICIC0788517",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "gst_certificate",
+     "printed": {
+      "legal_name": "Sagarmala Marine Services Pvt Ltd",
+      "trade_name": "MC Shipping",
+      "tax_id": "27LYCCS6297J1Z4",
+      "address": "Ballard Estate, 4 Shoorji Vallabhdas Marg, Mumbai 400001"
+     },
+     "issued_days_ago": 400,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "ICICI Bank",
+      "account_holder": "Sagarmala Marine Services Pvt Ltd",
+      "account_number": "96566823236090",
+      "ifsc": "ICIC0788517"
+     },
+     "issued_days_ago": 14,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "rejected",
+   "why": "Operating under a listed sanctions alias makes this a sanctioned party.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B54",
+   "title": "US legal name is a sanctioned alias",
+   "story": "Legal name 'Orion Vale Metallurgy Inc' matches the listed alias of sanctioned Orion Vale Metals LLC.",
+   "form": {
+    "legal_name": "Orion Vale Metallurgy Inc",
+    "trade_name": "",
+    "entity_type": "inc",
+    "country": "US",
+    "address": "350 N Orleans St",
+    "city": "Chicago, IL",
+    "postal_code": "60601",
+    "tax_id": "20-2361405",
+    "contact_name": "Paul Dressler",
+    "contact_email": "ap@orionvalemetallurgy.com",
+    "bank_name": "Truist Bank",
+    "account_holder": "Orion Vale Metallurgy Inc",
+    "currency": "USD",
+    "account_number": "495388031911",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "179877821",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "w9",
+     "printed": {
+      "legal_name": "Orion Vale Metallurgy Inc",
+      "tax_id": "20-2361405",
+      "address": "350 N Orleans St, Chicago, IL 60601"
+     },
+     "issued_days_ago": 100,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Truist Bank",
+      "account_holder": "Orion Vale Metallurgy Inc",
+      "account_number": "495388031911",
+      "routing_number": "179877821"
+     },
+     "issued_days_ago": 20,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "rejected",
+   "why": "Alias match to a sanctioned entity; different suffix doesn't change that.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B55",
+   "title": "DE clean vendor, payee is sanctioned",
+   "story": "Clean German machinery company, but the nominated bank account (form and letter) is held by Blackthorn Offshore Trading Ltd.",
+   "form": {
+    "legal_name": "Rheinblick Maschinenbau GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Rheinauhafen 7",
+    "city": "Koeln",
+    "postal_code": "50667",
+    "tax_id": "DE982587608",
+    "contact_name": "Klaus Wendt",
+    "contact_email": "buchhaltung@rheinblickmaschinenbau.de",
+    "bank_name": "Deutsche Bank",
+    "account_holder": "Blackthorn Offshore Trading Ltd",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE53500700109313289422",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "vat_certificate",
+     "printed": {
+      "legal_name": "Rheinblick Maschinenbau GmbH",
+      "tax_id": "DE982587608",
+      "address": "Rheinauhafen 7, Koeln 50667"
+     },
+     "issued_days_ago": 600,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Deutsche Bank",
+      "account_holder": "Blackthorn Offshore Trading Ltd",
+      "iban": "DE53500700109313289422"
+     },
+     "issued_days_ago": 10,
+     "language": "de",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "rejected",
+   "why": "Payments would flow to a sanctioned party; hard stop.",
+   "difficulty": "tricky"
+  },
+  {
+   "id": "B56",
+   "title": "US sanctioned name with punctuation/case",
+   "story": "Sanctioned 'Meridian Crest Shipping Co' written in capitals with a hyphen and trailing period.",
+   "form": {
+    "legal_name": "MERIDIAN-CREST SHIPPING CO.",
+    "trade_name": "",
+    "entity_type": "corp",
+    "country": "US",
+    "address": "2001 Western Ave",
+    "city": "Seattle, WA",
+    "postal_code": "98101",
+    "tax_id": "12-3640589",
+    "contact_name": "Alan Brock",
+    "contact_email": "ap@meridiancrestshipping.com",
+    "bank_name": "Truist Bank",
+    "account_holder": "MERIDIAN-CREST SHIPPING CO.",
+    "currency": "USD",
+    "account_number": "607572201517",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "063093944",
+    "swift": ""
+   },
+   "documents": {
+    "tax_cert": {
+     "kind": "w9",
+     "printed": {
+      "legal_name": "MERIDIAN-CREST SHIPPING CO.",
+      "tax_id": "12-3640589",
+      "address": "2001 Western Ave, Seattle, WA 98101"
+     },
+     "issued_days_ago": 70,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    },
+    "bank_proof": {
+     "kind": "bank_letter",
+     "printed": {
+      "bank_name": "Truist Bank",
+      "account_holder": "MERIDIAN-CREST SHIPPING CO.",
+      "account_number": "607572201517",
+      "routing_number": "063093944"
+     },
+     "issued_days_ago": 12,
+     "language": "en",
+     "format": "pdf",
+     "quality": "clear",
+     "edited": null
+    }
+   },
+   "expected": "rejected",
+   "why": "Formatting differences don't change an exact sanctioned-name match.",
+   "difficulty": "tricky"
+  }
+ ]
+}

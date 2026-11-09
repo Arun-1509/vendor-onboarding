@@ -1,0 +1,1592 @@
+{
+ "set": "blind",
+ "reader": "truth",
+ "n": 56,
+ "metrics": {
+  "n": 56,
+  "decision_accuracy": 0.625,
+  "strict_accuracy": 0.625,
+  "macro_f1": 0.6627,
+  "unsafe_approval_rate": 0.2368,
+  "straight_through_rate": 0.7778,
+  "errors": {
+   "unsafe_approvals": 9,
+   "missed_rejects": 1,
+   "disclosure_leaks": 6,
+   "over_escalations": 1,
+   "false_holds": 4,
+   "other": 0
+  },
+  "weighted_cost": 566,
+  "confusion": {
+   "approved": {
+    "approved": 14,
+    "awaiting_vendor": 4,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_vendor": {
+    "approved": 4,
+    "awaiting_vendor": 11,
+    "awaiting_reviewer": 1,
+    "rejected": 0
+   },
+   "awaiting_reviewer": {
+    "approved": 5,
+    "awaiting_vendor": 6,
+    "awaiting_reviewer": 6,
+    "rejected": 0
+   },
+   "rejected": {
+    "approved": 0,
+    "awaiting_vendor": 1,
+    "awaiting_reviewer": 0,
+    "rejected": 4
+   }
+  },
+  "per_class": {
+   "approved": {
+    "precision": 0.6087,
+    "recall": 0.7778,
+    "f1": 0.6829,
+    "support": 18
+   },
+   "awaiting_vendor": {
+    "precision": 0.5,
+    "recall": 0.6875,
+    "f1": 0.5789,
+    "support": 16
+   },
+   "awaiting_reviewer": {
+    "precision": 0.8571,
+    "recall": 0.3529,
+    "f1": 0.5,
+    "support": 17
+   },
+   "rejected": {
+    "precision": 1.0,
+    "recall": 0.8,
+    "f1": 0.8889,
+    "support": 5
+   }
+  },
+  "per_scenario": {
+   "approved": {
+    "n": 18,
+    "decision_ok": 14,
+    "strict_ok": 14,
+    "failed_ids": [
+     "B09",
+     "B10",
+     "B14",
+     "B18"
+    ]
+   },
+   "awaiting_reviewer": {
+    "n": 17,
+    "decision_ok": 6,
+    "strict_ok": 6,
+    "failed_ids": [
+     "B38",
+     "B39",
+     "B40",
+     "B41",
+     "B42"
+    ]
+   },
+   "awaiting_vendor": {
+    "n": 16,
+    "decision_ok": 11,
+    "strict_ok": 11,
+    "failed_ids": [
+     "B20",
+     "B27",
+     "B30",
+     "B33",
+     "B34"
+    ]
+   },
+   "rejected": {
+    "n": 5,
+    "decision_ok": 4,
+    "strict_ok": 4,
+    "failed_ids": [
+     "B55"
+    ]
+   }
+  },
+  "median_ms": 18
+ },
+ "failures": [
+  {
+   "id": "B09",
+   "scenario": "approved",
+   "country": "US",
+   "title": "US account titled with DBA",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 17,
+   "difficulty": "tricky",
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "The account is held by the same legal entity with its declared DBA; that is a normal title."
+  },
+  {
+   "id": "B10",
+   "scenario": "approved",
+   "country": "IN",
+   "title": "IN partnership firm with M/s prefix",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 9,
+   "difficulty": "tricky",
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "'M/s' is a customary Indian honorific for firms and '&' vs 'and' is cosmetic; identifiers match."
+  },
+  {
+   "id": "B14",
+   "scenario": "approved",
+   "country": "DE",
+   "title": "DE UG without (haftungsbeschraenkt) on form",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 45,
+   "ms": 14,
+   "difficulty": "tricky",
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "The parenthetical is part of the legal-form suffix, not a different company."
+  },
+  {
+   "id": "B18",
+   "scenario": "approved",
+   "country": "IN",
+   "title": "IN swapped upload slots, common contact name",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 10,
+   "ms": 3,
+   "difficulty": "tricky",
+   "codes": [
+    "WRONG_DOCUMENT",
+    "WRONG_DOCUMENT"
+   ],
+   "why_expected": "Both required documents were provided and match, just in each other's slots; a common personal name is not a duplicate signal."
+  },
+  {
+   "id": "B20",
+   "scenario": "awaiting_vendor",
+   "country": "DE",
+   "title": "DE bank letter too old",
+   "expected": "awaiting_vendor",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_vendor"
+   ],
+   "risk": 0,
+   "ms": 16,
+   "difficulty": "easy",
+   "codes": [],
+   "why_expected": "Bank proof older than 90 days; vendor must provide a recent one."
+  },
+  {
+   "id": "B27",
+   "scenario": "awaiting_vendor",
+   "country": "IN",
+   "title": "IN bank statement as bank proof",
+   "expected": "awaiting_vendor",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_vendor"
+   ],
+   "risk": 0,
+   "ms": 19,
+   "difficulty": "tricky",
+   "codes": [],
+   "why_expected": "Policy accepts only a bank confirmation letter or cancelled cheque; vendor should upload one of those."
+  },
+  {
+   "id": "B30",
+   "scenario": "awaiting_vendor",
+   "country": "US",
+   "title": "US vendor selects EUR currency",
+   "expected": "awaiting_vendor",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_vendor"
+   ],
+   "risk": 5,
+   "ms": 24,
+   "difficulty": "tricky",
+   "codes": [
+    "CURRENCY_UNUSUAL"
+   ],
+   "why_expected": "A domestic US ACH account in EUR is inconsistent; most likely a dropdown slip the vendor should correct."
+  },
+  {
+   "id": "B33",
+   "scenario": "awaiting_vendor",
+   "country": "GB",
+   "title": "GB bank letter 91 days old",
+   "expected": "awaiting_vendor",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_vendor"
+   ],
+   "risk": 0,
+   "ms": 36,
+   "difficulty": "tricky",
+   "codes": [],
+   "why_expected": "Just outside the 90-day window; vendor needs a fresh letter."
+  },
+  {
+   "id": "B34",
+   "scenario": "awaiting_vendor",
+   "country": "IN",
+   "title": "IN wrong entity type picked",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_reviewer",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_reviewer != expected awaiting_vendor"
+   ],
+   "risk": 30,
+   "ms": 29,
+   "difficulty": "tricky",
+   "codes": [
+    "ENTITY_TYPE_MISMATCH_PAN"
+   ],
+   "why_expected": "Entity type contradicts the name and GSTIN; a form error the vendor can fix."
+  },
+  {
+   "id": "B38",
+   "scenario": "awaiting_reviewer",
+   "country": "US",
+   "title": "US bank letter digitally altered",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 5,
+   "ms": 32,
+   "difficulty": "tricky",
+   "codes": [
+    "DOC_EDITED"
+   ],
+   "why_expected": "A tampered bank document is a fraud signal regardless of everything matching on the surface."
+  },
+  {
+   "id": "B39",
+   "scenario": "awaiting_reviewer",
+   "country": "IN",
+   "title": "IN bank letter holder name overwritten",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 5,
+   "ms": 31,
+   "difficulty": "tricky",
+   "codes": [
+    "DOC_EDITED"
+   ],
+   "why_expected": "Altered account-holder field means the account likely belongs to a person, not the vendor."
+  },
+  {
+   "id": "B40",
+   "scenario": "awaiting_reviewer",
+   "country": "DE",
+   "title": "DE payments to a third-party factoring company",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 25,
+   "ms": 39,
+   "difficulty": "tricky",
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "Third-party payee accounts need an assignment agreement and human verification before any payment set-up."
+  },
+  {
+   "id": "B41",
+   "scenario": "awaiting_reviewer",
+   "country": "GB",
+   "title": "GB company paid into director's personal account",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 25,
+   "ms": 29,
+   "difficulty": "easy",
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "A Ltd's payments going to an individual's account is a fraud/compliance concern."
+  },
+  {
+   "id": "B42",
+   "scenario": "awaiting_reviewer",
+   "country": "US",
+   "title": "US form bank differs from bank letter",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 28,
+   "difficulty": "tricky",
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "why_expected": "Wholly different account (not a typo) on form vs proof means the form account is unverified - a diversion pattern."
+  },
+  {
+   "id": "B43",
+   "scenario": "awaiting_reviewer",
+   "country": "IN",
+   "title": "IN GSTIN belongs to another company",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 33,
+   "difficulty": "tricky",
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "Borrowing another entity's tax registration is identity misuse, not a simple upload mistake."
+  },
+  {
+   "id": "B45",
+   "scenario": "awaiting_reviewer",
+   "country": "GB",
+   "title": "GB name shares core of sanctioned shipper",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 20,
+   "difficulty": "tricky",
+   "codes": [],
+   "why_expected": "Same distinctive name in a related industry could be an affiliate or front; needs a human sanctions check, not auto-approval or auto-rejection."
+  },
+  {
+   "id": "B47",
+   "scenario": "awaiting_reviewer",
+   "country": "GB",
+   "title": "GB missing VAT cert and payee is a different company",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 25,
+   "ms": 10,
+   "difficulty": "tricky",
+   "codes": [
+    "MISSING_DOC",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "A third-party payee needs review; per policy the fraud-shaped signal outranks the fixable gap."
+  },
+  {
+   "id": "B48",
+   "scenario": "awaiting_reviewer",
+   "country": "IN",
+   "title": "IN stale and altered bank letter",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 5,
+   "ms": 16,
+   "difficulty": "tricky",
+   "codes": [
+    "DOC_EDITED"
+   ],
+   "why_expected": "Tampering trumps the staleness; must not just ask the vendor for a new letter."
+  },
+  {
+   "id": "B49",
+   "scenario": "awaiting_reviewer",
+   "country": "US",
+   "title": "US W-9 for a different company",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 15,
+   "difficulty": "tricky",
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "Tax document identifies a different taxpayer; identity is unverified and possibly borrowed."
+  },
+  {
+   "id": "B51",
+   "scenario": "awaiting_reviewer",
+   "country": "DE",
+   "title": "DE Bankbestaetigung with edited IBAN",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 5,
+   "ms": 22,
+   "difficulty": "tricky",
+   "codes": [
+    "DOC_EDITED"
+   ],
+   "why_expected": "Document tampering on the bank account field is a fraud signal."
+  },
+  {
+   "id": "B55",
+   "scenario": "rejected",
+   "country": "DE",
+   "title": "DE clean vendor, payee is sanctioned",
+   "expected": "rejected",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected rejected",
+    "substatus awaiting_vendor != expected rejected_compliance"
+   ],
+   "risk": 25,
+   "ms": 17,
+   "difficulty": "tricky",
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "Payments would flow to a sanctioned party; hard stop."
+  }
+ ],
+ "rows": [
+  {
+   "id": "B01",
+   "scenario": "approved",
+   "country": "IN",
+   "title": "IN clean private limited",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 217,
+   "difficulty": "easy",
+   "codes": [],
+   "why_expected": "All fields complete and consistent with both documents; nothing unusual."
+  },
+  {
+   "id": "B02",
+   "scenario": "approved",
+   "country": "DE",
+   "title": "DE clean GmbH, German documents",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 15,
+   "difficulty": "easy",
+   "codes": [],
+   "why_expected": "German-language documents are expected for a German vendor and every value matches the form."
+  },
+  {
+   "id": "B03",
+   "scenario": "approved",
+   "country": "GB",
+   "title": "GB clean Ltd",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 20,
+   "difficulty": "easy",
+   "codes": [],
+   "why_expected": "Complete and consistent submission."
+  },
+  {
+   "id": "B04",
+   "scenario": "approved",
+   "country": "US",
+   "title": "US clean LLC",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 17,
+   "difficulty": "easy",
+   "codes": [],
+   "why_expected": "Complete, consistent W-9 and bank letter."
+  },
+  {
+   "id": "B05",
+   "scenario": "approved",
+   "country": "IN",
+   "title": "Pvt Ltd vs PRIVATE LIMITED, old GST cert",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 16,
+   "difficulty": "tricky",
+   "codes": [],
+   "why_expected": "Abbreviation/case differences are harmless and a GST registration certificate does not expire; only the bank proof needs to be recent, and it is."
+  },
+  {
+   "id": "B06",
+   "scenario": "approved",
+   "country": "IN",
+   "title": "IN sole proprietor paid in own name",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 15,
+   "difficulty": "tricky",
+   "codes": [],
+   "why_expected": "For a sole proprietorship the proprietor is the legal entity, so a personal-name account and a free email address are normal; all identifiers agree."
+  },
+  {
+   "id": "B07",
+   "scenario": "approved",
+   "country": "DE",
+   "title": "DE umlaut transliteration",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 32,
+   "difficulty": "tricky",
+   "codes": [],
+   "why_expected": "ue/\u00fc and ss/\u00df are the same name in German; everything else matches."
+  },
+  {
+   "id": "B08",
+   "scenario": "approved",
+   "country": "GB",
+   "title": "GB pays via IBAN only",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 36,
+   "difficulty": "tricky",
+   "codes": [],
+   "why_expected": "Policy explicitly allows an IBAN in place of sort code + account number, and the IBAN matches the letter."
+  },
+  {
+   "id": "B09",
+   "scenario": "approved",
+   "country": "US",
+   "title": "US account titled with DBA",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 17,
+   "difficulty": "tricky",
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "The account is held by the same legal entity with its declared DBA; that is a normal title."
+  },
+  {
+   "id": "B10",
+   "scenario": "approved",
+   "country": "IN",
+   "title": "IN partnership firm with M/s prefix",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 9,
+   "difficulty": "tricky",
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "'M/s' is a customary Indian honorific for firms and '&' vs 'and' is cosmetic; identifiers match."
+  },
+  {
+   "id": "B11",
+   "scenario": "approved",
+   "country": "DE",
+   "title": "DE bank letter 88 days old",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 15,
+   "difficulty": "tricky",
+   "codes": [],
+   "why_expected": "88 days is within the 90-day validity window."
+  },
+  {
+   "id": "B12",
+   "scenario": "approved",
+   "country": "GB",
+   "title": "GB shares building with existing vendor",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 16,
+   "difficulty": "tricky",
+   "codes": [],
+   "why_expected": "A shared multi-tenant address alone is not suspicious when name, tax ID, bank and contact are all distinct."
+  },
+  {
+   "id": "B13",
+   "scenario": "approved",
+   "country": "US",
+   "title": "US punctuation and case differences",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 19,
+   "difficulty": "tricky",
+   "codes": [],
+   "why_expected": "Punctuation, capitalisation and Inc/Incorporated are the same entity."
+  },
+  {
+   "id": "B14",
+   "scenario": "approved",
+   "country": "DE",
+   "title": "DE UG without (haftungsbeschraenkt) on form",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 45,
+   "ms": 14,
+   "difficulty": "tricky",
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "The parenthetical is part of the legal-form suffix, not a different company."
+  },
+  {
+   "id": "B15",
+   "scenario": "approved",
+   "country": "GB",
+   "title": "GB clean plc with SWIFT",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 10,
+   "difficulty": "easy",
+   "codes": [],
+   "why_expected": "Complete and consistent; a clear photo of the letter is acceptable."
+  },
+  {
+   "id": "B16",
+   "scenario": "approved",
+   "country": "US",
+   "title": "US voided check",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 12,
+   "difficulty": "easy",
+   "codes": [],
+   "why_expected": "A voided check is acceptable bank proof and matches the form."
+  },
+  {
+   "id": "B17",
+   "scenario": "approved",
+   "country": "US",
+   "title": "US name resembles a sanctioned entity",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 16,
+   "difficulty": "tricky",
+   "codes": [],
+   "why_expected": "A superficial name similarity to a sanctioned metals trader is not a match; different name, industry and identifiers."
+  },
+  {
+   "id": "B18",
+   "scenario": "approved",
+   "country": "IN",
+   "title": "IN swapped upload slots, common contact name",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 10,
+   "ms": 3,
+   "difficulty": "tricky",
+   "codes": [
+    "WRONG_DOCUMENT",
+    "WRONG_DOCUMENT"
+   ],
+   "why_expected": "Both required documents were provided and match, just in each other's slots; a common personal name is not a duplicate signal."
+  },
+  {
+   "id": "B19",
+   "scenario": "awaiting_vendor",
+   "country": "IN",
+   "title": "IN missing bank proof",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_vendor",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 8,
+   "difficulty": "easy",
+   "codes": [
+    "MISSING_DOC"
+   ],
+   "why_expected": "Required bank proof is missing; vendor just needs to upload it."
+  },
+  {
+   "id": "B20",
+   "scenario": "awaiting_vendor",
+   "country": "DE",
+   "title": "DE bank letter too old",
+   "expected": "awaiting_vendor",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_vendor"
+   ],
+   "risk": 0,
+   "ms": 16,
+   "difficulty": "easy",
+   "codes": [],
+   "why_expected": "Bank proof older than 90 days; vendor must provide a recent one."
+  },
+  {
+   "id": "B21",
+   "scenario": "awaiting_vendor",
+   "country": "GB",
+   "title": "GB invoice uploaded instead of VAT certificate",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_vendor",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 5,
+   "ms": 11,
+   "difficulty": "easy",
+   "codes": [
+    "WRONG_DOCUMENT"
+   ],
+   "why_expected": "An invoice is not a VAT registration certificate; the vendor must upload the right document."
+  },
+  {
+   "id": "B22",
+   "scenario": "awaiting_vendor",
+   "country": "US",
+   "title": "US blurry W-9 photo",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_vendor",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 5,
+   "ms": 11,
+   "difficulty": "easy",
+   "codes": [
+    "DOC_UNREADABLE"
+   ],
+   "why_expected": "Tax form is unreadable; vendor should re-upload a clear copy."
+  },
+  {
+   "id": "B23",
+   "scenario": "awaiting_vendor",
+   "country": "IN",
+   "title": "IN account number digits transposed",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_vendor",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 20,
+   "ms": 11,
+   "difficulty": "tricky",
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "why_expected": "Classic keying error with everything else matching; vendor should correct the form rather than anyone paying the typed number."
+  },
+  {
+   "id": "B24",
+   "scenario": "awaiting_vendor",
+   "country": "DE",
+   "title": "DE IBAN typo fails checksum",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_vendor",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 25,
+   "ms": 18,
+   "difficulty": "tricky",
+   "codes": [
+    "BANK_CHECKSUM",
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "why_expected": "Invalid IBAN from a typo is a vendor-fixable data error; nothing suspicious."
+  },
+  {
+   "id": "B25",
+   "scenario": "awaiting_vendor",
+   "country": "GB",
+   "title": "GB VAT number left blank",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_vendor",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 14,
+   "difficulty": "easy",
+   "codes": [
+    "MISSING_FIELD"
+   ],
+   "why_expected": "Required form field missing; vendor fills it in."
+  },
+  {
+   "id": "B26",
+   "scenario": "awaiting_vendor",
+   "country": "US",
+   "title": "US SSN-shaped number in EIN field",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_vendor",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 15,
+   "ms": 23,
+   "difficulty": "tricky",
+   "codes": [
+    "TAXID_MISMATCH_DOC"
+   ],
+   "why_expected": "Tax ID field is in the wrong format and doesn't match the W-9; vendor should enter the EIN."
+  },
+  {
+   "id": "B27",
+   "scenario": "awaiting_vendor",
+   "country": "IN",
+   "title": "IN bank statement as bank proof",
+   "expected": "awaiting_vendor",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_vendor"
+   ],
+   "risk": 0,
+   "ms": 19,
+   "difficulty": "tricky",
+   "codes": [],
+   "why_expected": "Policy accepts only a bank confirmation letter or cancelled cheque; vendor should upload one of those."
+  },
+  {
+   "id": "B28",
+   "scenario": "awaiting_vendor",
+   "country": "DE",
+   "title": "DE utility bill as bank proof",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_vendor",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 5,
+   "ms": 11,
+   "difficulty": "easy",
+   "codes": [
+    "WRONG_DOCUMENT"
+   ],
+   "why_expected": "Wrong document type for bank proof; vendor re-uploads."
+  },
+  {
+   "id": "B29",
+   "scenario": "awaiting_vendor",
+   "country": "GB",
+   "title": "GB contact email missing",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_vendor",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 21,
+   "difficulty": "easy",
+   "codes": [
+    "MISSING_FIELD"
+   ],
+   "why_expected": "Required field missing."
+  },
+  {
+   "id": "B30",
+   "scenario": "awaiting_vendor",
+   "country": "US",
+   "title": "US vendor selects EUR currency",
+   "expected": "awaiting_vendor",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_vendor"
+   ],
+   "risk": 5,
+   "ms": 24,
+   "difficulty": "tricky",
+   "codes": [
+    "CURRENCY_UNUSUAL"
+   ],
+   "why_expected": "A domestic US ACH account in EUR is inconsistent; most likely a dropdown slip the vendor should correct."
+  },
+  {
+   "id": "B31",
+   "scenario": "awaiting_vendor",
+   "country": "IN",
+   "title": "IN GSTIN typo fails checksum",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_vendor",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 20,
+   "ms": 26,
+   "difficulty": "tricky",
+   "codes": [
+    "TAXID_CHECKSUM",
+    "TAXID_MISMATCH_DOC"
+   ],
+   "why_expected": "Invalid GSTIN from a typo; certificate shows the right one, vendor corrects the field."
+  },
+  {
+   "id": "B32",
+   "scenario": "awaiting_vendor",
+   "country": "DE",
+   "title": "DE no VAT certificate uploaded",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_vendor",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 0,
+   "ms": 15,
+   "difficulty": "easy",
+   "codes": [
+    "MISSING_DOC"
+   ],
+   "why_expected": "Required tax document missing."
+  },
+  {
+   "id": "B33",
+   "scenario": "awaiting_vendor",
+   "country": "GB",
+   "title": "GB bank letter 91 days old",
+   "expected": "awaiting_vendor",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_vendor"
+   ],
+   "risk": 0,
+   "ms": 36,
+   "difficulty": "tricky",
+   "codes": [],
+   "why_expected": "Just outside the 90-day window; vendor needs a fresh letter."
+  },
+  {
+   "id": "B34",
+   "scenario": "awaiting_vendor",
+   "country": "IN",
+   "title": "IN wrong entity type picked",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_reviewer",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_reviewer != expected awaiting_vendor"
+   ],
+   "risk": 30,
+   "ms": 29,
+   "difficulty": "tricky",
+   "codes": [
+    "ENTITY_TYPE_MISMATCH_PAN"
+   ],
+   "why_expected": "Entity type contradicts the name and GSTIN; a form error the vendor can fix."
+  },
+  {
+   "id": "B35",
+   "scenario": "awaiting_reviewer",
+   "country": "IN",
+   "title": "IN existing vendor re-registers with new bank",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_reviewer",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 55,
+   "ms": 29,
+   "difficulty": "tricky",
+   "codes": [
+    "FREE_EMAIL_DOMAIN",
+    "BANK_CHANGE_REQUEST"
+   ],
+   "why_expected": "Duplicate of an approved vendor with changed bank details is the classic payment-diversion pattern; must be verified with the known contact."
+  },
+  {
+   "id": "B36",
+   "scenario": "awaiting_reviewer",
+   "country": "DE",
+   "title": "DE lookalike email domain for existing vendor",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_reviewer",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 50,
+   "ms": 25,
+   "difficulty": "tricky",
+   "codes": [
+    "BANK_CHANGE_REQUEST"
+   ],
+   "why_expected": "Lookalike domain plus new bank account for an existing vendor indicates impersonation."
+  },
+  {
+   "id": "B37",
+   "scenario": "awaiting_reviewer",
+   "country": "GB",
+   "title": "GB new vendor uses existing vendor's bank account",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_reviewer",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 50,
+   "ms": 36,
+   "difficulty": "tricky",
+   "codes": [
+    "BANK_ACCOUNT_SHARED"
+   ],
+   "why_expected": "One bank account shared by two supposedly unrelated vendors suggests a shell or duplicate-payment scheme."
+  },
+  {
+   "id": "B38",
+   "scenario": "awaiting_reviewer",
+   "country": "US",
+   "title": "US bank letter digitally altered",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 5,
+   "ms": 32,
+   "difficulty": "tricky",
+   "codes": [
+    "DOC_EDITED"
+   ],
+   "why_expected": "A tampered bank document is a fraud signal regardless of everything matching on the surface."
+  },
+  {
+   "id": "B39",
+   "scenario": "awaiting_reviewer",
+   "country": "IN",
+   "title": "IN bank letter holder name overwritten",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 5,
+   "ms": 31,
+   "difficulty": "tricky",
+   "codes": [
+    "DOC_EDITED"
+   ],
+   "why_expected": "Altered account-holder field means the account likely belongs to a person, not the vendor."
+  },
+  {
+   "id": "B40",
+   "scenario": "awaiting_reviewer",
+   "country": "DE",
+   "title": "DE payments to a third-party factoring company",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 25,
+   "ms": 39,
+   "difficulty": "tricky",
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "Third-party payee accounts need an assignment agreement and human verification before any payment set-up."
+  },
+  {
+   "id": "B41",
+   "scenario": "awaiting_reviewer",
+   "country": "GB",
+   "title": "GB company paid into director's personal account",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 25,
+   "ms": 29,
+   "difficulty": "easy",
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "A Ltd's payments going to an individual's account is a fraud/compliance concern."
+  },
+  {
+   "id": "B42",
+   "scenario": "awaiting_reviewer",
+   "country": "US",
+   "title": "US form bank differs from bank letter",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 28,
+   "difficulty": "tricky",
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "why_expected": "Wholly different account (not a typo) on form vs proof means the form account is unverified - a diversion pattern."
+  },
+  {
+   "id": "B43",
+   "scenario": "awaiting_reviewer",
+   "country": "IN",
+   "title": "IN GSTIN belongs to another company",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 33,
+   "difficulty": "tricky",
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "Borrowing another entity's tax registration is identity misuse, not a simple upload mistake."
+  },
+  {
+   "id": "B44",
+   "scenario": "awaiting_reviewer",
+   "country": "IN",
+   "title": "IN same name as existing vendor, different GSTIN",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_reviewer",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 45,
+   "ms": 17,
+   "difficulty": "tricky",
+   "codes": [
+    "FREE_EMAIL_DOMAIN",
+    "LOOKALIKE_VENDOR"
+   ],
+   "why_expected": "Indian company names are unique, so a second 'Acme Technologies' with new tax ID and bank looks like impersonation."
+  },
+  {
+   "id": "B45",
+   "scenario": "awaiting_reviewer",
+   "country": "GB",
+   "title": "GB name shares core of sanctioned shipper",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 20,
+   "difficulty": "tricky",
+   "codes": [],
+   "why_expected": "Same distinctive name in a related industry could be an affiliate or front; needs a human sanctions check, not auto-approval or auto-rejection."
+  },
+  {
+   "id": "B46",
+   "scenario": "awaiting_reviewer",
+   "country": "US",
+   "title": "US reuses existing vendor's EIN",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_reviewer",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 40,
+   "ms": 19,
+   "difficulty": "tricky",
+   "codes": [
+    "TAXID_DUPLICATE_OTHER_NAME"
+   ],
+   "why_expected": "Two different names on one EIN indicates identity reuse or a duplicate vendor."
+  },
+  {
+   "id": "B47",
+   "scenario": "awaiting_reviewer",
+   "country": "GB",
+   "title": "GB missing VAT cert and payee is a different company",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 25,
+   "ms": 10,
+   "difficulty": "tricky",
+   "codes": [
+    "MISSING_DOC",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "A third-party payee needs review; per policy the fraud-shaped signal outranks the fixable gap."
+  },
+  {
+   "id": "B48",
+   "scenario": "awaiting_reviewer",
+   "country": "IN",
+   "title": "IN stale and altered bank letter",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 5,
+   "ms": 16,
+   "difficulty": "tricky",
+   "codes": [
+    "DOC_EDITED"
+   ],
+   "why_expected": "Tampering trumps the staleness; must not just ask the vendor for a new letter."
+  },
+  {
+   "id": "B49",
+   "scenario": "awaiting_reviewer",
+   "country": "US",
+   "title": "US W-9 for a different company",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 15,
+   "difficulty": "tricky",
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "Tax document identifies a different taxpayer; identity is unverified and possibly borrowed."
+  },
+  {
+   "id": "B50",
+   "scenario": "awaiting_reviewer",
+   "country": "DE",
+   "title": "DE letterhead bank differs from IBAN's bank",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_reviewer",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 20,
+   "ms": 21,
+   "difficulty": "tricky",
+   "codes": [
+    "BANK_CODE_MISMATCH"
+   ],
+   "why_expected": "A bank letter whose letterhead can't have issued that IBAN looks forged."
+  },
+  {
+   "id": "B51",
+   "scenario": "awaiting_reviewer",
+   "country": "DE",
+   "title": "DE Bankbestaetigung with edited IBAN",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 5,
+   "ms": 22,
+   "difficulty": "tricky",
+   "codes": [
+    "DOC_EDITED"
+   ],
+   "why_expected": "Document tampering on the bank account field is a fraud signal."
+  },
+  {
+   "id": "B52",
+   "scenario": "rejected",
+   "country": "GB",
+   "title": "GB exact sanctioned name",
+   "expected": "rejected",
+   "got": "rejected",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 100,
+   "ms": 16,
+   "difficulty": "easy",
+   "codes": [
+    "SANCTIONS_HIT"
+   ],
+   "why_expected": "Sanctioned party; hard stop."
+  },
+  {
+   "id": "B53",
+   "scenario": "rejected",
+   "country": "IN",
+   "title": "IN trade name is a sanctioned alias",
+   "expected": "rejected",
+   "got": "rejected",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 100,
+   "ms": 23,
+   "difficulty": "tricky",
+   "codes": [
+    "SANCTIONS_HIT"
+   ],
+   "why_expected": "Operating under a listed sanctions alias makes this a sanctioned party."
+  },
+  {
+   "id": "B54",
+   "scenario": "rejected",
+   "country": "US",
+   "title": "US legal name is a sanctioned alias",
+   "expected": "rejected",
+   "got": "rejected",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 100,
+   "ms": 17,
+   "difficulty": "tricky",
+   "codes": [
+    "SANCTIONS_HIT"
+   ],
+   "why_expected": "Alias match to a sanctioned entity; different suffix doesn't change that."
+  },
+  {
+   "id": "B55",
+   "scenario": "rejected",
+   "country": "DE",
+   "title": "DE clean vendor, payee is sanctioned",
+   "expected": "rejected",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected rejected",
+    "substatus awaiting_vendor != expected rejected_compliance"
+   ],
+   "risk": 25,
+   "ms": 17,
+   "difficulty": "tricky",
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "Payments would flow to a sanctioned party; hard stop."
+  },
+  {
+   "id": "B56",
+   "scenario": "rejected",
+   "country": "US",
+   "title": "US sanctioned name with punctuation/case",
+   "expected": "rejected",
+   "got": "rejected",
+   "decision_ok": true,
+   "strict_ok": true,
+   "fails": [],
+   "risk": 100,
+   "ms": 25,
+   "difficulty": "tricky",
+   "codes": [
+    "SANCTIONS_HIT"
+   ],
+   "why_expected": "Formatting differences don't change an exact sanctioned-name match."
+  }
+ ]
+}

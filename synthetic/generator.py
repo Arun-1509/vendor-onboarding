@@ -96,7 +96,7 @@ SCENARIOS = {
     "bank_typo":             (3, VENDOR, [], [], "IBAN / routing / IFSC on the form has a typo"),
     "taxid_form_vs_cert":    (2, VENDOR, ["TAXID_MISMATCH_DOC"], [], "Form tax ID differs from certificate"),
     "account_vs_letter":     (3, VENDOR, ["BANK_ACCOUNT_MISMATCH_DOC"], [], "Account number transposed on the form"),
-    "holder_is_person":      (3, VENDOR, ["ACCOUNT_HOLDER_MISMATCH"], [], "Bank account in a person's name"),
+    "holder_is_person":      (3, REVIEW, ["THIRD_PARTY_PAYEE"], [], "Bank account in a person's name (third-party payee)"),
     "extra_word_name":       (2, VENDOR, [], [], "Certificate name has an extra word (possibly a different company)"),
     "blurry_scan":           (3, VENDOR, ["DOC_UNREADABLE"], [], "Bank letter photo too blurry to read"),
     "invalid_email":         (2, VENDOR, ["EMAIL_INVALID"], [], "Contact email is malformed"),

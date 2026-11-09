@@ -602,6 +602,43 @@ async function outboxView(view) {
   view.replaceChildren(h('div', { class: 'head' }, h('div', {}, h('h1', {}, 'Outbox'), h('p', { class: 'sub' }, 'Every message the process wrote. Vendor emails are scanned by code for internal terms before they could go out; nothing is sent to real vendors from the demo.')), tabs), list);
 }
 
+
+// --------------------------------------------------- robustness benchmarks (blind + diverse documents) ---
+async function benchCard(host) {
+  let b; try { b = await api('/benchmark'); } catch (e) { host.replaceChildren(); return; }
+  const sets = b.sets || {}; const live = (b.live && b.live.sets) || {};
+  const NAME = { blind: 'Blind answer key', diverse: 'Messy documents' };
+  const acc = m => m ? pct(m.decision_accuracy) : '–', uns = m => m ? String(m.errors.unsafe_approvals + m.errors.missed_rejects) : '–';
+  const rows = Object.entries(sets).map(([k, v]) => h('tr', {}, h('td', {}, h('b', {}, NAME[k] || k)),
+    h('td', { class: 'num' }, v.n), h('td', { class: 'num b' }, acc(v.first_look)), h('td', { class: 'num v' }, acc(v.after_fixes)), h('td', { class: 'num v' }, acc(live[k] && live[k].metrics)),
+    h('td', { class: 'num mono' }, `${uns(v.first_look)} → ${uns(v.after_fixes)}` + (live[k] ? ` → ${uns(live[k].metrics)}` : ''))));
+  const reading = Object.values(live).map(x => x.reading).filter(Boolean);
+  const rd = reading.length ? reading.reduce((a, r) => ({ c: a.c + r.fields_correct, n: a.n + r.fields_checked }), { c: 0, n: 0 }) : null;
+  const status = h('div', { class: 'sm muted', style: 'margin-top:8px' });
+  const drawJob = j => { if (!j || j.state === 'idle') { status.replaceChildren(); return; }
+    const ok = (j.recent || []).filter(r => r.ok).length;
+    status.replaceChildren(h('div', { class: 'note ' + (j.state === 'error' ? 'warn' : 'ok') }, j.state === 'running' ? `Live benchmark running: ${j.set}, ${j.done}/${j.total} vendors (${ok} correct so far, ${Math.round(j.seconds / 60)} min)` :
+      j.state === 'done' ? `Live benchmark finished: ${ok}/${j.done} correct. Reload to see the table.` : `Live benchmark stopped: ${j.error}`)); };
+  const runBtn = h('button', { class: 'btn', onclick: async e => {
+    const k = prompt('Admin key (the live run uses about 3 model calls per vendor, ~25 minutes)'); if (!k) return;
+    try { await api('/admin/benchmark', { method: 'POST', headers: { 'X-Admin-Key': k } }); toast('Live benchmark started'); } catch (err) { toast(err.message, true); return; }
+    e.currentTarget.disabled = true;
+    for (let i = 0; i < 2000; i++) { await sleep(5000); const x = await api('/benchmark'); drawJob(x.job); if (x.job.state !== 'running') break; }
+    e.currentTarget.disabled = false; } }, 'Run live benchmark');
+  drawJob(b.job);
+  host.replaceChildren(h('div', { class: 'card' },
+    h('div', { class: 'card-h' }, h('h2', {}, 'Harder tests: a blind answer key and messy documents'), runBtn),
+    h('p', { class: 'sm muted', style: 'margin:0 0 10px' }, 'The 1,900 vendors above were written by the same person as the rules. These two sets were not: one answer key was written by an independent author who never saw the code, and one set draws every document differently. First look = before any fix.'),
+    h('div', { class: 'tablewrap', style: 'border:0' }, h('table', { class: 'cmp' }, h('thead', {}, h('tr', {}, ['Set', 'Vendors', 'First look', 'After fixes', 'Live AI', 'Dangerous errors'].map((x, i) => h('th', { class: i ? 'num' : '' }, x)))), h('tbody', {}, rows))),
+    h('ul', { class: 'xs muted', style: 'margin:6px 0 0;padding-left:16px' }, Object.entries(sets).map(([k, v]) => h('li', {}, h('b', {}, (NAME[k] || k) + ': '), v.description))),
+    h('p', { class: 'xs muted', style: 'margin:6px 0 0' }, 'Dangerous errors = unsafe approvals + missed sanctions rejects. "First look" and "after fixes" use a perfect reader (exactly what is printed) to isolate the rules. "Live AI" reads the real files with the deployed model.' +
+      (rd ? ` Live reading accuracy: ${rd.c}/${rd.n} printed fields read exactly (${pct(rd.c / rd.n)}).` : '') + (b.live ? ` Last live run: ${b.live.finished} (${b.live.provider}).` : '')),
+    status,
+    h('h3', { style: 'margin-top:14px' }, 'What the first look found, and the fix'),
+    h('table', { class: 'mini' }, h('tbody', {}, (b.findings || []).map(f => h('tr', {}, h('td', { class: 'xs muted', style: 'white-space:nowrap;vertical-align:top' }, NAME[f.set] || f.set),
+      h('td', { class: 'sm' }, f.found, h('div', { class: 'xs', style: 'color:var(--ok, #10b981);margin-top:2px' }, '→ ' + f.fix))))))));
+}
+
 // ============================================================ model quality ===
 async function qualityView(view) {
   let q;
@@ -623,6 +660,7 @@ async function qualityView(view) {
   const bars = sp => { const keys = Object.keys(sp.v2.per_scenario); return h('div', {}, keys.map(k => { const v = sp.v2.per_scenario[k], b = sp.baseline && sp.baseline.per_scenario[k];
     const vb = v.strict_ok / v.n, bb = b ? b.strict_ok / b.n : 0; return h('div', { class: 'hbar' }, h('span', { class: 'muted', title: k }, k.replace(/^x_/, '').replace(/_/g, ' ')),
       h('div', { class: 'track' }, h('b', { class: 'base', style: `width:${bb * 100}%` }), h('b', { class: 'v2', style: `width:${vb * 100}%` })), h('span', { class: 'num xs' }, pct(vb, 0))); })); };
+  const benchHost = h('div'); benchCard(benchHost);
   const spotOut = h('div');
   const spotBtn = h('button', { class: 'btn primary', onclick: async e => {
     e.currentTarget.disabled = true; spotOut.replaceChildren(h('div', { class: 'skeleton', style: 'height:60px' }));
@@ -641,6 +679,7 @@ async function qualityView(view) {
       big('Unsafe approvals (held-out)', tv.errors.unsafe_approvals, tb.errors.unsafe_approvals, x => String(x), ''),
       big('Fraud cases emailed to vendor', tv.errors.disclosure_leaks, tb.errors.disclosure_leaks, x => String(x), ''),
       big('Stress-set accuracy (unseen variations)', (stress.first_look || stress.v2).decision_accuracy, stress.baseline.decision_accuracy, x => pct(x), '')),
+    benchHost,
     h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, 'Validate on vendors generated right now'), spotBtn),
       h('p', { class: 'muted sm', style: 'margin:0' }, 'Each click generates fresh companies (random names, valid IDs, newly rendered PDFs and scans) across 25 scenarios, runs them, and scores them against their labels.'), spotOut),
     h('div', { class: 'grid2' }, h('div', { class: 'card' }, h('h2', {}, 'Where decisions land (held-out set)'), h('div', { class: 'row', style: 'gap:24px;align-items:flex-start' }, heat(tb, 'Original engine'), heat(test.v2, 'v2'))),

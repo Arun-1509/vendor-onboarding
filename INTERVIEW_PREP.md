@@ -21,6 +21,16 @@
   - and a stress set of variations I wrote before measuring (91.7% on the first look, 65% for the original).
 - I report first-look numbers because those runs found real bugs I then fixed.
 
+**Did you test it on anything you didn't write?**
+- Yes, two harder sets:
+  - **A blind answer key** written by an independent author who never saw my code. It scored 62.5% on first look.
+  - **A messy-documents set**: tables, German letters, phone photos, stamps. It scored 81.7% on first look.
+- They found real gaps, all invisible to my 1,900-vendor set:
+  - non-ISO dates silently skipping the 90-day check;
+  - a value-only paste-over going undetected;
+  - the payee never being screened against sanctions.
+- I fixed each one, labelled one change openly as a policy change, and confirmed nothing else regressed.
+
 **Isn't 100% suspicious?**
 - Yes. That's why I lead with the first-look numbers and say plainly that I wrote both the generator and the rules.
 - Synthetic data is cleaner than reality. The next step is a pilot on a few hundred historic submissions with known outcomes, plus `live_check.py` on the real model.
@@ -67,8 +77,19 @@
 5. A scheduler instead of the demo clock.
 6. Per-vendor-type policies.
 
+## Two stories worth telling
+1. **The AI was confidently wrong, and code caught it.**
+   - Live Gemini said "Kestrel Analytics Technologies" was the same company as "Kestrel Analytics", at 90% confidence.
+   - A code rule overrides that: an extra whole word can be another company, so the vendor is asked.
+2. **My own test set couldn't see its blind spots.**
+   - A blind answer key and messy documents dropped the first look to 62.5% and 81.7%.
+   - Those runs found that a stale bank letter printed as "10/07/2026" passed the 90-day check, and that a clean company asking to be paid into a sanctioned firm's account wasn't rejected.
+   - Both are fixed, with tests.
+
 ## Numbers to remember
 - **Held-out set:** 86.3% → **99.9%** (first look), unsafe approvals **48 → 0**, disclosure leaks **23 → 0**.
 - **Stress set:** 65.0% → **91.7%** (first look).
+- **Blind answer key (56, independent author):** **62.5%** first look → 100% after fixes. **Messy documents (60):** **81.7%** → 100%.
+- **Live Gemini:** 29/29 demo cases right, 4–8 s each.
 - **Volume:** 1,900 synthetic vendors, 37 + 9 scenarios, 4 countries; 29 hand-made demo cases; 91 tests.
 - **Policy settings:** auto-approve only below risk 20; bank letters expire after 90 days; review SLA 48 h; two reminders, then closed.

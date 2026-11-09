@@ -374,6 +374,67 @@ def quality_summary():
     return json.loads(p.read_text(encoding="utf-8"))
 
 
+# ===================================================== robustness benchmarks (blind + diverse documents) ====
+_bench = {"state": "idle", "set": "", "done": 0, "total": 0, "recent": [], "results": {}, "error": "", "started": 0.0}
+
+
+def _bench_live_file():
+    return config.VAR_DIR / "bench_live.json"
+
+
+@app.get("/api/benchmark")
+def benchmark_summary():
+    """Offline first-look / after-fix numbers (committed report) + the latest live run, if any."""
+    p = config.ROOT / "reports" / "bench_summary.json"
+    out = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {"sets": {}, "findings": []}
+    lf = _bench_live_file()
+    if lf.exists():
+        out["live"] = json.loads(lf.read_text(encoding="utf-8"))
+    job = {k: v for k, v in _bench.items() if k != "results"}
+    job["seconds"] = round(time.time() - _bench["started"], 1) if _bench["started"] else 0
+    out["job"] = job
+    return out
+
+
+@app.post("/api/admin/benchmark")
+def benchmark_run(sets: str = "blind,diverse", pace: float = 12.0, x_admin_key: str | None = Header(None)):
+    """Run the benchmarks through the LIVE model, paced under the free-tier rate limit. Admin only:
+    it uses API quota (~3 model calls per vendor)."""
+    if config.ADMIN_KEY and x_admin_key != config.ADMIN_KEY:
+        raise HTTPException(403, "Wrong or missing admin key.")
+    if config.MOCK_LLM:
+        raise HTTPException(409, "No model key is configured, so there is no live model to benchmark.")
+    if _bench["state"] == "running":
+        return {"started": False, "reason": "already running"}
+    from . import bench
+    names = [s for s in sets.split(",") if s in bench.SETS]
+    _bench.update(state="running", set="", done=0, total=sum(bench.load(n)["n"] for n in names), recent=[], results={},
+                  error="", started=time.time())
+
+    def work():
+        try:
+            llm = get_llm()
+            for n in names:
+                _bench["set"] = n
+
+                def prog(i, total, row):
+                    _bench["done"] += 1
+                    _bench["recent"] = (_bench["recent"] + [{"set": n, "id": row["id"], "ok": row["decision_ok"],
+                                                             "expected": row["expected"], "got": row["got"]}])[-400:]
+                r = bench.run_set(n, llm, pace_s=max(0.0, pace), progress=prog)
+                r.pop("rows", None)
+                _bench["results"][n] = r
+                _bench_live_file().parent.mkdir(parents=True, exist_ok=True)
+                _bench_live_file().write_text(json.dumps({"provider": config.PROVIDER_LABEL, "finished": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
+                                                          "sets": _bench["results"]}, indent=1), encoding="utf-8")
+            _bench["state"] = "done"
+        except Exception as e:                                  # report, never crash the server
+            _bench.update(state="error", error=str(e)[:300])
+
+    threading.Thread(target=work, daemon=True).start()
+    return {"started": True, "total": _bench["total"], "sets": names}
+
+
 @app.get("/api/rulebook")
 def rulebook():
     return {"auto_approve_below_risk": config.AUTO_APPROVE_MAX_RISK,

@@ -18,6 +18,16 @@ def _same_core(a: str, b: str) -> bool:
     return bool(ca) and sorted(ca) == sorted(cb)
 
 
+# industry words: a listed name minus these is its DISTINCTIVE core ('Meridian Crest' of 'Meridian Crest Shipping')
+INDUSTRY_WORDS = {"shipping", "shipments", "logistics", "trading", "traders", "metals", "metal", "metallurgy", "group",
+                  "holdings", "international", "global", "services", "industries", "exports", "imports", "marine", "maritime",
+                  "freight", "energy", "resources", "capital", "ventures", "enterprises", "company"}
+
+
+def distinctive_core(listed: str) -> list[str]:
+    return [t for t in nm.split_name(listed)[0] if t not in INDUSTRY_WORDS]
+
+
 def sanctions_best_match(candidates: list[str], entries: list[dict] | None = None) -> dict | None:
     """Highest-scoring (candidate, list-name) pair, or None.
     `exact` = same name once case, accents, punctuation, legal form and word order are ignored
@@ -30,9 +40,14 @@ def sanctions_best_match(candidates: list[str], entries: list[dict] | None = Non
             for listed in [e["name"], *e.get("aliases", [])]:
                 exact = _same_core(cand, listed)
                 score = 1.0 if exact else max(nm.core_similarity(cand, listed), nm.aligned_similarity(cand, listed))
+                core = distinctive_core(listed)
+                shares = (not exact and len(core) >= 2 and all(t in nm.split_name(cand)[0] for t in core))
+                if shares:                                      # whole distinctive name + another industry word: an affiliate?
+                    score = max(score, config.SANCTIONS_REVIEW)
                 if best is None or score > best["score"]:
                     best = {"score": round(score, 3), "exact": exact, "candidate": cand, "listed_as": listed,
-                            "entry_id": e["id"], "list_note": e.get("note", "")}
+                            "entry_id": e["id"], "list_note": e.get("note", ""),
+                            **({"shares_distinctive_name": " ".join(core)} if shares else {})}
     return best
 
 

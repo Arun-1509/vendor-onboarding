@@ -21,8 +21,18 @@ _FORM_WORDS = {
     "llp": "llp", "gmbh": "gmbh", "mbh": "gmbh", "ag": "ag", "ug": "ug", "kg": "kg",
     "llc": "llc", "inc": "inc", "incorporated": "inc", "corp": "corp", "corporation": "corp",
     "co": "co", "company": "co", "plc": "plc", "sarl": "sarl", "bv": "bv", "nv": "nv",
-    "pty": "pty", "lp": "lp",
+    "pty": "pty", "lp": "lp", "haftungsbeschrankt": "ug",
 }
+# 'M/s Sharma & Sons' (Indian honorific for firms) and 'Acme Inc DBA Acme Direct' (US 'doing business as')
+_HONORIFIC = re.compile(r"^\s*(m/s\.?|messrs\.?)\s+", re.I)
+_DBA = re.compile(r"\s+(?:dba|d/b/a|d\.b\.a\.|t/a|trading as|doing business as)\s+", re.I)
+
+
+def strip_decorations(name: str) -> str:
+    """Remove a leading 'M/s' and anything after 'DBA' / 'trading as' (the trade-name part)."""
+    s = _HONORIFIC.sub("", name or "")
+    parts = _DBA.split(s, maxsplit=1)
+    return parts[0] if parts[0].strip() else s
 # groups of words that mean the same legal form
 _FORM_CLASS = [
     ({"private", "limited"}, "private_limited"),
@@ -43,7 +53,7 @@ ABBREVIATIONS = {
 
 
 def normalize(name: str) -> str:
-    s = unicodedata.normalize("NFKD", name or "")
+    s = unicodedata.normalize("NFKD", strip_decorations(name or ""))
     s = "".join(c for c in s if not unicodedata.combining(c)).lower()
     s = s.replace("&", " and ")
     s = re.sub(r"[^a-z0-9 ]+", " ", s)
@@ -99,8 +109,10 @@ def compare_names(a: str, b: str) -> dict:
                 "why": f"same core name but different legal forms ({fa} vs {fb})"}
     if sim >= config.NAME_EQUIVALENT and (fa == fb or not fa or not fb):
         return {**out, "verdict": "equivalent", "why": f"core names are {sim:.0%} similar (minor spelling difference)"}
-    if sim >= config.NAME_GREY_LOW or is_abbreviation_of(a, b) or is_abbreviation_of(b, a):
-        why = ("one name looks like an abbreviation of the other" if sim < config.NAME_GREY_LOW
+    contained = bool(extra_words(a, b))                 # 'X Plastics' vs 'X Plastics International'
+    if sim >= config.NAME_GREY_LOW or contained or is_abbreviation_of(a, b) or is_abbreviation_of(b, a):
+        why = (f"one name is the other plus '{' '.join(extra_words(a, b))}'" if contained and sim < config.NAME_GREY_LOW
+               else "one name looks like an abbreviation of the other" if sim < config.NAME_GREY_LOW
                else f"core names are {sim:.0%} similar")
         return {**out, "verdict": "grey", "why": f"{why}, which needs a closer look"}
     return {**out, "verdict": "different", "why": f"core names are only {sim:.0%} similar"}

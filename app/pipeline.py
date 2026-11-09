@@ -18,6 +18,7 @@ from . import config, db, rules, screening, workflow
 from .llm import (DOC_FIELDS, LLMError, get_llm, grounded, pdf_text, vendor_mail_is_safe)
 from .rules import finding
 from .validators import bank as bk
+from .validators import dates as dt_
 from .validators import docintegrity
 from .validators import names as nm
 from .validators import taxid as tx
@@ -128,6 +129,14 @@ def s_read_documents(ctx: Ctx):
     with ThreadPoolExecutor(max_workers=max(1, len(todo))) as ex:
         futs = {t: ex.submit(ctx.llm.extract_document, t, p) for t, p in todo}
     read = {t: f.result() for t, f in futs.items()}            # re-raises an AI failure -> STAGE_ERROR, as before
+    tc, bp = read.get("tax_cert", {}), read.get("bank_proof", {})
+    if tc.get("doc_type_detected") == "bank_proof" and bp.get("doc_type_detected") == "tax_cert":
+        # both documents are here, just in each other's upload slots: read each as what it is
+        read["tax_cert"], read["bank_proof"] = bp, tc
+        ctx.paths["tax_cert"], ctx.paths["bank_proof"] = ctx.paths["bank_proof"], ctx.paths["tax_cert"]
+        todo = [(t, ctx.paths[t]) for t, _ in todo]
+        ctx.add(finding("DOC_SLOTS_SWAPPED", "The tax certificate and the bank letter were uploaded into each other's slots; each was read as what it is.",
+                        field="documents"))
     for dtype, path in todo:
         label = DOC_LABEL[dtype]
         res = read[dtype]
@@ -139,8 +148,13 @@ def s_read_documents(ctx: Ctx):
                             ask=f"Your {label} was hard to read. Please upload a clearer, full-page copy (a PDF or a straight-on photo in good light)."))
             summaries[dtype] = "unreadable"
             continue
+        if dtype == "bank_proof" and d["detected"] == "bank_statement":
+            ctx.add(finding("DOC_NOT_ACCEPTED", "A bank statement was uploaded as proof of the bank account.", field=dtype,
+                            ask="You uploaded a bank statement. Please send a letter from your bank confirming the account (or a cancelled cheque), issued in the last 90 days."))
+            summaries[dtype] = "bank statement (not accepted)"
+            continue
         if d["detected"] != dtype:
-            seen = {"tax_cert": "a tax certificate", "bank_proof": "a bank letter", "incorporation": "an incorporation certificate",
+            seen = {"tax_cert": "a tax certificate", "bank_proof": "a bank letter", "incorporation": "an incorporation certificate", "bank_statement": "a bank statement",
                     "other": "a different kind of document"}.get(d["detected"], "a different kind of document")
             ctx.add(finding("WRONG_DOCUMENT", f"File uploaded as {label} looks like {seen}.", field=dtype,
                             ask=f"The file uploaded as your {label} looks like {seen}. Please upload your {label}."))
@@ -154,6 +168,15 @@ def s_read_documents(ctx: Ctx):
             if not val:
                 continue
             conf = float(v.get("confidence", 0))
+            if k == "issue_date":
+                iso = dt_.parse_one(val)
+                # dates are compared as DATES: '09.11.2026' on the page grounds '2026-11-09'
+                if text.strip() and not (iso and iso in dt_.dates_in(text)):
+                    bad.append(k)
+                    continue
+                if iso:
+                    d["values"][k] = iso.isoformat()
+                    continue
             if text.strip() and not (grounded(v.get("evidence", ""), text) and grounded(val, text)):
                 bad.append(k)
                 if k in CRITICAL:
@@ -172,12 +195,12 @@ def s_read_documents(ctx: Ctx):
         integ = docintegrity.analyze(path)
         d["integrity"] = integ
         if integ["conflicts"]:
-            parts = "; ".join(f"{k.replace('_', ' ')}: " + " vs ".join(screening.mask(x) if k in ("account_number", "iban") else x for x in v)
+            parts = "; ".join(f"{k.replace('_', ' ')}: " + " vs ".join(screening.mask(x) if k in ("account_number", "iban") or (k == "overlaid_value" and sum(ch.isdigit() for ch in x) >= 6) else x for x in v)
                               for k, v in integ["conflicts"].items())
             ctx.add(finding("DOC_CONFLICTING_VALUES",
                             f"The {label} contains two different values for the same field ({parts}). One is hidden under the visible page"
                             + (f"; the file was edited {integ['incremental_updates']} time(s) after it was created." if integ["incremental_updates"] else "."),
-                            field=dtype, evidence={k: [screening.mask(x) if k in ("account_number", "iban") else x for x in v]
+                            field=dtype, evidence={k: [screening.mask(x) if k in ("account_number", "iban") or (k == "overlaid_value" and sum(ch.isdigit() for ch in x) >= 6) else x for x in v]
                                                    for k, v in integ["conflicts"].items()} | {"incremental_updates": integ["incremental_updates"]}))
         elif integ["incremental_updates"]:
             ctx.add(finding("DOC_EDITED", f"The {label} was saved with {integ['incremental_updates']} later edit(s).", field=dtype,
@@ -253,6 +276,11 @@ def s_validate(ctx: Ctx):
         ctx.add(finding("EMAIL_INVALID", "Contact email is not a valid address.", field="contact_email",
                         ask="The contact email address looks invalid. Please send a working address."))
     # document dates
+    if ctx.usable("bank_proof") and not ctx.doc_val("bank_proof", "issue_date"):
+        # no date we can verify on the page = we cannot show the letter is recent
+        ctx.add(finding("DOC_UNDATED", "No verifiable date was found on the bank letter.", field="bank_proof",
+                        ask=f"We could not find a date on your {DOC_LABEL['bank_proof']}. Please send a dated letter from your bank, "
+                            f"issued in the last {config.BANK_PROOF_MAX_AGE_DAYS} days."))
     for dtype, maxage in (("bank_proof", config.BANK_PROOF_MAX_AGE_DAYS), ("tax_cert", None)):
         iso = ctx.doc_val(dtype, "issue_date")
         if not iso or not ctx.usable(dtype):
@@ -296,6 +324,21 @@ def _ocr_reconcile(ctx, dtype, field, doc_value, form_value) -> bool:
     return True
 
 
+def _looks_like_typo(a: str, b: str) -> bool:
+    """A keying slip (1-2 wrong characters, two neighbours swapped, one extra/missing) vs a different account."""
+    if a == b:
+        return True
+    if len(a) == len(b):
+        diff = [i for i in range(len(a)) if a[i] != b[i]]
+        if len(diff) == 1:
+            return True
+        return len(diff) == 2 and (diff[1] == diff[0] + 1 or (a[diff[0]] == b[diff[1]] and a[diff[1]] == b[diff[0]]))
+    if abs(len(a) - len(b)) == 1:
+        s, l = (a, b) if len(a) < len(b) else (b, a)
+        return any(l[:i] + l[i + 1:] == s for i in range(len(l)))
+    return False
+
+
 def _compare_into(ctx, a, b, where, unresolved_code, ask_mismatch, field, grey_code=None):
     """Compare two names; record variants, queue grey zone for the AI, or flag a mismatch."""
     cmpd = nm.compare_names(a, b)
@@ -334,13 +377,25 @@ def s_cross_check(ctx: Ctx):
         ctx.add(finding("BANK_COUNTRY_DIFFERS", f"Vendor is in {c} but the bank is in {bank_country}.", field="bank", evidence=ctx.facts["signals"]))
     cur_ok = {config.COUNTRIES.get(c, {}).get("currency"), config.COUNTRIES.get(bank_country or "", {}).get("currency")}
     if ctx.has_field("currency") and c in config.COUNTRIES and f["currency"].upper() not in cur_ok:
-        ctx.add(finding("CURRENCY_UNUSUAL", f"Currency {f['currency'].upper()} is unusual for {c}.", field="currency"))
+        if not f.get("iban") and not f.get("swift"):            # a domestic-only account cannot receive this currency
+            ctx.add(finding("CURRENCY_CONFIRM", f"Currency {f['currency'].upper()} with domestic-only {c} bank details.", field="currency",
+                            ask=f"You selected {f['currency'].upper()} as the payment currency, but the account details are for a domestic "
+                                f"{c} account. Please confirm the currency (or send IBAN/SWIFT details for a foreign-currency account)."))
+        else:
+            ctx.add(finding("CURRENCY_UNUSUAL", f"Currency {f['currency'].upper()} is unusual for {c}.", field="currency"))
 
     # ---- 2. entity type vs PAN ----------------------------------------------------
     if c == "IN" and ctx.tax and ctx.tax.ok and ctx.tax.info.get("pan_entity"):
         ch = ctx.tax.info["pan_entity"]
         match = tx.pan_matches_declared_entity(f.get("entity_type", ""), ch)
-        if match is False:
+        if match is False and ch != "P" and f.get("entity_type") in ("sole_prop", "partnership", "llp", "pvt_ltd", "ltd"):
+            # the tax ID is a company's or firm's and the form says another type: a dropdown slip, not a disguise
+            ctx.add(finding("ENTITY_TYPE_FORM_ERROR",
+                            f"The PAN inside the GSTIN ({ctx.tax.info['pan']}) is a {tx.PAN_ENTITY[ch]}, but the form says '{f.get('entity_type')}'.",
+                            field="entity_type", evidence={"pan": ctx.tax.info["pan"], "pan_char": ch, "declared": f.get("entity_type")},
+                            ask=f"Your tax registration shows your business as a {tx.PAN_ENTITY[ch].lower()}, but the form says "
+                                f"'{f.get('entity_type', '').replace('_', ' ')}'. Please correct the business type."))
+        elif match is False:
             ctx.add(finding("ENTITY_TYPE_MISMATCH_PAN",
                             f"The PAN inside the GSTIN ({ctx.tax.info['pan']}) has type '{ch}' = {tx.PAN_ENTITY[ch]}, but the vendor declares '{f.get('entity_type')}'.",
                             field="tax_id", evidence={"pan": ctx.tax.info["pan"], "pan_char": ch, "pan_means": tx.PAN_ENTITY[ch],
@@ -390,9 +445,14 @@ def s_cross_check(ctx: Ctx):
                                 ask=f"The tax ID on your form ({fn_}) is different from the one on your certificate ({dn}). Please confirm which is correct and send the matching certificate."))
         cn = ctx.doc_val("tax_cert", "legal_name")
         if cn and legal:
-            _compare_into(ctx, legal, cn, "tax_cert", "NAME_MISMATCH_TAXCERT",
-                          f"The company name on your form ('{legal}') does not match your tax certificate ('{cn}'). Please send the certificate for the company you are registering, or correct the name.",
-                          "legal_name", grey_code="NAME_UNRESOLVED")
+            cmpd = _compare_into(ctx, legal, cn, "tax_cert", "NAME_MISMATCH_TAXCERT",
+                                 f"The company name on your form ('{legal}') does not match your tax certificate ('{cn}'). Please send the certificate for the company you are registering, or correct the name.",
+                                 "legal_name", grey_code="NAME_UNRESOLVED")
+            same_id = dt and ctx.has_field("tax_id") and not any(x["code"] == "TAXID_MISMATCH_DOC" for x in ctx.findings)
+            if cmpd["verdict"] == "different" and same_id:
+                # the form's tax ID is registered to this OTHER company: borrowed identity, not an upload slip
+                ctx.add(finding("TAXCERT_OTHER_ENTITY", f"The tax ID on the form is registered to '{cn}', not to '{legal}'.",
+                                field="tax_id", evidence={"form_name": legal, "registered_name": cn, **cmpd}))
     authority = ctx.doc_val("tax_cert", "legal_name") if ctx.usable("tax_cert") and ctx.doc_val("tax_cert", "legal_name") else legal
     # ---- 5. bank letter vs form ----------------------------------------------------
     holder_form = f.get("account_holder", "")
@@ -402,9 +462,14 @@ def s_cross_check(ctx: Ctx):
             dv, fv = ctx.doc_val("bank_proof", fld), f.get(fld)
             if dv and fv and re.sub(r"[\s\-]", "", dv).upper() != re.sub(r"[\s\-]", "", fv).upper() \
                     and not _ocr_reconcile(ctx, "bank_proof", fld, dv, fv):
-                ctx.add(finding("BANK_ACCOUNT_MISMATCH_DOC", f"Form {label} ends {screening.mask(fv)[-4:]}, bank letter ends {screening.mask(dv)[-4:]}.",
-                                field=fld, evidence={"form": screening.mask(fv), "letter": screening.mask(dv)},
-                                ask=f"The {label} on your form does not match your bank letter. Please confirm the correct {label}."))
+                if _looks_like_typo(re.sub(r"[\s\-]", "", dv).upper(), re.sub(r"[\s\-]", "", fv).upper()):
+                    ctx.add(finding("BANK_ACCOUNT_MISMATCH_DOC", f"Form {label} ends {screening.mask(fv)[-4:]}, bank letter ends {screening.mask(dv)[-4:]}.",
+                                    field=fld, evidence={"form": screening.mask(fv), "letter": screening.mask(dv)},
+                                    ask=f"The {label} on your form does not match your bank letter. Please confirm the correct {label}."))
+                else:                                           # not a keying slip: a different account altogether
+                    ctx.add(finding("BANK_ACCOUNT_DIFFERENT_DOC", f"Form {label} (ending {screening.mask(fv)[-4:]}) is a different account from the "
+                                    f"one the bank letter confirms (ending {screening.mask(dv)[-4:]}).",
+                                    field=fld, evidence={"form": screening.mask(fv), "letter": screening.mask(dv)}))
         di, fi = ctx.doc_val("bank_proof", "ifsc"), f.get("ifsc")
         if di and fi and di.strip().upper() != fi.strip().upper():
             ctx.add(finding("BANK_ACCOUNT_MISMATCH_DOC", "IFSC on form differs from the bank letter.", field="ifsc",
@@ -439,8 +504,9 @@ def s_cross_check(ctx: Ctx):
         elif vs_legal and vs_legal["verdict"] == "grey":
             ctx.grey.append({"a": holder, "b": authority, "field": "account_holder", "code": "ACCOUNT_HOLDER_MISMATCH", "ask": ask, "cmp": vs_legal})
         elif vs_legal:
-            ctx.add(finding("ACCOUNT_HOLDER_MISMATCH", f"Account holder '{holder}' is not the vendor '{authority}': {vs_legal['why']}.",
-                            field="account_holder", evidence={"holder": holder, "legal_name": authority, **vs_legal}, ask=ask))
+            # a clearly different company or a private person: payments would leave the vendor
+            ctx.add(finding("THIRD_PARTY_PAYEE", f"Account holder '{holder}' is not the vendor '{authority}': {vs_legal['why']}.",
+                            field="account_holder", evidence={"holder": holder, "legal_name": authority, **vs_legal}))
     # ---- 6. contact email -----------------------------------------------------------
     dom = (f.get("contact_email", "").split("@")[-1] or "").lower()
     if dom in config.FREE_EMAIL_DOMAINS and f.get("entity_type") not in ("sole_prop", ""):
@@ -482,7 +548,10 @@ def s_screening(ctx: Ctx):
     vid, f = ctx.vendor["vendor_id"], ctx.form
     cert_name = ctx.doc_val("tax_cert", "legal_name") if ctx.usable("tax_cert") else None
     names = [x for x in (f.get("legal_name"), f.get("trade_name"), cert_name) if x]
-    hit = screening.sanctions_best_match(names)
+    # the PAYEE is screened too: a clean company asking to be paid into a listed party's account is a hard stop
+    letter_holder = ctx.doc_val("bank_proof", "account_holder") if ctx.usable("bank_proof") else None
+    payees = [x for x in (f.get("account_holder"), letter_holder) if x and x not in names]
+    hit = screening.sanctions_best_match(names + payees)
     tax_norm = ctx.tax.normalized if ctx.tax and ctx.tax.ok else (f.get("tax_id") or "")
     facts = {"sanctions_best_score": hit["score"] if hit else 0}
     if hit and hit.get("exact", hit["score"] >= config.SANCTIONS_REJECT):

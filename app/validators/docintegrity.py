@@ -46,4 +46,46 @@ def analyze(path: str | Path) -> dict:
             seen.setdefault(key, {})
             seen[key].setdefault(_norm(value), value)
     out["conflicts"] = {k: list(v.values()) for k, v in seen.items() if len(v) > 1}
+    over = overlaid_text(r)
+    if over:
+        out["overlaid"] = over
+        # the edit replaced only the VALUE (no second label): name the field from the label next to it
+        for o in over:
+            key = o.get("field") or "overlaid_value"
+            if key not in out["conflicts"]:
+                out["conflicts"][key] = [o["under"], o["over"]]
     return out
+
+
+def overlaid_text(reader) -> list[dict]:
+    """Two DIFFERENT strings drawn starting at the same point of a page: what remains when someone
+    covers a value with a white box and types a new one at the same spot (even without retyping
+    the label). Genuine documents do not print two texts on top of each other."""
+    found = []
+    for pno, page in enumerate(reader.pages):
+        runs = []
+
+        def visit(text, cm, tm, font_dict, font_size):
+            t = (text or "").strip()
+            if len(_norm(t)) >= 4:
+                x = tm[4] * cm[0] + tm[5] * cm[2] + cm[4]
+                y = tm[4] * cm[1] + tm[5] * cm[3] + cm[5]
+                runs.append((round(x, 1), round(y, 1), t))
+        try:
+            page.extract_text(visitor_text=visit)
+        except Exception:
+            continue
+        for i, (x1, y1, t1) in enumerate(runs):
+            for x2, y2, t2 in runs[i + 1:]:
+                if abs(x1 - x2) <= 1.5 and abs(y1 - y2) <= 1.5 and _norm(t1) != _norm(t2):
+                    label = _label_left_of(runs, x1, y1)
+                    found.append({"page": pno, "under": t1, "over": t2, "field": _LABELS.get(label) if label else None})
+    return found
+
+
+def _label_left_of(runs, x, y):
+    left = [(x - rx, t) for rx, ry, t in runs if abs(ry - y) <= 1.5 and rx < x - 1]
+    if not left:
+        return None
+    t = min(left)[1]
+    return t.rstrip(": ").strip().lower() if t.rstrip().endswith(":") else None

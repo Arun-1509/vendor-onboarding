@@ -111,7 +111,7 @@ def test_guardrail_replaces_a_drifting_ai_email_with_the_safe_template():
     class Drifty(MockLLM):
         def draft_email(self, audience, kind, ctx):
             return {"subject": "Problem", "body": "We flagged you as suspicious fraud; your risk score is high."}
-    c = next(x for x in CASES if x["id"] == "V3_account_in_other_name")
+    c = next(x for x in CASES if x["id"] == "V1_bad_gstin_checksum")
     with tempfile.TemporaryDirectory() as t:
         conn = db.connect(Path(t) / "t.db")
         service.seed_vendor_master(conn)
