@@ -337,7 +337,7 @@ class GeminiLLM(AnthropicLLM):
         last, first = None, None
         import time
         models = self.models_for(primary)
-        for m in models + models[:2]:                           # a 2nd short pass only if all were busy
+        for m in models + models[:2] * 2:                       # up to 2 more passes, only if all were busy
             if m in GeminiLLM._dead:
                 continue
             if last is not None and first is None:
@@ -345,7 +345,7 @@ class GeminiLLM(AnthropicLLM):
             if m is models[0] and last is not None:
                 if "429" not in str(last) and "Timeout" not in type(last).__name__:
                     break                                       # real errors: don't loop
-                time.sleep(min(max(GeminiLLM._retry_after, 2.0), 20.0))   # Google says how long; cap it
+                time.sleep(min(max(GeminiLLM._retry_after, 2.0), 30.0))   # Google says how long; cap it
             think = self._thinking(m)
             for attempt in range(2):                            # one retry for rate limits / blips
                 b = body if think is None else {**body, "generationConfig": {**body["generationConfig"], "thinkingConfig": think}}

@@ -72,6 +72,28 @@ python scripts/summarize_quality.py          # -> reports/summary.json, shown on
 ```
 In the app, **Model quality → Spot-check 12 fresh vendors now** generates brand-new vendors with a random seed and scores them live.
 
+## Live AI check (real Gemini on the deployed site, 2026-11-09)
+All 29 demo cases were run against the public URL with a real Gemini key.
+
+**First look: 9/29.** Every document read failed, and each case safely went to a reviewer (`STAGE_ERROR`) instead of being guessed.
+- **Cause:** Google had retired the configured model names for new keys.
+- **Fix:** the app now asks the key which models it can use and picks the newest fast one (`gemini-flash-lite-latest`).
+
+**Speed: about 4 minutes per case → 4–8 seconds.**
+- Reasoning ("thinking") is set to low for extraction, because copying fields off a page needs none.
+- The documents are read in parallel.
+- A busy model is skipped rather than retried.
+
+**One genuine difference between the live AI and the offline mode.**
+- Gemini judged "Kestrel Analytics **Technologies** Pvt Ltd" to be the same company as "Kestrel Analytics Pvt Ltd" (90% confident).
+- A code guardrail now overrides that: an extra whole word can be another registered company, so the vendor is asked instead.
+- After the guardrail, the offline held-out and stress results were unchanged (0 unsafe approvals).
+
+**Final full run: 26/29.**
+- 2 failures were the free tier's ~15 requests/minute limit, because the test fired cases back to back. The app now waits the delay Google returns, up to 3 passes.
+- 1 was correct behaviour on leftover test data: an earlier run had approved a near-identical name, so the case was flagged as a lookalike.
+- Each AI call is logged with its timing under `models.recent_calls` at `/api/health`.
+
 ## Limits (say these before you're asked)
 - **I wrote both the generator and the rules.** The stress set and the first-look numbers are how I guard against fooling myself, but synthetic data is cleaner than real inboxes. The real test is a pilot on a few hundred historic submissions with known outcomes.
 - **Offline mode simulates the document reader.** `scripts/live_check.py` measures the live model:

@@ -107,3 +107,9 @@ def test_provider_selection(monkeypatch):
 
     monkeypatch.undo()
     importlib.reload(config)       # leave config as the environment defines it
+
+
+def test_waits_out_a_busy_minute_instead_of_holding():
+    out = {"subject": "s", "body": "b"}
+    llm = make([status(429)] * 4 + [ok(out)])                # both models busy twice, then free
+    assert llm.draft_email("vendor", "request", {"asks": []}) == out
