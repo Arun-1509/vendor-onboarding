@@ -260,6 +260,22 @@ class GeminiLLM(AnthropicLLM):
     # So we ask the key which models it can use, once, and pick from that list.
     _available: list | None = None
     _dead: set = set()                                          # models that answered 404 for this key
+    _no_think: set = set()                                      # models that reject thinkingConfig
+    trace: list = []                                            # last calls: model, status, seconds (no content)
+
+    @classmethod
+    def _thinking(cls, m: str):
+        """Reading a form is extraction, not reasoning: keep 'thinking' minimal so a call takes seconds, not minutes."""
+        if m in cls._no_think:
+            return None
+        if "2.5" in m:
+            return {"thinkingBudget": 0 if "flash" in m else 128}
+        return {"thinkingLevel": "low"}
+
+    @classmethod
+    def _trace(cls, m, status, t0, think):
+        import time
+        cls.trace = (cls.trace + [{"model": m, "status": status, "s": round(time.time() - t0, 1), "thinking": think}])[-12:]
 
     def available_models(self) -> list:
         if GeminiLLM._available is None:
@@ -315,18 +331,27 @@ class GeminiLLM(AnthropicLLM):
                                      "responseMimeType": "application/json",
                                      "responseSchema": _gemini_schema(schema)}}
         last, first = None, None
+        import time
         for m in self.models_for(primary):
             if last is not None and first is None:
                 first = last
+            think = self._thinking(m)
             for attempt in range(2):                            # one retry for rate limits / blips
+                b = body if think is None else {**body, "generationConfig": {**body["generationConfig"], "thinkingConfig": think}}
+                t0 = time.time()
                 try:
-                    r = self.http.post(self.URL.format(model=m), params={"key": config.GEMINI_API_KEY}, json=body)
+                    r = self.http.post(self.URL.format(model=m), params={"key": config.GEMINI_API_KEY}, json=b)
                 except Exception as e:
+                    self._trace(m, type(e).__name__, t0, think)
                     last = e
+                    continue
+                self._trace(m, r.status_code, t0, think)
+                if r.status_code == 400 and think is not None and "thinking" in r.text.lower():
+                    GeminiLLM._no_think.add(m)                  # this model rejects the setting: send it plain
+                    think = None
                     continue
                 if r.status_code in (429, 500, 502, 503, 504):
                     last = LLMError(f"{m} returned {r.status_code}")
-                    import time
                     time.sleep(1.5 * (attempt + 1))
                     continue
                 if r.status_code != 200:
@@ -337,7 +362,7 @@ class GeminiLLM(AnthropicLLM):
                 try:
                     data = r.json()
                     cand = data["candidates"][0]
-                    text = "".join(p.get("text", "") for p in cand["content"]["parts"])
+                    text = "".join(p.get("text", "") for p in cand["content"]["parts"] if not p.get("thought"))
                     parsed = json.loads(text)
                     if isinstance(parsed, dict):
                         return parsed

@@ -122,12 +122,15 @@ def s_intake(ctx: Ctx):
 
 def s_read_documents(ctx: Ctx):
     summaries = {}
-    for dtype in ("tax_cert", "bank_proof", "incorporation"):
-        path = ctx.paths.get(dtype)
-        if not path:
-            continue
+    todo = [(t, ctx.paths[t]) for t in ("tax_cert", "bank_proof", "incorporation") if ctx.paths.get(t)]
+    # Read all documents at once (each is an independent AI call); results are then checked in a fixed order.
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=max(1, len(todo))) as ex:
+        futs = {t: ex.submit(ctx.llm.extract_document, t, p) for t, p in todo}
+    read = {t: f.result() for t, f in futs.items()}            # re-raises an AI failure -> STAGE_ERROR, as before
+    for dtype, path in todo:
         label = DOC_LABEL[dtype]
-        res = ctx.llm.extract_document(dtype, path)
+        res = read[dtype]
         d = {"path": path, "detected": res.get("doc_type_detected"), "legible": res.get("legible", True),
              "raw": res.get("fields", {}), "values": {}, "usable": False, "grounding": "n/a"}
         ctx.docs[dtype] = d
