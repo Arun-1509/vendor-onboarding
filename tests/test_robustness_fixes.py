@@ -53,3 +53,12 @@ def test_benchmarks_pass_with_a_perfect_reader():
         assert r["metrics"]["errors"]["unsafe_approvals"] == 0, name
         assert r["metrics"]["errors"]["missed_rejects"] == 0, name
         assert not r["failures"], [(f["id"], f["got"]) for f in r["failures"]]
+
+
+def test_statement_is_caught_in_code_even_if_the_ai_calls_it_a_letter():
+    import json
+    from app.pipeline import _looks_like_statement
+    c = next(x for x in json.load(open("bench/blind/cases.json"))["cases"] if x["id"] == "B27")
+    assert _looks_like_statement(bench._abs(c["docs"]["bank_proof"]))
+    ok = next(x for x in json.load(open("bench/blind/cases.json"))["cases"] if x["id"] == "B01")
+    assert not _looks_like_statement(bench._abs(ok["docs"]["bank_proof"]))

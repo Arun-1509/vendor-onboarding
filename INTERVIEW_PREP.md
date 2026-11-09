@@ -24,6 +24,7 @@
 **Did you test it on anything you didn't write?**
 - Yes, two harder sets:
   - **A blind answer key** written by an independent author who never saw my code. It scored 62.5% on first look.
+  - **Live Gemini on those harder tests:** 55/56 on the blind set and 26/26 answered messy-document vendors, with 99.2% of printed fields read exactly. The one live miss (a statement read as a bank letter) is now double-checked in code. When the free quota ran out, all 34 affected vendors went to a reviewer and none was approved.
   - **A messy-documents set**: tables, German letters, phone photos, stamps. It scored 81.7% on first look.
 - They found real gaps, all invisible to my 1,900-vendor set:
   - non-ISO dates silently skipping the 90-day check;

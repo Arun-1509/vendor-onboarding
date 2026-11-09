@@ -610,7 +610,7 @@ async function benchCard(host) {
   const NAME = { blind: 'Blind answer key', diverse: 'Messy documents' };
   const acc = m => m ? pct(m.decision_accuracy) : '–', uns = m => m ? String(m.errors.unsafe_approvals + m.errors.missed_rejects) : '–';
   const rows = Object.entries(sets).map(([k, v]) => h('tr', {}, h('td', {}, h('b', {}, NAME[k] || k)),
-    h('td', { class: 'num' }, v.n), h('td', { class: 'num b' }, acc(v.first_look)), h('td', { class: 'num v' }, acc(v.after_fixes)), h('td', { class: 'num v' }, acc(live[k] && live[k].metrics)),
+    h('td', { class: 'num' }, v.n), h('td', { class: 'num b' }, acc(v.first_look)), h('td', { class: 'num v' }, acc(v.after_fixes)), h('td', { class: 'num v', title: live[k] && live[k].quota_held ? `${live[k].quota_held} vendors hit the free Gemini quota and were safely held for a reviewer; accuracy is over the ${live[k].answered} the model answered` : '' }, live[k] ? (live[k].answered_accuracy != null ? pct(live[k].answered_accuracy) : acc(live[k].metrics)) + (live[k].quota_held ? ` (${live[k].answered} answered)` : '') : '–'),
     h('td', { class: 'num mono' }, `${uns(v.first_look)} → ${uns(v.after_fixes)}` + (live[k] ? ` → ${uns(live[k].metrics)}` : ''))));
   const reading = Object.values(live).map(x => x.reading).filter(Boolean);
   const rd = reading.length ? reading.reduce((a, r) => ({ c: a.c + r.fields_correct, n: a.n + r.fields_checked }), { c: 0, n: 0 }) : null;
@@ -631,7 +631,7 @@ async function benchCard(host) {
     h('p', { class: 'sm muted', style: 'margin:0 0 10px' }, 'The 1,900 vendors above were written by the same person as the rules. These two sets were not: one answer key was written by an independent author who never saw the code, and one set draws every document differently. First look = before any fix.'),
     h('div', { class: 'tablewrap', style: 'border:0' }, h('table', { class: 'cmp' }, h('thead', {}, h('tr', {}, ['Set', 'Vendors', 'First look', 'After fixes', 'Live AI', 'Dangerous errors'].map((x, i) => h('th', { class: i ? 'num' : '' }, x)))), h('tbody', {}, rows))),
     h('ul', { class: 'xs muted', style: 'margin:6px 0 0;padding-left:16px' }, Object.entries(sets).map(([k, v]) => h('li', {}, h('b', {}, (NAME[k] || k) + ': '), v.description))),
-    h('p', { class: 'xs muted', style: 'margin:6px 0 0' }, 'Dangerous errors = unsafe approvals + missed sanctions rejects. "First look" and "after fixes" use a perfect reader (exactly what is printed) to isolate the rules. "Live AI" reads the real files with the deployed model.' +
+    h('p', { class: 'xs muted', style: 'margin:6px 0 0' }, 'Dangerous errors = unsafe approvals + missed sanctions rejects. "First look" and "after fixes" use a perfect reader (exactly what is printed) to isolate the rules. "Live AI" reads the real files with the deployed model; vendors that ran out of free Gemini quota were held for a reviewer (never approved) and are left out of its accuracy.' +
       (rd ? ` Live reading accuracy: ${rd.c}/${rd.n} printed fields read exactly (${pct(rd.c / rd.n)}).` : '') + (b.live ? ` Last live run: ${b.live.finished} (${b.live.provider}).` : '')),
     status,
     h('h3', { style: 'margin-top:14px' }, 'What the first look found, and the fix'),

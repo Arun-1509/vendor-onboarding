@@ -12,6 +12,7 @@ set to the day the documents were generated (so a 70-day-old letter stays 70 day
 """
 from __future__ import annotations
 
+from .validators import dates as dt_
 import json
 import re
 import time
@@ -130,7 +131,8 @@ def field_accuracy(cases: list[dict], seen: dict) -> dict:
                 gv = ((got.get("fields") or {}).get(k) or {}).get("value")
                 n += 1
                 bl[1] += 1
-                if _norm(gv) == _norm(want):
+                same_date = k == "issue_date" and gv and dt_.grounded_date(want, str(gv))
+                if _norm(gv) == _norm(want) or same_date:
                     ok += 1
                     bl[0] += 1
                 elif len(errors) < 40:

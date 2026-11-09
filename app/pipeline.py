@@ -121,6 +121,20 @@ def s_intake(ctx: Ctx):
                                           "country": ctx.country, "documents": sorted(k for k, v in ctx.paths.items() if v)}}
 
 
+_STATEMENT_MARKERS = ("statement of account", "account statement", "kontoauszug", "opening balance", "closing balance")
+
+
+def _looks_like_statement(path: str) -> bool:
+    """A bank statement (transaction list) is not proof of the account. Checked in code because the
+    live model sometimes labels a statement as a bank letter."""
+    from .llm import pdf_text
+    try:
+        t = (pdf_text(path) or "").lower()
+    except Exception:
+        return False
+    return any(m in t for m in _STATEMENT_MARKERS)
+
+
 def s_read_documents(ctx: Ctx):
     summaries = {}
     todo = [(t, ctx.paths[t]) for t in ("tax_cert", "bank_proof", "incorporation") if ctx.paths.get(t)]
@@ -148,6 +162,8 @@ def s_read_documents(ctx: Ctx):
                             ask=f"Your {label} was hard to read. Please upload a clearer, full-page copy (a PDF or a straight-on photo in good light)."))
             summaries[dtype] = "unreadable"
             continue
+        if dtype == "bank_proof" and d["detected"] in ("bank_proof", "other") and _looks_like_statement(path):
+            d["detected"] = "bank_statement"          # code double-checks the AI: a transaction list is a statement
         if dtype == "bank_proof" and d["detected"] == "bank_statement":
             ctx.add(finding("DOC_NOT_ACCEPTED", "A bank statement was uploaded as proof of the bank account.", field=dtype,
                             ask="You uploaded a bank statement. Please send a letter from your bank confirming the account (or a cancelled cheque), issued in the last 90 days."))

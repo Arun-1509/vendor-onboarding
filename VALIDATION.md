@@ -137,6 +137,19 @@ All 29 demo cases were run against the public URL with a real Gemini key.
 - 1 was correct behaviour on leftover test data: an earlier run had approved a near-identical name, so the case was flagged as a lookalike.
 - Each AI call is logged with its timing under `models.recent_calls` at `/api/health`.
 
+## Live AI benchmark: real Gemini on all 116 harder-test vendors (2026-11-09)
+
+Run on the deployed site (free Gemini tier, ~3 model calls per vendor). Raw results: `reports/bench_live.json`.
+
+| Set | Vendors answered | Live decisions correct | Dangerous errors |
+|---|---|---|---|
+| Blind answer key | 56 / 56 | **55 / 56 (98.2%)** | 1 (fixed, below) |
+| Messy documents | 26 / 60 | **26 / 26 (100%)** | 0 |
+
+- **Free-tier quota:** 34 messy-document vendors ran out of the free daily Gemini quota mid-run. Every one became STAGE_ERROR and was held for a reviewer. None was approved, so the fail-safe worked; they are left out of the accuracy rather than counted as passes.
+- **The one live miss (B27):** the model called a bank *statement* a bank letter, so it was accepted as bank proof. The perfect reader never made this mistake. **Fix:** code now double-checks the AI. A bank-proof file whose text says "statement of account", "opening/closing balance" or "Kontoauszug" is treated as a statement and the vendor is asked for a letter. On all 300+ benchmark and sample PDFs this matched only B27.
+- **Reading accuracy:** 607 / 612 printed fields read exactly (99.2%). The 5 misses are an address digit dropped in a table, and phone-photo misreads (a postcode letter, an address, a GSTIN with a stray prefix). The GSTIN one is caught by the checksum, so no bad ID gets through. The first scoring counted dates read exactly as printed (e.g. `09.12.2024`) as wrong because it wanted ISO form; that was a scoring bug, fixed in `app/bench.py`.
+
 ## Limits (say these before you're asked)
 - **I wrote both the generator and the rules.** The stress set and the first-look numbers are how I guard against fooling myself, but synthetic data is cleaner than real inboxes. The real test is a pilot on a few hundred historic submissions with known outcomes.
 - **Offline mode simulates the document reader.** `scripts/live_check.py` measures the live model:
