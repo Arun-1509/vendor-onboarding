@@ -14,7 +14,7 @@ import time
 import traceback
 from datetime import datetime, timedelta
 
-from . import config, db, rules, screening
+from . import config, db, rules, screening, workflow
 from .llm import (DOC_FIELDS, LLMError, get_llm, grounded, pdf_text, vendor_mail_is_safe)
 from .rules import finding
 from .validators import bank as bk
@@ -549,7 +549,10 @@ def s_communicate(ctx: Ctx):
     elif sub == "awaiting_reviewer" or sub == "rejected_compliance":
         codes = set(d["driving"]) | {f["code"] for f in d["findings"] if f["action"] in ("reviewer", "reject")}
         items = [f"{f['title']}: {f['message']}" for f in d["findings"] if f["action"] in ("reviewer", "reject", "vendor")]
-        write("reviewer", "review", {**base, "status": st, "asks": items, "next_step": _next_step(codes)}, "procurement-review@internal")
+        checks = [a["action"] for a in workflow.next_actions(d["findings"], st, sub) if a["who"] in ("reviewer", "compliance")]
+        write("reviewer", "review", {**base, "status": st, "asks": items,
+                                     "next_step": _next_step(codes) + (". Checklist: " + " | ".join(checks) if checks else "")},
+              "compliance@internal" if codes & workflow.COMPLIANCE else "procurement-review@internal")
     elif sub == "rejected_closed":
         write("vendor", "rejected", base, to_vendor)
     for m in drafts:
@@ -613,6 +616,7 @@ def process_submission(conn, submission_id: str, llm=None, emit=None) -> dict:
     result = {"status": d["status"], "substatus": d["substatus"], "risk_score": d["risk_score"], "risk_limit": d["risk_limit"],
               "explanation": explanation, "rule_trace": d["trace"], "driving": d["driving"], "findings": d["findings"],
               "resolved_since_last_run": resolved, "emails": ctx.emails, "llm_mode": llm.mode,
+              "next_actions": workflow.next_actions(d["findings"], d["status"], d["substatus"]),
               "documents": {k: {"detected_as": v.get("detected"), "grounding": v.get("grounding"), "fields": v.get("values")} for k, v in ctx.docs.items()},
               "seconds": round(time.time() - t0, 2)}
     finished = db.iso(db.now(conn))
@@ -620,6 +624,8 @@ def process_submission(conn, submission_id: str, llm=None, emit=None) -> dict:
                  (d["status"], d["substatus"], d["risk_score"], finished, json.dumps(result, default=str), run_id))
     # --- update vendor master ----------------------------------------------------------
     data = dict(vendor["data"])
+    for k in ("reviewer_asks", "first_approver", "first_approval_reason"):   # a new run starts a fresh review
+        data.pop(k, None)
     if d["status"] == "approved":
         data["approved_account_key"] = ctx.account_key
         data["approved_legal_name"] = ctx.form.get("legal_name")

@@ -20,7 +20,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 
-from . import config, db, emailer, evaluation, pipeline, rules, service
+from . import config, db, emailer, evaluation, pipeline, rules, service, workflow
 from .llm import get_llm
 
 @asynccontextmanager
@@ -251,12 +251,64 @@ def override(vendor_id: str, body: Override):
         c.close()
 
 
+class Review(BaseModel):
+    action: str
+    reason: str
+    actor: str = "reviewer"
+    checklist_done: bool = False
+    asks: list[str] = []
+
+
+@app.get("/api/review/queue")
+def review_queue():
+    c = _conn()
+    try:
+        return workflow.review_queue(c)
+    finally:
+        c.close()
+
+
+@app.post("/api/vendors/{vendor_id}/review")
+def review(vendor_id: str, body: Review):
+    c = _conn()
+    try:
+        return workflow.review_action(c, vendor_id, body.action, body.actor, body.reason, body.checklist_done, body.asks)
+    except KeyError:
+        raise HTTPException(404, "vendor not found")
+    except ValueError as e:
+        raise HTTPException(422, str(e))
+    finally:
+        c.close()
+
+
+@app.get("/api/audit/export")
+def audit_export(vendor_id: str | None = None):
+    """Full, verifiable audit trail as JSON lines: what an auditor would be handed."""
+    c = _conn()
+    sql, args = "SELECT * FROM audit", []
+    if vendor_id:
+        sql += " WHERE vendor_id=?"; args.append(vendor_id)
+    lines = [json.dumps(db.row(r), default=str) for r in c.execute(sql + " ORDER BY seq", args)]
+    c.close()
+    name = f"audit_{vendor_id or 'all'}.jsonl"
+    return PlainTextResponse("\n".join(lines), media_type="application/x-ndjson",
+                             headers={"Content-Disposition": f'attachment; filename="{name}"'})
+
+
+@app.get("/api/quality")
+def quality_summary():
+    p = config.ROOT / "reports" / "summary.json"
+    if not p.exists():
+        raise HTTPException(404, "No quality report yet. Run scripts/validate.py and scripts/summarize_quality.py.")
+    return json.loads(p.read_text(encoding="utf-8"))
+
+
 @app.get("/api/rulebook")
 def rulebook():
     return {"auto_approve_below_risk": config.AUTO_APPROVE_MAX_RISK,
             "thresholds": {"bank letter max age (days)": config.BANK_PROOF_MAX_AGE_DAYS, "names treated as the same at core similarity >=": config.NAME_EQUIVALENT,
                            "names go to the AI judge between": f"{config.NAME_GREY_LOW} and {config.NAME_EQUIVALENT}", "lookalike vendor at similarity >=": config.LOOKALIKE_THRESHOLD,
-                           "sanctions: auto-reject at >=": config.SANCTIONS_REJECT, "sanctions: human review at >=": config.SANCTIONS_REVIEW,
+                           "sanctions: auto-reject only on": "exact name / alias (any order, accents, legal form ignored)", "sanctions: human review at >=": config.SANCTIONS_REVIEW,
                            "AI name judgment accepted at confidence >=": config.LLM_MIN_CONFIDENCE, "vendor response window (days)": config.VENDOR_RESPONSE_DAYS,
                            "reminders before closing": config.MAX_REMINDERS, "days between reminders": config.REMINDER_GAP_DAYS},
             "rules": list(rules.RULEBOOK.values())}
@@ -271,6 +323,9 @@ def stats():
     for v in vs:
         by[v["substatus"]] = by.get(v["substatus"], 0) + 1
     handled = sum(1 for v in vs if v["substatus"] in ("approved", "awaiting_vendor", "rejected_compliance", "rejected_closed"))
+    by_day: dict[str, dict] = {}
+    for r in c.execute("SELECT substr(started_at,1,10) d, substatus s, COUNT(*) n FROM runs WHERE status!='running' GROUP BY d, s"):
+        by_day.setdefault(r["d"], {})[r["s"]] = r["n"]
     overdue = sum(1 for v in vs if v["substatus"] == "awaiting_vendor" and v["due_at"] and service._parse(v["due_at"]) <= now)
     secs = c.execute("SELECT AVG((julianday(finished_at)-julianday(started_at))*86400.0) s, COUNT(*) n FROM runs WHERE status!='running'").fetchone()
     out = {"vendors_total": c.execute("SELECT COUNT(*) n FROM vendors").fetchone()["n"], "processed": len(vs), "by_substatus": by,
@@ -278,9 +333,11 @@ def stats():
            "awaiting_reviewer": by.get("awaiting_reviewer", 0),
            "rejected": sum(n for k, n in by.items() if k.startswith("rejected")), "overdue": overdue,
            "handled_without_human": handled, "handled_pct": round(100 * handled / len(vs)) if vs else 0,
-           "runs": secs["n"], "avg_run_seconds": round(secs["s"] or 0, 1),
+           "runs": secs["n"], "avg_run_seconds": round(secs["s"] or 0, 1), "runs_by_day": by_day,
            "est_hours_saved": round(handled * config.ESTIMATED_MANUAL_MINUTES / 60, 1),
            "manual_minutes_assumption": config.ESTIMATED_MANUAL_MINUTES,
+           "awaiting_second_approval": by.get("awaiting_second_approval", 0),
+           "review_overdue": sum(1 for q in workflow.review_queue(c) if q["overdue"]),
            "clock_offset_days": db.clock_offset_days(c), "llm_mode": "mock" if config.MOCK_LLM else "live", "provider": config.PROVIDER_LABEL}
     c.close()
     return out

@@ -140,6 +140,10 @@ def _latest_form(conn, vendor_id: str) -> dict:
 
 def vendor_asks(conn, vendor_id: str) -> list[str]:
     """What the vendor still has to do, taken from the latest run's findings."""
+    v = conn.execute("SELECT data FROM vendors WHERE vendor_id=?", (vendor_id,)).fetchone()
+    reviewer_asks = (json.loads(v["data"] or "{}") if v else {}).get("reviewer_asks")
+    if reviewer_asks:                       # a reviewer re-routed the case to the vendor with their own words
+        return list(reviewer_asks)
     r = conn.execute("SELECT result FROM runs WHERE vendor_id=? AND status!='running' ORDER BY run_id DESC LIMIT 1", (vendor_id,)).fetchone()
     if not r or not r["result"]:
         return []
@@ -201,7 +205,7 @@ def portal_view(conn, token: str, running: bool = False) -> dict | None:
         return None
     sub = v["substatus"]
     state = ("checking" if running else "open" if sub == "awaiting_vendor" else "approved" if v["status"] == "approved"
-             else "review" if sub == "awaiting_reviewer" else "closed")
+             else "review" if sub in ("awaiting_reviewer", "awaiting_second_approval") else "closed")
     form = _latest_form(conn, v["vendor_id"])
     docs = conn.execute("SELECT docs FROM submissions WHERE vendor_id=? ORDER BY version DESC LIMIT 1", (v["vendor_id"],)).fetchone()
     days_left = None
