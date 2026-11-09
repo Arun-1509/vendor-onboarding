@@ -30,10 +30,10 @@ MODEL_EXTRACT = os.getenv("MODEL_EXTRACT", "claude-sonnet-5-5")
 MODEL_JUDGE = os.getenv("MODEL_JUDGE", "claude-fable-5-1")
 MODEL_WRITE = os.getenv("MODEL_WRITE", "claude-sonnet-5-5")
 MODEL_FALLBACK = os.getenv("MODEL_FALLBACK", "claude-sonnet-5-5")
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")           # reads documents, writes emails
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-lite-latest")           # reads documents, writes emails
 GEMINI_JUDGE_MODEL = os.getenv("GEMINI_JUDGE_MODEL", "gemini-flash-latest")
-GEMINI_FALLBACK = os.getenv("GEMINI_FALLBACK", "gemini-flash-lite-latest")
-LLM_TIMEOUT_S = float(os.getenv("LLM_TIMEOUT_S", "90"))
+GEMINI_FALLBACK = os.getenv("GEMINI_FALLBACK", "gemini-flash-latest")
+LLM_TIMEOUT_S = float(os.getenv("LLM_TIMEOUT_S", "30"))
 
 # --------------------------------------------------------------- rules ----
 AUTO_APPROVE_MAX_RISK = 20        # risk score must be BELOW this to auto-approve

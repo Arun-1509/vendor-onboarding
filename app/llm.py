@@ -261,6 +261,7 @@ class GeminiLLM(AnthropicLLM):
     _available: list | None = None
     _dead: set = set()                                          # models that answered 404 for this key
     _no_think: set = set()                                      # models that reject thinkingConfig
+    _cool: dict = {}                                            # model -> time until which it is rate-limited
     trace: list = []                                            # last calls: model, status, seconds (no content)
 
     @classmethod
@@ -309,8 +310,10 @@ class GeminiLLM(AnthropicLLM):
         else:
             ranked = sorted((n for n in avail if self._rank(n)), key=self._rank, reverse=True)
             picks = [m for m in wanted if m in avail] + ranked
-        live = [m for m in dict.fromkeys(picks) if m not in GeminiLLM._dead]
-        return live[:4] or list(dict.fromkeys(wanted))
+        import time
+        live = [m for m in dict.fromkeys(picks) if m not in GeminiLLM._dead][:4] or list(dict.fromkeys(wanted))
+        now = time.time()                                       # rate-limited models go last, not first
+        return [m for m in live if GeminiLLM._cool.get(m, 0) <= now] + [m for m in live if GeminiLLM._cool.get(m, 0) > now]
 
     @staticmethod
     def _parts(content: list) -> list:
@@ -332,9 +335,16 @@ class GeminiLLM(AnthropicLLM):
                                      "responseSchema": _gemini_schema(schema)}}
         last, first = None, None
         import time
-        for m in self.models_for(primary):
+        models = self.models_for(primary)
+        for m in models + models[:2]:                           # a 2nd short pass only if all were busy
+            if m in GeminiLLM._dead:
+                continue
             if last is not None and first is None:
                 first = last
+            if m is models[0] and last is not None:
+                if "429" not in str(last) and "Timeout" not in type(last).__name__:
+                    break                                       # real errors: don't loop
+                time.sleep(2.0)
             think = self._thinking(m)
             for attempt in range(2):                            # one retry for rate limits / blips
                 b = body if think is None else {**body, "generationConfig": {**body["generationConfig"], "thinkingConfig": think}}
@@ -343,16 +353,21 @@ class GeminiLLM(AnthropicLLM):
                     r = self.http.post(self.URL.format(model=m), params={"key": config.GEMINI_API_KEY}, json=b)
                 except Exception as e:
                     self._trace(m, type(e).__name__, t0, think)
+                    GeminiLLM._cool[m] = time.time() + 60       # hung: try the next model now, this one later
                     last = e
-                    continue
+                    break
                 self._trace(m, r.status_code, t0, think)
                 if r.status_code == 400 and think is not None and "thinking" in r.text.lower():
                     GeminiLLM._no_think.add(m)                  # this model rejects the setting: send it plain
                     think = None
                     continue
-                if r.status_code in (429, 500, 502, 503, 504):
+                if r.status_code == 429:                        # free-tier quota: move on, don't wait
+                    GeminiLLM._cool[m] = time.time() + 60
+                    last = LLMError(f"{m} returned 429 (rate limit)")
+                    break
+                if r.status_code in (500, 502, 503, 504):
                     last = LLMError(f"{m} returned {r.status_code}")
-                    time.sleep(1.5 * (attempt + 1))
+                    time.sleep(1.0)
                     continue
                 if r.status_code != 200:
                     if r.status_code == 404:

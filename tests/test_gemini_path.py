@@ -16,6 +16,8 @@ def _cfg(monkeypatch):
     monkeypatch.setattr(config, "GEMINI_JUDGE_MODEL", "m-judge")
     monkeypatch.setattr(config, "GEMINI_FALLBACK", "m-fallback")
     monkeypatch.setattr("time.sleep", lambda s: None)
+    for attr, empty in (("_available", None), ("_dead", set()), ("_no_think", set()), ("_cool", {}), ("trace", [])):
+        monkeypatch.setattr(GeminiLLM, attr, empty)
 
 
 def ok(payload):
@@ -58,11 +60,19 @@ def test_judgment_parses_and_uses_judge_model():
     assert model == "m-judge" and body["generationConfig"]["responseMimeType"] == "application/json"
 
 
-def test_rate_limit_retries_then_falls_back():
+def test_rate_limit_switches_model_then_retries():
     out = {"subject": "s", "body": "b"}
-    llm = make([status(429), status(429), ok(out)])
+    llm = make([status(429), status(429), ok(out)])         # free tier: don't wait on a busy model, try the other
     assert llm.draft_email("vendor", "request", {"asks": []}) == out
-    assert [c[0] for c in llm.http.calls] == ["m-main", "m-main", "m-fallback"]
+    assert [c[0] for c in llm.http.calls] == ["m-main", "m-fallback", "m-main"]
+
+
+def test_busy_model_is_tried_last_next_time():
+    out = {"subject": "s", "body": "b"}
+    llm = make([status(429), ok(out), ok(out)])
+    llm.draft_email("vendor", "request", {"asks": []})
+    llm.draft_email("vendor", "request", {"asks": []})
+    assert [c[0] for c in llm.http.calls] == ["m-main", "m-fallback", "m-fallback"]
 
 
 def test_pdf_is_sent_inline(tmp_path):
