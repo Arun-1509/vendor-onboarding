@@ -459,6 +459,13 @@ def s_name_judgment(ctx: Ctx):
         j = ctx.llm.judge_names(g["a"], g["b"], {"country": ctx.country, "declared_legal_form": ctx.form.get("entity_type"),
                                                  "deterministic_comparison": g["cmp"]["why"]})
         yes = j.get("same_entity") == "yes" and float(j.get("confidence", 0)) >= config.LLM_MIN_CONFIDENCE
+        extra = nm.extra_words(g["a"], g["b"])
+        if yes and extra:                                       # code checks the AI: a whole extra word may be
+            yes = False                                         # another registered company -> ask, don't assume
+            j = {**j, "overridden": True,
+                 "reasoning": f"The AI said 'same company', but one name has an extra word ({', '.join(extra)}) that can "
+                              f"denote a different registered company, so the rulebook does not accept it without confirmation. "
+                              f"AI said: {j.get('reasoning', '')}"}
         out.append({"a": g["a"], "b": g["b"], **j, "accepted": yes})
         if yes:
             ctx.add(finding("NAME_VARIANT_AI", f"'{g['a']}' and '{g['b']}' judged the same company ({j.get('confidence'):.0%}): {j.get('reasoning')}",

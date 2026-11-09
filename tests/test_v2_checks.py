@@ -91,3 +91,20 @@ def test_gemini_model_autopick_skips_retired_models():
         assert "gemini-flash-latest" not in g.models_for("gemini-1.0-retired")
     finally:
         GeminiLLM._available, GeminiLLM._dead = old[0], old[1]
+
+
+def test_extra_word_is_never_waved_through_by_the_ai():
+    """Live Gemini said 'same company' for 'Kestrel Analytics Technologies' vs 'Kestrel Analytics'.
+    The rulebook must still ask the vendor: an extra whole word can be another registered company."""
+    assert names.extra_words("Kestrel Analytics Technologies Pvt Ltd", "Kestrel Analytics Private Limited") == ["technologies"]
+    assert names.extra_words("Delta Engg Pvt Ltd", "Delta Engineering Private Limited") == []      # abbreviation, not extra
+    from app import evaluation
+    from app.llm import MockLLM
+
+    class OverconfidentAI(MockLLM):
+        def judge_names(self, a, b, context):
+            return {"same_entity": "yes", "confidence": 0.95, "variant_type": "legal_suffix", "reasoning": "same brand"}
+
+    case = next(c for c in evaluation.load_cases() if c["id"] == "E2d_extra_word_is_a_different_company")
+    out = evaluation.run_case(case, OverconfidentAI())
+    assert not out["steps"][0]["fails"], out["steps"][0]

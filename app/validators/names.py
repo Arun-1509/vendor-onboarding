@@ -123,6 +123,23 @@ def is_abbreviation_of(short: str, long: str) -> bool:
     return True
 
 
+def extra_words(a: str, b: str) -> list[str]:
+    """Whole words one name has and the other lacks, when one core name CONTAINS the other
+    ('Kestrel Analytics Technologies' vs 'Kestrel Analytics' -> ['technologies']). Abbreviations
+    are expanded first, so 'Engg' vs 'Engineering' is not an extra word. An extra word can be a
+    different registered company, so the AI is not allowed to wave it through on its own."""
+    ca, cb = split_name(a)[0], split_name(b)[0]
+    if not ca or not cb or len(ca) == len(cb):
+        return []
+    short, long_ = (ca, cb) if len(ca) < len(cb) else (cb, ca)
+    rest = list(long_)
+    for t in short:
+        if t not in rest:
+            return []
+        rest.remove(t)
+    return rest
+
+
 # Words impostors add to a real vendor's name to make a 'new' company look plausible.
 GENERIC_PADDING = {"india", "global", "group", "international", "intl", "services", "solutions", "holdings",
                    "trading", "enterprises", "worldwide", "consulting", "ventures", "industries", "co", "company",
