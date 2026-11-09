@@ -1,25 +1,28 @@
+# Render Blueprint. Render > New > Blueprint > pick this repo. See DEPLOY.md for a click-by-click guide.
 services:
   - type: web
     name: vendor-onboarding
     runtime: docker
-    plan: starter            # a persistent disk needs a paid instance; free tier works but loses data on restart
+    plan: free                 # free works for the demo: it sleeps after ~15 min idle (first load ~50 s) and
+                               # forgets data on restart (the app re-seeds itself). For persistent history use
+                               # plan: starter and uncomment the disk block below.
     healthCheckPath: /api/health
-    disk:
-      name: data
-      mountPath: /data
-      sizeGB: 1
+    # disk:
+    #   name: data
+    #   mountPath: /data
+    #   sizeGB: 1
     envVars:
+      - key: VAR_DIR
+        value: /tmp/vendor-data     # with a disk: /data
       - key: GEMINI_API_KEY
-        sync: false           # free key from aistudio.google.com
+        sync: false                 # optional, free key from aistudio.google.com -> live AI document reading
       - key: ANTHROPIC_API_KEY
-        sync: false           # optional: if set, Claude is used instead
+        sync: false                 # optional; used instead of Gemini if set. Use a key with a spend limit.
       - key: BASE_URL
-        sync: false           # set to your public URL, e.g. https://vendor-onboarding.onrender.com
+        sync: false                 # your public URL, e.g. https://vendor-onboarding.onrender.com (links in emails)
       - key: ADMIN_KEY
-        generateValue: true
+        generateValue: true         # required to "Reset demo data" on the public link
       - key: DAILY_RUN_CAP
         value: "300"
-      - key: RESEND_API_KEY
-        sync: false
-      - key: DEMO_INBOX
-        sync: false           # your own email address: the app only ever sends here
+      - key: RATE_PER_HOUR
+        value: "60"

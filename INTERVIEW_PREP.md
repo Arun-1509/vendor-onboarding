@@ -1,45 +1,74 @@
 # Interview prep
 
-## The one-sentence design
-**The AI reads and explains; code decides.** Nothing the model says can set a status. `rules.decide()` is the only place that happens.
+## 30-second pitch
+"Vendor onboarding is a fraud surface disguised as paperwork. I built a process that reads a vendor's form and documents, cross-checks every source against every other, and decides: approve, ask the vendor, hold for a person, or reject. The AI reads and explains; a rulebook decides; people only see what's genuinely ambiguous, and high-risk approvals need two of them. I measured it on 1,900 labelled synthetic vendors. On the held-out set it cut wrongful approvals from 48 to zero."
 
-## Read the code in this order (about 90 minutes)
-1. `app/rules.py`: the rulebook and `decide()`. Everything else feeds this.
-2. `app/pipeline.py`: the 9 stages, in the order a run takes them.
-3. `app/validators/names.py`: the name logic (exact / equivalent / form mismatch / grey / different).
-4. `app/llm.py`: extraction with grounding, the judge, email drafting, the email guardrail.
-5. `app/screening.py`: sanctions, lookalikes, shared accounts.
-6. `app/service.py`: submissions, resubmission, the waiting loop (`tick`), the vendor portal.
-7. `app/db.py`: the schema and the hash-chained audit log.
-8. `tests/test_scenarios.py`: the 26 labelled cases, and the mutation tests.
+## Code tour (2 minutes)
+| Say | Open |
+|---|---|
+| "Each stage only adds findings; one function decides." | `app/pipeline.py` (STAGES), then `app/rules.py` (`RULEBOOK`, `decide`) |
+| "The AI has three jobs and none of them decides." | `app/llm.py` docstring |
+| "This catches the edited bank letter without trusting the AI." | `app/validators/docintegrity.py` |
+| "The human side: next actions, queue, four-eyes." | `app/workflow.py` |
+| "How I know it works." | `synthetic/generator.py` (SCENARIOS), `app/quality.py` (cost weights), `VALIDATION.md` |
 
-## Questions to expect, and the honest answers
+## Likely questions, with short answers
+**How do you know it works?**
+- I generated labelled vendors: consistent companies with one deliberate change each, across 37 scenarios.
+- There are three sets:
+  - tune on dev;
+  - report on a held-out test set (99.9% on the first look);
+  - and a stress set of variations I wrote before measuring (91.7% on the first look, 65% for the original).
+- I report first-look numbers because those runs found real bugs I then fixed.
 
-**Why not let the model decide?** It is non-deterministic, can be talked into things by document text, and cannot explain a decision to an auditor. A rulebook can be read, argued with and changed by a procurement lead. The model's job is to turn messy PDFs into fields and to explain.
+**Isn't 100% suspicious?**
+- Yes. That's why I lead with the first-look numbers and say plainly that I wrote both the generator and the rules.
+- Synthetic data is cleaner than reality. The next step is a pilot on a few hundred historic submissions with known outcomes, plus `live_check.py` on the real model.
 
-**How do you stop it hallucinating a field?** Every extracted value comes with the quote it was read from. Code checks the quote exists in the PDF text layer. If not, the field is dropped. A crashed step becomes a human hold.
+**Why not train a model to classify vendors?**
+- I wouldn't have labelled fraud examples; they are rare and sensitive.
+- An auditor needs a reason they can read.
+- Policy changes should be one-line edits, not retraining.
+- The AI is used where judgment really is fuzzy (reading documents, ambiguous names), and even there code checks it.
 
-**Why is the lookalike not rejected?** A lookalike might be a fraudster or a legitimate subsidiary. Rejecting would be accusing someone with no proof, and telling them why teaches a fraudster what to fix. So a human decides and the vendor learns nothing. Only sanctions hits and non-response auto-reject.
+**What stops the AI from inventing a value?**
+- It must quote the text it read, and code checks the quote exists in the file.
+- Critical fields that fail the check hold the case for a human (`DOC_UNGROUNDED`).
 
-**What counts as the grey zone for names?** After normalising and stripping legal forms, similarity ≥0.93 is "same", below 0.72 is "different", and in between goes to the judge, accepted only at confidence ≥0.80. Abbreviations must have equal word counts, which fixed a real bug where a dropped word was waved through.
+**Why not auto-reject fraud-shaped cases?**
+- Suspicion isn't proof, and a wrongful rejection costs a real supplier.
+- Exact sanctions matches are the only automatic rejections; everything fraud-shaped goes to a person, with four-eyes for the dangerous ones.
 
-**What do the validators not do?** Format and checksum only. No live registry lookup (GST portal, VIES). That is the biggest honest gap; a real build adds those APIs behind the same stage.
+**Why don't you tell the vendor why they're being reviewed?**
+- Telling a fraudster "your bank account belongs to another vendor" teaches them what to forge next.
+- That's why "disclosure leaks" are weighted ×10 in my metric, and why the reviewer's "ask vendor" text is scanned for internal terms.
 
-**How is it kept from emailing real people?** Mail only ever goes to `DEMO_INBOX`, never the vendor's address.
+**What can't it catch?**
+- A document retyped from scratch, with no edit trace. Only bank-side verification (penny-drop / confirmation of payee) catches that, so every bank change and new account gets a human call-back on a number already on file.
+- It also doesn't check registries, ownership (UBO) or adverse media; those are listed in ASSUMPTIONS.md.
 
-**What if the API is down?** Documents cannot be read, so a `STAGE_ERROR` hold goes to a reviewer. Never an approval.
+**What happens when the AI is down?**
+- The step fails into `STAGE_ERROR`, which means hold for a human. It never approves on a failure.
 
-**What would you do next?** Registry lookups; OCR for scanned PDFs beyond the vision path; per-country rule packs owned by compliance; Slack/ERP integration; a reviewer queue with SLAs; sanctions via a real list provider.
+**What does "four-eyes" protect against?**
+- A single compromised or rushed reviewer approving a bank change.
+- The second approver must be a different person, and both are in the audit chain.
 
-**Why does it work with Gemini and Claude?** The model only reads, explains and drafts; code decides. So the provider is a swappable transport (`GeminiLLM` reuses the same prompts, schemas and grounding check). That is the design paying off.
+**Why Render?**
+- The brief needs a live link.
+- Render builds the Dockerfile from GitHub and gives a URL.
+- The free tier sleeps and forgets data on restart, so the app re-seeds itself on startup.
 
-**Why does it work with Gemini and Claude?** The model only reads, explains and drafts; code decides. So the provider is a swappable transport (`GeminiLLM` reuses the same prompts, schemas and grounding check). That is the design paying off.
+**What would you build next?**
+1. A pilot on real historic data.
+2. Confirmation-of-payee / penny-drop for bank ownership.
+3. GST / VAT registry lookups.
+4. SSO with real reviewer identities instead of typed names.
+5. A scheduler instead of the demo clock.
+6. Per-vendor-type policies.
 
-## Be upfront about
-- The live model path (Gemini or Claude) was tested with fake clients and the offline mock, then verified with `scripts/check_model.py` and the live evaluation. Say what you ran.
-- The sanctions list is fictional data.
-- Thresholds (risk 20, similarity 0.93/0.72) are reasoned starting points, not tuned on real vendor data.
-- Hand-built labelled cases are not production traffic.
-
-## Numbers you can quote
-26 labelled cases, 9 stages, about 40 rules, 4 countries (IN, DE, GB, US), auto-approve under risk 20, 7-day response window with 2 reminders 3 days apart, 6 MB upload limit.
+## Numbers to remember
+- **Held-out set:** 86.3% → **99.9%** (first look), unsafe approvals **48 → 0**, disclosure leaks **23 → 0**.
+- **Stress set:** 65.0% → **91.7%** (first look).
+- **Volume:** 1,900 synthetic vendors, 37 + 9 scenarios, 4 countries; 29 hand-made demo cases; 91 tests.
+- **Policy settings:** auto-approve only below risk 20; bank letters expire after 90 days; review SLA 48 h; two reminders, then closed.

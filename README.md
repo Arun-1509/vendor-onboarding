@@ -1,51 +1,64 @@
-# Vendor Onboarding: automated submission → decision
+# Onboard: vendor onboarding, from submission to decision (PS-2)
 
-Takes a vendor submission (form + tax document + bank letter), reads and cross-checks it, screens it, and produces **approved / pending / rejected** with visible reasoning, a drafted message back to the vendor (or an internal note), and a tamper-evident audit trail.
+A vendor submits a form, a tax certificate and a bank letter. The process reads the documents, cross-checks every source against the others, screens the vendor, and decides: **approved**, **pending** (waiting on the vendor, or held for a reviewer) or **rejected**. Every decision shows its reasoning. For anything not approved it says exactly what is needed, and it writes the message.
 
-It is a complete, runnable prototype: pipeline, rulebook, web UI (live run view, dashboard, vendor reply page, outbox, evaluation), a waiting loop with reminders and closure, and an audit trail you can verify.
+> **Principle: the AI reads and explains; code decides; people handle the genuinely ambiguous.**
 
-**Start here:** open the app, go to *New submission*, pick a prepared vendor, press *Run it now*. Docs: `DESIGN.md` (why), `ASSUMPTIONS.md`, `DEPLOY.md` (public URL), `DEMO_SCRIPT.md` (video and live demo), `INTERVIEW_PREP.md` (code tour and likely questions).
+**Highlights**
+- **9-stage live run view.** Each stage streams in as it executes. The source document is shown with the evidence highlighted: green where a value was verified in the file, red where a value was pasted over another.
+- **Measured quality:**
+  - Held-out test (first look): **99.9% accuracy, 0 unsafe approvals**. The original engine scored 86.3% with 48 unsafe approvals.
+  - Stress set of variations the rules weren't built for (first look): 91.7%, against 65.0% for the original.
+  - Full detail is in [VALIDATION.md](VALIDATION.md) and on the in-app **Model quality** page.
+- **Catches what eyeballing misses:**
+  - an edited PDF bank letter;
+  - a valid GSTIN that belongs to someone else (PAN initial, state code);
+  - a bank code that belongs to a different bank;
+  - a padded lookalike name ("Globex Logistics Solutions **India**");
+  - a request to change bank details;
+  - a shared bank account;
+  - a near-match on the sanctions list.
+- **Reviewer workflow:**
+  - a queue with a 48-hour SLA and a checklist for each risk type;
+  - **four-eyes approval** for high-risk cases;
+  - re-routing to the vendor with a guardrail against leaking internal terms.
+- **Vendor portal.** The vendor sees only what to fix, never the risk or the screening.
+- **Waiting loop.** Reminders, then closure if there's no reply. Resubmissions become new versions, and the system shows which findings were resolved.
+- **Audit trail.** Hash-chained (tamper-evident), with JSON-lines export.
 
-## Run it (offline, no API key needed)
+## Run it locally (no API key needed)
 ```bash
 pip install -r requirements.txt
-python scripts/make_samples.py          # sample PDFs + labelled cases (re-run before a demo: dates are relative to today)
-python scripts/run_eval.py              # 26 labelled vendors through the pipeline → scorecard
-pytest -q                               # 68 tests
-uvicorn app.main:app --port 8000        # the app: http://localhost:8000
+python scripts/make_samples.py                 # demo-pack documents (dates are relative to today)
+uvicorn app.main:app --port 8000               # http://localhost:8000
 ```
-Without a key the app runs in **mock mode** (clearly labelled on every run). With a key it uses a real model: **Gemini (free key from aistudio.google.com)** or Claude, selected automatically.
+Without a key it runs in **offline mode**: document reading is simulated, and the app labels every run with that. Add a free `GEMINI_API_KEY` (aistudio.google.com) or an `ANTHROPIC_API_KEY` to use a real model, then run `python scripts/live_check.py`.
 
-## Use a real model
+## Test and validate
 ```bash
-export GEMINI_API_KEY=...                # free: aistudio.google.com  (or ANTHROPIC_API_KEY for Claude)
-python scripts/check_model.py            # confirms which models your account can call
-python scripts/run_eval.py               # re-run the whole suite against live Claude, then READ any failures
-```
-Models are set per job in `.env.example`. Extraction uses a fast model (it's on the live-demo critical path); only the rare grey-zone name judgment uses the strongest.
-
-## Try the API
-```bash
-curl -X POST localhost:8000/api/samples/E1b_bank_change_request/submit     # → {"submission_id": "S-00006", ...}
-curl -N localhost:8000/api/submissions/S-00006/events                      # live stage-by-stage stream (SSE)
-curl localhost:8000/api/vendors ; curl localhost:8000/api/stats ; curl localhost:8000/api/audit/verify
-```
-Real uploads: `POST /api/submissions` (multipart: `form` = JSON string, files `tax_cert`, `bank_proof`).
-
-## Layout
-```
-app/pipeline.py      the 9 stages (what the live run view shows)
-app/rules.py         RULEBOOK + decide(): the ONLY place a status is decided
-app/llm.py           Claude client + offline mock (read docs, judge names, draft emails)
-app/validators/      tax-ID, bank and name logic (pure, unit-tested)
-app/screening.py     sanctions (fictional list), lookalikes, shared accounts
-app/db.py            SQLite + simulated clock + hash-chained audit log
-app/main.py          API, SSE stream, upload/rate/daily-cap guards
-app/service.py       submissions, resubmission, waiting loop (reminders, closure), vendor portal
-static/              the web UI: plain JS, no build step
-DEPLOY.md  Dockerfile  render.yaml
-samples/cases.json   26 labelled cases with expected outcomes
+pytest -q                                      # 91 tests
+python scripts/run_eval.py                     # 29 hand-made labelled cases (the demo pack)
+python scripts/synth.py --split test --n 800 --seed 29 && python scripts/validate.py test
 ```
 
-## Public-link safety
-Upload size/type limits, per-IP rate limit (`RATE_PER_HOUR`), and a hard daily cap (`DAILY_RUN_CAP`) protect your API budget if the link is opened by strangers.
+## Deploy (public link for the submission)
+Render, Railway or Fly: one Docker container, no other services. See [DEPLOY.md](DEPLOY.md) for click-by-click steps.
+
+## Where to look
+| | |
+|---|---|
+| `app/pipeline.py` | the 9 stages shown in the live run view |
+| `app/rules.py` | the rulebook and `decide()`: the only place a status is decided |
+| `app/workflow.py` | next actions, review queue, four-eyes, re-route to the vendor |
+| `app/validators/` | tax IDs, bank codes, names, document integrity (pure functions, unit-tested) |
+| `app/llm.py` | the AI's three jobs (read, judge names, draft emails), for Claude, Gemini and offline |
+| `synthetic/` | labelled synthetic vendor generator (37 + 9 stress scenarios) |
+| `app/quality.py`, `scripts/validate.py` | measurement harness and reports |
+| `static/` | the UI (plain JS, no build step; pdf.js from a CDN for document rendering) |
+
+Docs:
+- [DESIGN.md](DESIGN.md): why it is built this way
+- [ASSUMPTIONS.md](ASSUMPTIONS.md)
+- [VALIDATION.md](VALIDATION.md)
+- [DEMO_SCRIPT.md](DEMO_SCRIPT.md): the video and the live demo
+- [INTERVIEW_PREP.md](INTERVIEW_PREP.md)

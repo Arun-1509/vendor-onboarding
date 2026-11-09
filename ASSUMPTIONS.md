@@ -12,12 +12,19 @@ The guide says to treat ambiguity as part of the exercise: make an assumption, w
 |---|---|
 | Document reading (PDF/image) | **Real** with Claude when `ANTHROPIC_API_KEY` is set. Offline **mock** mode reads our generated sample PDFs; every run is labelled `mock` or `live`. |
 | Tax-ID and bank checks | **Real format + checksum** (GSTIN, PAN, German USt-IdNr, UK VAT, EIN prefix, IBAN mod-97, ABA, IFSC, SWIFT). **No registry lookup**, so a passing ID is *plausible*, not *verified with the government*. |
+| Bank-code directories | **Demo subsets**: a few IFSC prefixes, German BLZ codes and UK sort-code ranges. Production uses the full RBI IFSC master, the Bundesbank BLZ file and the UK EISCD. An unknown code is simply not checked (never a false alarm). |
+| PIN → GST state map | Two-digit PIN prefixes mapped to every state they touch, because postal circles don't follow state lines exactly. That makes it conservative: it can miss some mismatches, but it won't invent one. |
+| Document integrity | **Real**: reads the PDF's own text layer and file structure. It catches pasted-over values; it cannot catch a document retyped from scratch. |
 | Sanctions screening | **Mock list of three FICTIONAL entities.** Real deployment = a maintained feed (OFAC / UN / EU / UK). Fuzzy matching logic is real. |
 | Existing vendors | Seeded demo vendor master. |
 | Bank-account ownership | Checked against the bank letter's printed holder name. **No bank API** (penny-drop / account verification) is called. |
 | Email | Drafted and stored in an outbox; **not sent to real addresses** from the public demo. Sending to a verified test inbox is a switch, not a rebuild. |
 
 ## Policy decisions (opinions I'd defend)
+- **Only an EXACT sanctions match auto-rejects** (same name once case, accents, punctuation, legal form and word order are ignored, or a listed alias). A one-letter difference can be evasion or an innocent company, so it goes to compliance. Changed in v2: the original auto-rejected fuzzy matches at 93% similarity.
+- **Four-eyes:** approving a bank change, a shared account, a lookalike, an edited document, someone else's tax ID or a sanctions near-match needs a ticked checklist and two different reviewers.
+- **A head office using a branch's GST registration is normal**, so it is recorded but not blocking. A certificate whose *own* address is in a different state from its GSTIN is inconsistent and goes to review.
+- **Scan misreads are reconciled only on scans**, and only where a look-alike letter sits where the form has the matching digit. A letter there can't be a valid value, so this can't hide a genuinely different account.
 1. **Only compliance hits are auto-rejected.** Everything that merely *looks* like fraud (lookalike name, shared bank account, bank change, entity-type contradiction) is held for a **human**, because suspicion is not proof and a wrongful rejection has a business cost. Automation approves the clean, asks vendors for the fixable, and escalates the suspicious.
 2. **"Pending" has two meanings**, shown separately: *awaiting vendor* (fixable; an email goes out) and *awaiting reviewer* (a person decides; **nothing is disclosed to the vendor**).
 3. **The vendor is never told why they were screened.** Vendor emails are checked by code for fraud/sanctions/risk language and fall back to a safe template if the AI drifts. A sanctions rejection sends the vendor nothing.
@@ -31,6 +38,7 @@ The guide says to treat ambiguity as part of the exercise: make an assumption, w
 ## Known limitations (honest list)
 - Only checks what is on the page; a skilled forger with a valid-looking GSTIN/IBAN would pass format checks, which is exactly why bank changes and lookalikes go to a human call-back.
 - GST state-code vs address matching, director/UBO checks, adverse-media, credit checks: out of scope.
-- The mock AI is deliberately conservative and simple; the live model will phrase things differently. Results of the labelled suite in live mode must be re-checked (run `python scripts/run_eval.py` with a key).
+- The mock AI is deliberately conservative and simple, and the live model will behave differently. `scripts/live_check.py` measures live extraction (field agreement with the file text) and live decisions on a held-out sample.
+- Validation data is synthetic, and I wrote both the generator and the rules. See VALIDATION.md for how the held-out and stress sets limit that, and for the first-look numbers.
 - One reviewer role, no authentication on the demo. A real deployment needs SSO and roles.
 - Time is simulated in the demo (clock offset) to show reminders; a real system would use a scheduler.

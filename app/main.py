@@ -23,8 +23,25 @@ from sse_starlette.sse import EventSourceResponse
 from . import config, db, emailer, evaluation, pipeline, rules, service, workflow
 from .llm import get_llm
 
+def _refresh_samples_if_stale(max_age_days: int = 30):
+    """Demo documents carry dates relative to when they were generated (bank letters expire
+    after 90 days), so a long-running deployment regenerates them instead of drifting stale."""
+    cases = config.ROOT / "samples" / "cases.json"
+    if cases.exists() and time.time() - cases.stat().st_mtime < max_age_days * 86400:
+        return
+    try:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("make_samples", config.ROOT / "scripts" / "make_samples.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        mod.main()
+    except Exception as e:                      # never block startup on demo data
+        print(f"sample refresh skipped: {e}")
+
+
 @asynccontextmanager
 async def _lifespan(_app):
+    _refresh_samples_if_stale()
     c = db.connect()
     if c.execute("SELECT COUNT(*) n FROM vendors").fetchone()["n"] == 0:
         service.seed_vendor_master(c)

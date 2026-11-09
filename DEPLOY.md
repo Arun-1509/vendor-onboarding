@@ -1,41 +1,43 @@
-# Deploying
+# Deploying to Render (public link for the submission)
 
-The task needs a public URL that the reviewers can open. This app is one container, one process, SQLite on a disk. Nothing else to run.
+**What Render is:** a hosting service. You connect a GitHub repository; it builds the app from the `Dockerfile` and gives you a public URL like `https://vendor-onboarding.onrender.com`. That URL is "Deliverable 1: a link to your process, live and runnable".
 
-## Fastest: Render (or Railway / Fly)
+**Free tier, two things to know:**
+1. **It sleeps after about 15 minutes with no visitors.** The first visit after that takes about 50 seconds. Open the link a minute before any demo.
+2. **There is no permanent disk on the free tier**, so a restart wipes the run history. The app re-seeds itself on startup, so it always works. If you want history to survive, switch to the Starter plan (about $7/month) and add a disk (commented out in `render.yaml`).
 
-1. Put this folder in a GitHub repo (the `.gitignore` already keeps `var/` and `.env` out).
-2. Render > New > Blueprint > pick the repo. It reads `render.yaml`.
-3. Fill in the three secrets it asks for:
-   - `GEMINI_API_KEY`: free, from aistudio.google.com (no card). Free-tier rate limits are fine for a demo.
-   - `ANTHROPIC_API_KEY` (optional): if you have one, it is used instead of Gemini. Put it on a workspace with a spend limit, because the URL is public.
-   - `BASE_URL`: the URL Render gives you (links inside emails use it).
-   - `DEMO_INBOX` + `RESEND_API_KEY`: optional, only for the "Send to my test inbox" button.
-4. Open the URL. The top-left chip must say **Live AI: Gemini** (or Claude). If it says *Offline mock AI*, the key is missing.
+## Steps (about 10 minutes)
+1. **Put the code on GitHub.** In this folder:
+   ```bash
+   git remote add origin https://github.com/<you>/vendor-onboarding.git
+   git push -u origin master
+   ```
+   (Create the empty repository on github.com first. `.gitignore` keeps `var/` and `.env` out.)
+2. **Render:** sign in at render.com (GitHub login is fine) → **New** → **Blueprint** → pick the repository. Render reads `render.yaml`.
+3. **Fill the settings it asks for:**
+   - `BASE_URL`: leave it empty for now, then set it to your URL after the first deploy (it is used in vendor email links).
+   - `GEMINI_API_KEY` (optional): a free key from aistudio.google.com. It switches document reading from "offline" to a real model.
+   - `ANTHROPIC_API_KEY` (optional): used instead of Gemini if set. Put a spend limit on it, because the URL is public.
+   - `ADMIN_KEY` is generated for you. Find it under the service's **Environment** tab; the app asks for it when someone clicks "Reset demo data" on the public link.
+4. **Deploy.** The first build takes about 3–5 minutes. Then open the URL:
+   - The bottom-left chip says **Offline AI (simulated)** or **Live AI · Gemini/Claude**.
+   - **Model quality** shows the validation results; **New submission** shows the demo pack.
 
-## Settings that matter
+## Before you send the link
+1. Open it once to wake it.
+2. Overview → **Reset demo data** (enter the admin key), so reviewers start clean.
+3. Run one happy-path case and one edge case to confirm.
+4. If you added a model key: run `python scripts/live_check.py --n 30` locally with the same key, and read any failure.
 
-| Variable | Why |
-|---|---|
-| `VAR_DIR=/data` | Database and uploads. Must be a persistent disk, or history vanishes on every restart. |
-| `ADMIN_KEY` | If set, "Reset demo data" asks for it (`X-Admin-Key` header). Leave it unset for local use. |
-| `DAILY_RUN_CAP` | Hard daily ceiling on runs, so a shared link cannot drain your API credit. |
-| `RATE_PER_HOUR` | Per-IP submissions per hour. |
-| `LLM_PROVIDER` | `auto` (default): Claude if its key exists, else Gemini. Or force `gemini` / `anthropic`. |
-| `MOCK_LLM` | `auto` (default) uses the real model when a key exists. `1` forces the offline mock. |
+## Built-in protection for a public URL
+- Upload type and size limits.
+- A per-IP hourly limit (`RATE_PER_HOUR`).
+- A hard daily run cap (`DAILY_RUN_CAP`), so a shared link can't drain an API budget.
+- Demo emails are drafted, never sent to real vendor addresses.
 
-## Before you submit the link (do this in order)
-
-1. `python scripts/check_model.py` with the key set. It confirms the key works and every configured model exists. If a Gemini model name is reported missing, set `GEMINI_MODEL` / `GEMINI_FALLBACK` to one from your list.
-2. Open the live site, Evaluation > Run all cases. It asks for confirmation because it spends credit. **Expect 26/26.** If a case fails in live mode, that is a real model-versus-mock difference: tell me which case and its output and I will fix the prompt or the rule.
-3. Click "Reset demo data" so reviewers start from a clean list (5 existing vendors, nothing else).
-4. Free instances sleep. Open the URL a minute before any demo so the first click is not a cold start.
-
-## Run locally
-
+## Alternatives
+Railway and Fly.io work the same way (one container, `PORT` env var respected). Locally, with Docker:
+```bash
+docker build -t vendor .
+docker run -p 8000:8000 vendor
 ```
-pip install -r requirements.txt
-python scripts/make_samples.py     # regenerate before a demo: document dates are relative to today
-uvicorn app.main:app --port 8000   # no key needed: it runs in offline mock mode
-```
-Docker: `docker build -t vendor . && docker run -p 8000:8000 -e GEMINI_API_KEY=... -v vendor-data:/data vendor`
