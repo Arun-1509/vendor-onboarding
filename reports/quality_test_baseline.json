@@ -1,0 +1,2385 @@
+{
+ "split": "test",
+ "seed": 29,
+ "llm_mode": "mock",
+ "metrics": {
+  "n": 800,
+  "decision_accuracy": 0.865,
+  "strict_accuracy": 0.8625,
+  "macro_f1": 0.8201,
+  "unsafe_approval_rate": 0.0874,
+  "straight_through_rate": 0.9188,
+  "errors": {
+   "unsafe_approvals": 43,
+   "missed_rejects": 0,
+   "disclosure_leaks": 18,
+   "over_escalations": 0,
+   "false_holds": 25,
+   "other": 22
+  },
+  "weighted_cost": 2377,
+  "confusion": {
+   "approved": {
+    "approved": 283,
+    "awaiting_vendor": 25,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_vendor": {
+    "approved": 0,
+    "awaiting_vendor": 241,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_reviewer": {
+    "approved": 43,
+    "awaiting_vendor": 18,
+    "awaiting_reviewer": 143,
+    "rejected": 22
+   },
+   "rejected": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 25
+   }
+  },
+  "per_class": {
+   "approved": {
+    "precision": 0.8681,
+    "recall": 0.9188,
+    "f1": 0.8927,
+    "support": 308
+   },
+   "awaiting_vendor": {
+    "precision": 0.8486,
+    "recall": 1.0,
+    "f1": 0.9181,
+    "support": 241
+   },
+   "awaiting_reviewer": {
+    "precision": 1.0,
+    "recall": 0.6327,
+    "f1": 0.7751,
+    "support": 226
+   },
+   "rejected": {
+    "precision": 0.5319,
+    "recall": 1.0,
+    "f1": 0.6944,
+    "support": 25
+   }
+  },
+  "per_scenario": {
+   "account_vs_letter": {
+    "n": 16,
+    "decision_ok": 16,
+    "strict_ok": 16,
+    "failed_ids": []
+   },
+   "bank_change": {
+    "n": 23,
+    "decision_ok": 23,
+    "strict_ok": 23,
+    "failed_ids": []
+   },
+   "bank_code_mismatch": {
+    "n": 22,
+    "decision_ok": 6,
+    "strict_ok": 6,
+    "failed_ids": [
+     "test-0081-bank_code_mismatch",
+     "test-0112-bank_code_mismatch",
+     "test-0179-bank_code_mismatch",
+     "test-0226-bank_code_mismatch",
+     "test-0237-bank_code_mismatch"
+    ]
+   },
+   "bank_typo": {
+    "n": 21,
+    "decision_ok": 21,
+    "strict_ok": 21,
+    "failed_ids": []
+   },
+   "blurry_scan": {
+    "n": 26,
+    "decision_ok": 26,
+    "strict_ok": 26,
+    "failed_ids": []
+   },
+   "branch_gstin": {
+    "n": 8,
+    "decision_ok": 8,
+    "strict_ok": 8,
+    "failed_ids": []
+   },
+   "cert_state_mismatch": {
+    "n": 11,
+    "decision_ok": 0,
+    "strict_ok": 0,
+    "failed_ids": [
+     "test-0058-cert_state_mismatch",
+     "test-0199-cert_state_mismatch",
+     "test-0326-cert_state_mismatch",
+     "test-0328-cert_state_mismatch",
+     "test-0345-cert_state_mismatch"
+    ]
+   },
+   "clean": {
+    "n": 113,
+    "decision_ok": 113,
+    "strict_ok": 113,
+    "failed_ids": []
+   },
+   "clean_scan": {
+    "n": 31,
+    "decision_ok": 31,
+    "strict_ok": 31,
+    "failed_ids": []
+   },
+   "combo_fraud_plus_fix": {
+    "n": 22,
+    "decision_ok": 17,
+    "strict_ok": 17,
+    "failed_ids": [
+     "test-0126-combo_fraud_plus_fix",
+     "test-0158-combo_fraud_plus_fix",
+     "test-0427-combo_fraud_plus_fix",
+     "test-0491-combo_fraud_plus_fix",
+     "test-0798-combo_fraud_plus_fix"
+    ]
+   },
+   "country_contradiction": {
+    "n": 18,
+    "decision_ok": 18,
+    "strict_ok": 18,
+    "failed_ids": []
+   },
+   "extra_word_name": {
+    "n": 12,
+    "decision_ok": 12,
+    "strict_ok": 12,
+    "failed_ids": []
+   },
+   "free_email_company": {
+    "n": 14,
+    "decision_ok": 14,
+    "strict_ok": 14,
+    "failed_ids": []
+   },
+   "holder_is_person": {
+    "n": 14,
+    "decision_ok": 14,
+    "strict_ok": 14,
+    "failed_ids": []
+   },
+   "invalid_email": {
+    "n": 14,
+    "decision_ok": 14,
+    "strict_ok": 14,
+    "failed_ids": []
+   },
+   "lookalike_vendor": {
+    "n": 27,
+    "decision_ok": 24,
+    "strict_ok": 24,
+    "failed_ids": [
+     "test-0277-lookalike_vendor",
+     "test-0330-lookalike_vendor",
+     "test-0759-lookalike_vendor"
+    ]
+   },
+   "missing_doc": {
+    "n": 26,
+    "decision_ok": 26,
+    "strict_ok": 26,
+    "failed_ids": []
+   },
+   "missing_field": {
+    "n": 34,
+    "decision_ok": 34,
+    "strict_ok": 34,
+    "failed_ids": []
+   },
+   "ocr_misread": {
+    "n": 25,
+    "decision_ok": 0,
+    "strict_ok": 0,
+    "failed_ids": [
+     "test-0009-ocr_misread",
+     "test-0014-ocr_misread",
+     "test-0018-ocr_misread",
+     "test-0038-ocr_misread",
+     "test-0140-ocr_misread"
+    ]
+   },
+   "pan_entity_mismatch": {
+    "n": 17,
+    "decision_ok": 17,
+    "strict_ok": 17,
+    "failed_ids": []
+   },
+   "pan_name_mismatch": {
+    "n": 13,
+    "decision_ok": 0,
+    "strict_ok": 0,
+    "failed_ids": [
+     "test-0119-pan_name_mismatch",
+     "test-0193-pan_name_mismatch",
+     "test-0250-pan_name_mismatch",
+     "test-0269-pan_name_mismatch",
+     "test-0371-pan_name_mismatch"
+    ]
+   },
+   "prior_rejected": {
+    "n": 4,
+    "decision_ok": 4,
+    "strict_ok": 4,
+    "failed_ids": []
+   },
+   "sanctions_exact": {
+    "n": 25,
+    "decision_ok": 25,
+    "strict_ok": 25,
+    "failed_ids": []
+   },
+   "sanctions_near": {
+    "n": 22,
+    "decision_ok": 0,
+    "strict_ok": 0,
+    "failed_ids": [
+     "test-0052-sanctions_near",
+     "test-0088-sanctions_near",
+     "test-0127-sanctions_near",
+     "test-0180-sanctions_near",
+     "test-0259-sanctions_near"
+    ]
+   },
+   "sanctions_word_overlap": {
+    "n": 14,
+    "decision_ok": 14,
+    "strict_ok": 14,
+    "failed_ids": []
+   },
+   "shared_account": {
+    "n": 20,
+    "decision_ok": 20,
+    "strict_ok": 20,
+    "failed_ids": []
+   },
+   "stale_bank_letter": {
+    "n": 23,
+    "decision_ok": 23,
+    "strict_ok": 23,
+    "failed_ids": []
+   },
+   "tampered_bank_letter": {
+    "n": 13,
+    "decision_ok": 0,
+    "strict_ok": 0,
+    "failed_ids": [
+     "test-0008-tampered_bank_letter",
+     "test-0032-tampered_bank_letter",
+     "test-0114-tampered_bank_letter",
+     "test-0162-tampered_bank_letter",
+     "test-0410-tampered_bank_letter"
+    ]
+   },
+   "taxid_dup_other_name": {
+    "n": 14,
+    "decision_ok": 14,
+    "strict_ok": 14,
+    "failed_ids": []
+   },
+   "taxid_form_vs_cert": {
+    "n": 21,
+    "decision_ok": 21,
+    "strict_ok": 21,
+    "failed_ids": []
+   },
+   "taxid_typo": {
+    "n": 22,
+    "decision_ok": 22,
+    "strict_ok": 22,
+    "failed_ids": []
+   },
+   "variant_abbreviation": {
+    "n": 20,
+    "decision_ok": 20,
+    "strict_ok": 18,
+    "failed_ids": [
+     "test-0188-variant_abbreviation",
+     "test-0578-variant_abbreviation"
+    ]
+   },
+   "variant_case_punct": {
+    "n": 19,
+    "decision_ok": 19,
+    "strict_ok": 19,
+    "failed_ids": []
+   },
+   "variant_id_formatting": {
+    "n": 12,
+    "decision_ok": 12,
+    "strict_ok": 12,
+    "failed_ids": []
+   },
+   "variant_legal_form": {
+    "n": 33,
+    "decision_ok": 33,
+    "strict_ok": 33,
+    "failed_ids": []
+   },
+   "variant_trade_name": {
+    "n": 19,
+    "decision_ok": 19,
+    "strict_ok": 19,
+    "failed_ids": []
+   },
+   "wrong_doc": {
+    "n": 12,
+    "decision_ok": 12,
+    "strict_ok": 12,
+    "failed_ids": []
+   }
+  },
+  "median_ms": 76
+ },
+ "failures": [
+  {
+   "id": "test-0008-tampered_bank_letter",
+   "scenario": "tampered_bank_letter",
+   "country": "GB",
+   "title": "Genuine bank letter edited: new account number pasted over the old",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 90,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0009-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "IN",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 896O80187151689)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 71,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0014-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "IN",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 8273B4829899204)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 62,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0018-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "GB",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 512550Z7)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 58,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0032-tampered_bank_letter",
+   "scenario": "tampered_bank_letter",
+   "country": "GB",
+   "title": "Genuine bank letter edited: new account number pasted over the old",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 75,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0038-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "US",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 4I348579974)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 67,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0052-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Orion Vale Meeals LLC)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 82,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0058-cert_state_mismatch",
+   "scenario": "cert_state_mismatch",
+   "country": "IN",
+   "title": "Certificate address is in a different state from the GSTIN (GSTIN state 06, certificate in Ahmedabad)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 79,
+   "codes": []
+  },
+  {
+   "id": "test-0081-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "DE",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is Deutsche Bank, stated Sparkasse KoelnBonn)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 75,
+   "codes": []
+  },
+  {
+   "id": "test-0088-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "GB",
+   "title": "Name is a near-spelling of a sanctioned entity (Blackthorn Ofishore Trading Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 76,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0112-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "GB",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is HSBC UK, stated NatWest)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 81,
+   "codes": []
+  },
+  {
+   "id": "test-0114-tampered_bank_letter",
+   "scenario": "tampered_bank_letter",
+   "country": "GB",
+   "title": "Genuine bank letter edited: new account number pasted over the old",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 82,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0119-pan_name_mismatch",
+   "scenario": "pan_name_mismatch",
+   "country": "IN",
+   "title": "GSTIN valid, but its PAN belongs to a differently named entity (PAN initial R)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 78,
+   "codes": []
+  },
+  {
+   "id": "test-0126-combo_fraud_plus_fix",
+   "scenario": "combo_fraud_plus_fix",
+   "country": "IN",
+   "title": "Fraud signal AND a fixable gap: reviewer must win (lookalike_vendor + missing postal_code)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer",
+    "missing expected finding LOOKALIKE_VENDOR"
+   ],
+   "risk": 0,
+   "ms": 81,
+   "codes": [
+    "MISSING_FIELD"
+   ]
+  },
+  {
+   "id": "test-0127-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Merdian Crest Shipping Co)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 72,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0140-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "GB",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 540O0078)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 57,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0158-combo_fraud_plus_fix",
+   "scenario": "combo_fraud_plus_fix",
+   "country": "IN",
+   "title": "Fraud signal AND a fixable gap: reviewer must win (lookalike_vendor + missing postal_code)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer",
+    "missing expected finding LOOKALIKE_VENDOR"
+   ],
+   "risk": 0,
+   "ms": 78,
+   "codes": [
+    "MISSING_FIELD"
+   ]
+  },
+  {
+   "id": "test-0162-tampered_bank_letter",
+   "scenario": "tampered_bank_letter",
+   "country": "US",
+   "title": "Genuine bank letter edited: new account number pasted over the old",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 66,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0179-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "GB",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is Santander UK, stated Barclays Bank)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 79,
+   "codes": []
+  },
+  {
+   "id": "test-0180-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Meridian Crest Shiiping Co)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 83,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0188-variant_abbreviation",
+   "scenario": "variant_abbreviation",
+   "country": "IN",
+   "title": "Bank letter abbreviates one word of the name ('Wesmoent Logistics Texti LLP')",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": false,
+   "fails": [
+    "missing expected finding NAME_VARIANT_AI"
+   ],
+   "risk": 0,
+   "ms": 77,
+   "codes": []
+  },
+  {
+   "id": "test-0191-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "US",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 87478869I55)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 60,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0193-pan_name_mismatch",
+   "scenario": "pan_name_mismatch",
+   "country": "IN",
+   "title": "GSTIN valid, but its PAN belongs to a differently named entity (PAN initial R)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 76,
+   "codes": []
+  },
+  {
+   "id": "test-0199-cert_state_mismatch",
+   "scenario": "cert_state_mismatch",
+   "country": "IN",
+   "title": "Certificate address is in a different state from the GSTIN (GSTIN state 07, certificate in Pune)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 69,
+   "codes": []
+  },
+  {
+   "id": "test-0226-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "GB",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is HSBC UK, stated NatWest)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 79,
+   "codes": []
+  },
+  {
+   "id": "test-0237-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "DE",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is ING-DiBa, stated Hamburger Sparkasse)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 69,
+   "codes": []
+  },
+  {
+   "id": "test-0242-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "GB",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 8211Z528)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 63,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0250-pan_name_mismatch",
+   "scenario": "pan_name_mismatch",
+   "country": "IN",
+   "title": "GSTIN valid, but its PAN belongs to a differently named entity (PAN initial L)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 76,
+   "codes": []
+  },
+  {
+   "id": "test-0259-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Meridian Creot Shipping Co)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 78,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0261-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "US",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 859473Z763)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 67,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0265-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Ooion Vale Metals LLC)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 82,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0269-pan_name_mismatch",
+   "scenario": "pan_name_mismatch",
+   "country": "IN",
+   "title": "GSTIN valid, but its PAN belongs to a differently named entity (PAN initial V)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 79,
+   "codes": []
+  },
+  {
+   "id": "test-0277-lookalike_vendor",
+   "scenario": "lookalike_vendor",
+   "country": "DE",
+   "title": "Name imitates an approved vendor; different tax ID and bank (add_word: 'Hansa Elektro Technik India GmbH' vs 'Hansa Elektro Technik GmbH')",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer",
+    "missing expected finding LOOKALIKE_VENDOR"
+   ],
+   "risk": 0,
+   "ms": 81,
+   "codes": []
+  },
+  {
+   "id": "test-0286-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "GB",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 37O41224)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 64,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0307-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Orin Vale Metals LLC)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 62,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0326-cert_state_mismatch",
+   "scenario": "cert_state_mismatch",
+   "country": "IN",
+   "title": "Certificate address is in a different state from the GSTIN (GSTIN state 33, certificate in Ahmedabad)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 80,
+   "codes": []
+  },
+  {
+   "id": "test-0328-cert_state_mismatch",
+   "scenario": "cert_state_mismatch",
+   "country": "IN",
+   "title": "Certificate address is in a different state from the GSTIN (GSTIN state 07, certificate in Jaipur)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 61,
+   "codes": []
+  },
+  {
+   "id": "test-0330-lookalike_vendor",
+   "scenario": "lookalike_vendor",
+   "country": "DE",
+   "title": "Name imitates an approved vendor; different tax ID and bank (add_word: 'Weser Messtechnik Group GmbH' vs 'Weser Messtechnik GmbH')",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer",
+    "missing expected finding LOOKALIKE_VENDOR"
+   ],
+   "risk": 0,
+   "ms": 65,
+   "codes": []
+  },
+  {
+   "id": "test-0337-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Orin Vale Metals LLC)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 57,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0345-cert_state_mismatch",
+   "scenario": "cert_state_mismatch",
+   "country": "IN",
+   "title": "Certificate address is in a different state from the GSTIN (GSTIN state 27, certificate in New Delhi)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 87,
+   "codes": []
+  },
+  {
+   "id": "test-0348-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "US",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 39602986O0)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 70,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0359-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "DE",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is Deutsche Bank, stated ING-DiBa)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 65,
+   "codes": []
+  },
+  {
+   "id": "test-0371-pan_name_mismatch",
+   "scenario": "pan_name_mismatch",
+   "country": "IN",
+   "title": "GSTIN valid, but its PAN belongs to a differently named entity (PAN initial C)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 80,
+   "codes": []
+  },
+  {
+   "id": "test-0381-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "GB",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is Lloyds Bank, stated NatWest)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 79,
+   "codes": []
+  },
+  {
+   "id": "test-0388-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Meridin Crest Shipping Co)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 70,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0398-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Orion Vale Mtals LLC)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 86,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0410-tampered_bank_letter",
+   "scenario": "tampered_bank_letter",
+   "country": "IN",
+   "title": "Genuine bank letter edited: new account number pasted over the old",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 80,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0421-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "GB",
+   "title": "Name is a near-spelling of a sanctioned entity (Blackthorn Offshooe Trading Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 83,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0426-tampered_bank_letter",
+   "scenario": "tampered_bank_letter",
+   "country": "US",
+   "title": "Genuine bank letter edited: new account number pasted over the old",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 84,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0427-combo_fraud_plus_fix",
+   "scenario": "combo_fraud_plus_fix",
+   "country": "US",
+   "title": "Fraud signal AND a fixable gap: reviewer must win (lookalike_vendor + missing contact_name)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer",
+    "missing expected finding LOOKALIKE_VENDOR"
+   ],
+   "risk": 0,
+   "ms": 78,
+   "codes": [
+    "MISSING_FIELD"
+   ]
+  },
+  {
+   "id": "test-0444-pan_name_mismatch",
+   "scenario": "pan_name_mismatch",
+   "country": "IN",
+   "title": "GSTIN valid, but its PAN belongs to a differently named entity (PAN initial B)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 83,
+   "codes": []
+  },
+  {
+   "id": "test-0446-tampered_bank_letter",
+   "scenario": "tampered_bank_letter",
+   "country": "DE",
+   "title": "Genuine bank letter edited: new account number pasted over the old",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 82,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0458-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "IN",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 89349667I21879)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 62,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0468-pan_name_mismatch",
+   "scenario": "pan_name_mismatch",
+   "country": "IN",
+   "title": "GSTIN valid, but its PAN belongs to a differently named entity (PAN initial J)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 75,
+   "codes": []
+  },
+  {
+   "id": "test-0472-tampered_bank_letter",
+   "scenario": "tampered_bank_letter",
+   "country": "DE",
+   "title": "Genuine bank letter edited: new account number pasted over the old",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 81,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0475-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "IN",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 87997O13992120)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 64,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0491-combo_fraud_plus_fix",
+   "scenario": "combo_fraud_plus_fix",
+   "country": "GB",
+   "title": "Fraud signal AND a fixable gap: reviewer must win (lookalike_vendor + missing contact_name)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer",
+    "missing expected finding LOOKALIKE_VENDOR"
+   ],
+   "risk": 0,
+   "ms": 88,
+   "codes": [
+    "MISSING_FIELD"
+   ]
+  },
+  {
+   "id": "test-0500-cert_state_mismatch",
+   "scenario": "cert_state_mismatch",
+   "country": "IN",
+   "title": "Certificate address is in a different state from the GSTIN (GSTIN state 19, certificate in Lucknow)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 76,
+   "codes": []
+  },
+  {
+   "id": "test-0516-pan_name_mismatch",
+   "scenario": "pan_name_mismatch",
+   "country": "IN",
+   "title": "GSTIN valid, but its PAN belongs to a differently named entity (PAN initial N)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 71,
+   "codes": []
+  },
+  {
+   "id": "test-0519-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "GB",
+   "title": "Name is a near-spelling of a sanctioned entity (Blackthorn Offshore Trding Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 63,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0524-pan_name_mismatch",
+   "scenario": "pan_name_mismatch",
+   "country": "IN",
+   "title": "GSTIN valid, but its PAN belongs to a differently named entity (PAN initial M)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 80,
+   "codes": []
+  },
+  {
+   "id": "test-0525-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "IN",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 18B05846700)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 62,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0531-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "GB",
+   "title": "Name is a near-spelling of a sanctioned entity (Blacathorn Offshore Trading Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 81,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0541-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "IN",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 79B64946659621)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 65,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0549-tampered_bank_letter",
+   "scenario": "tampered_bank_letter",
+   "country": "GB",
+   "title": "Genuine bank letter edited: new account number pasted over the old",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 77,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0555-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "GB",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 7Z632912)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 66,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0556-cert_state_mismatch",
+   "scenario": "cert_state_mismatch",
+   "country": "IN",
+   "title": "Certificate address is in a different state from the GSTIN (GSTIN state 24, certificate in New Delhi)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 75,
+   "codes": []
+  },
+  {
+   "id": "test-0564-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "US",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 0625154I26)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 62,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0578-variant_abbreviation",
+   "scenario": "variant_abbreviation",
+   "country": "IN",
+   "title": "Bank letter abbreviates one word of the name ('Arihant Casti Electricals Limited')",
+   "expected": "approved",
+   "got": "approved",
+   "decision_ok": true,
+   "strict_ok": false,
+   "fails": [
+    "missing expected finding NAME_VARIANT_AI"
+   ],
+   "risk": 0,
+   "ms": 73,
+   "codes": []
+  },
+  {
+   "id": "test-0583-cert_state_mismatch",
+   "scenario": "cert_state_mismatch",
+   "country": "IN",
+   "title": "Certificate address is in a different state from the GSTIN (GSTIN state 24, certificate in Mumbai)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 69,
+   "codes": []
+  },
+  {
+   "id": "test-0595-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "US",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 0Z64824521)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 64,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0598-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "US",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 9253I194141)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 66,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0615-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "GB",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is HSBC UK, stated Santander UK)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 75,
+   "codes": []
+  },
+  {
+   "id": "test-0619-cert_state_mismatch",
+   "scenario": "cert_state_mismatch",
+   "country": "IN",
+   "title": "Certificate address is in a different state from the GSTIN (GSTIN state 19, certificate in Chennai)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 72,
+   "codes": []
+  },
+  {
+   "id": "test-0621-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Orion Vaoe Metals LLC)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 75,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0622-tampered_bank_letter",
+   "scenario": "tampered_bank_letter",
+   "country": "US",
+   "title": "Genuine bank letter edited: new account number pasted over the old",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 80,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0638-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "GB",
+   "title": "Name is a near-spelling of a sanctioned entity (Blckthorn Offshore Trading Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 82,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0641-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Meridian Crst Shipping Co)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 80,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0642-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "GB",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 63492Z74)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 66,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0643-pan_name_mismatch",
+   "scenario": "pan_name_mismatch",
+   "country": "IN",
+   "title": "GSTIN valid, but its PAN belongs to a differently named entity (PAN initial R)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 83,
+   "codes": []
+  },
+  {
+   "id": "test-0651-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Orion Vale Meaals LLC)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 70,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0658-pan_name_mismatch",
+   "scenario": "pan_name_mismatch",
+   "country": "IN",
+   "title": "GSTIN valid, but its PAN belongs to a differently named entity (PAN initial N)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 66,
+   "codes": []
+  },
+  {
+   "id": "test-0659-tampered_bank_letter",
+   "scenario": "tampered_bank_letter",
+   "country": "DE",
+   "title": "Genuine bank letter edited: new account number pasted over the old",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 83,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0661-tampered_bank_letter",
+   "scenario": "tampered_bank_letter",
+   "country": "GB",
+   "title": "Genuine bank letter edited: new account number pasted over the old",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 78,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0663-pan_name_mismatch",
+   "scenario": "pan_name_mismatch",
+   "country": "IN",
+   "title": "GSTIN valid, but its PAN belongs to a differently named entity (PAN initial K)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 75,
+   "codes": []
+  },
+  {
+   "id": "test-0671-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "GB",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is NatWest, stated HSBC UK)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 82,
+   "codes": []
+  },
+  {
+   "id": "test-0684-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "IN",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is Axis Bank, stated Yes Bank)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 75,
+   "codes": []
+  },
+  {
+   "id": "test-0685-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "DE",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is Hamburger Sparkasse, stated HypoVereinsbank)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 80,
+   "codes": []
+  },
+  {
+   "id": "test-0687-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Merdian Crest Shipping Co)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 76,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0692-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Meridin Crest Shipping Co)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 80,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0697-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "GB",
+   "title": "Name is a near-spelling of a sanctioned entity (Blackthorn Offshore Tradng Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 80,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0699-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "DE",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is Hamburger Sparkasse, stated Deutsche Bank)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 84,
+   "codes": []
+  },
+  {
+   "id": "test-0702-tampered_bank_letter",
+   "scenario": "tampered_bank_letter",
+   "country": "IN",
+   "title": "Genuine bank letter edited: new account number pasted over the old",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 20,
+   "ms": 79,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0703-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "GB",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is Lloyds Bank, stated Santander UK)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 65,
+   "codes": []
+  },
+  {
+   "id": "test-0710-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Mridian Crest Shipping Co)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 81,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0713-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "GB",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is Royal Bank of Scotland, stated Barclays Bank)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 82,
+   "codes": []
+  },
+  {
+   "id": "test-0717-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "GB",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 175O4496)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 63,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0719-pan_name_mismatch",
+   "scenario": "pan_name_mismatch",
+   "country": "IN",
+   "title": "GSTIN valid, but its PAN belongs to a differently named entity (PAN initial V)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 83,
+   "codes": []
+  },
+  {
+   "id": "test-0721-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "DE",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is Sparkasse KoelnBonn, stated Deutsche Bank)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 80,
+   "codes": []
+  },
+  {
+   "id": "test-0725-cert_state_mismatch",
+   "scenario": "cert_state_mismatch",
+   "country": "IN",
+   "title": "Certificate address is in a different state from the GSTIN (GSTIN state 19, certificate in Ahmedabad)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 77,
+   "codes": []
+  },
+  {
+   "id": "test-0731-bank_code_mismatch",
+   "scenario": "bank_code_mismatch",
+   "country": "GB",
+   "title": "Bank code (IFSC / IBAN BLZ / sort code) belongs to another bank (code is NatWest, stated HSBC UK)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 110,
+   "codes": []
+  },
+  {
+   "id": "test-0732-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "GB",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 3Z472999)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 58,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0741-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "GB",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 8397S707)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 65,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0743-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "GB",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 3B784224)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 60,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0745-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "GB",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 33S44349)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 63,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0746-ocr_misread",
+   "scenario": "ocr_misread",
+   "country": "US",
+   "title": "Scan where OCR reads one digit as a look-alike letter (read as 32S792989593)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved",
+    "unexpected finding BANK_ACCOUNT_MISMATCH_DOC"
+   ],
+   "risk": 20,
+   "ms": 63,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "test-0755-sanctions_near",
+   "scenario": "sanctions_near",
+   "country": "US",
+   "title": "Name is a near-spelling of a sanctioned entity (Mridian Crest Shipping Co)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 84,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "test-0759-lookalike_vendor",
+   "scenario": "lookalike_vendor",
+   "country": "DE",
+   "title": "Name imitates an approved vendor; different tax ID and bank (add_word: 'Odenwald Metallbau Global AG' vs 'Odenwald Metallbau AG')",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer",
+    "missing expected finding LOOKALIKE_VENDOR"
+   ],
+   "risk": 0,
+   "ms": 81,
+   "codes": []
+  },
+  {
+   "id": "test-0766-cert_state_mismatch",
+   "scenario": "cert_state_mismatch",
+   "country": "IN",
+   "title": "Certificate address is in a different state from the GSTIN (GSTIN state 32, certificate in Lucknow)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 65,
+   "codes": []
+  },
+  {
+   "id": "test-0798-combo_fraud_plus_fix",
+   "scenario": "combo_fraud_plus_fix",
+   "country": "IN",
+   "title": "Fraud signal AND a fixable gap: reviewer must win (lookalike_vendor + missing contact_name)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer",
+    "missing expected finding LOOKALIKE_VENDOR"
+   ],
+   "risk": 0,
+   "ms": 83,
+   "codes": [
+    "MISSING_FIELD"
+   ]
+  }
+ ]
+}
