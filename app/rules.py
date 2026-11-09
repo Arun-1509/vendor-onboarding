@@ -40,7 +40,12 @@ _R = [
     ("NAME_MISMATCH_TAXCERT", "consistency", "warn", "vendor", 20, "Company name differs from tax certificate", "The tax certificate is the authority on the legal name."),
     ("ACCOUNT_HOLDER_MISMATCH", "consistency", "warn", "vendor", 25, "Bank account is not in the vendor's name", "Paying a different name is a classic fraud pattern."),
     ("BANK_ACCOUNT_MISMATCH_DOC", "consistency", "warn", "vendor", 20, "Account on form differs from bank letter", "Either a typo or a tampered document."),
-    ("BANK_NAME_IFSC_MISMATCH", "consistency", "warn", "reviewer", 15, "Bank name does not match the IFSC code", "The code belongs to a different bank from the one stated."),
+    ("BANK_CODE_MISMATCH", "consistency", "warn", "reviewer", 20, "Bank name does not match the bank code", "The IFSC / IBAN bank code / sort code belongs to a different bank from the one stated."),
+    ("IBAN_PARTS_MISMATCH", "consistency", "warn", "vendor", 15, "IBAN disagrees with the sort code / account number", "A UK IBAN contains the sort code and account number; both must agree."),
+    ("PAN_NAME_MISMATCH", "consistency", "block", "reviewer", 30, "Tax ID belongs to a differently named entity", "The 5th character of a company PAN is the first letter of its name; this one points to another business."),
+    ("GSTIN_STATE_MISMATCH", "consistency", "block", "reviewer", 30, "Certificate address is in a different state from its GSTIN", "A GST certificate is issued per state; an address elsewhere means the certificate is internally inconsistent."),
+    ("GSTIN_BRANCH_STATE", "consistency", "info", "none", 5, "Form address is in another state from the GSTIN", "Common when a head office uses a branch's registration; the certificate itself is consistent."),
+    ("DOC_OCR_RECONCILED", "completeness", "info", "none", 0, "Scan misread reconciled", "A scanned digit read as a look-alike letter (0/O, 1/I, 5/S, 8/B); the form value is confirmed."),
     ("FORM_LEGAL_FORM_MISMATCH", "consistency", "warn", "vendor", 10, "Legal form differs between sources", "'Ltd' and 'LLP' are different legal entities."),
     ("ENTITY_TYPE_MISMATCH_PAN", "consistency", "block", "reviewer", 30, "Tax ID says a different kind of entity", "e.g. a PAN issued to an individual, but the vendor claims to be a company."),
     ("COUNTRY_CONTRADICTION", "consistency", "block", "reviewer", 30, "Country contradicts tax ID or bank details", "Fields that cannot all be true at once."),
@@ -51,6 +56,9 @@ _R = [
     ("NAME_VARIANT_AI", "consistency", "info", "none", 10, "Names judged to be the same company (AI-assisted)", "Grey-zone name difference resolved with a recorded explanation."),
     ("NAME_TRADE_NAME", "consistency", "info", "none", 5, "Bank account is in the declared trade name", "Acceptable when the trade name is declared and the legal name is confirmed by the certificate."),
     ("NAME_UNRESOLVED", "consistency", "warn", "vendor", 20, "Names could not be reconciled", "We could not confidently tell if these are the same company."),
+    # --- document integrity --------------------------------------------------------
+    ("DOC_CONFLICTING_VALUES", "fraud", "block", "reviewer", 45, "Document contains two different values for the same field", "Typical of a genuine document with a new value pasted over the old one."),
+    ("DOC_EDITED", "fraud", "info", "none", 5, "Document was edited after it was created", "Saved with later changes. Often harmless (e.g. signed), worth a glance."),
     # --- screening ---------------------------------------------------------------
     ("SANCTIONS_HIT", "compliance", "block", "reject", 100, "Matches the sanctions list", "We are legally barred from paying listed parties."),
     ("SANCTIONS_NEAR", "compliance", "block", "reviewer", 40, "Close to a sanctions-list name", "A human must rule out a false positive."),

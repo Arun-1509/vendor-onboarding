@@ -1,0 +1,2164 @@
+{
+ "split": "stress",
+ "seed": 47,
+ "llm_mode": "mock",
+ "metrics": {
+  "n": 300,
+  "decision_accuracy": 0.65,
+  "strict_accuracy": 0.65,
+  "macro_f1": 0.392,
+  "unsafe_approval_rate": 0.0079,
+  "straight_through_rate": 0.6667,
+  "errors": {
+   "unsafe_approvals": 1,
+   "missed_rejects": 0,
+   "disclosure_leaks": 38,
+   "over_escalations": 0,
+   "false_holds": 58,
+   "other": 8
+  },
+  "weighted_cost": 496,
+  "confusion": {
+   "approved": {
+    "approved": 116,
+    "awaiting_vendor": 58,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_vendor": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_reviewer": {
+    "approved": 1,
+    "awaiting_vendor": 38,
+    "awaiting_reviewer": 79,
+    "rejected": 8
+   },
+   "rejected": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   }
+  },
+  "per_class": {
+   "approved": {
+    "precision": 0.9915,
+    "recall": 0.6667,
+    "f1": 0.7973,
+    "support": 174
+   },
+   "awaiting_vendor": {
+    "precision": 0.0,
+    "recall": 1.0,
+    "f1": 0.0,
+    "support": 0
+   },
+   "awaiting_reviewer": {
+    "precision": 1.0,
+    "recall": 0.627,
+    "f1": 0.7707,
+    "support": 126
+   },
+   "rejected": {
+    "precision": 0.0,
+    "recall": 1.0,
+    "f1": 0.0,
+    "support": 0
+   }
+  },
+  "per_scenario": {
+   "x_abbrev_nonprefix": {
+    "n": 33,
+    "decision_ok": 14,
+    "strict_ok": 14,
+    "failed_ids": [
+     "stress-0017-x_abbrev_nonprefix",
+     "stress-0029-x_abbrev_nonprefix",
+     "stress-0033-x_abbrev_nonprefix",
+     "stress-0039-x_abbrev_nonprefix",
+     "stress-0055-x_abbrev_nonprefix"
+    ]
+   },
+   "x_lookalike_translit": {
+    "n": 37,
+    "decision_ok": 37,
+    "strict_ok": 37,
+    "failed_ids": []
+   },
+   "x_lookalike_xcountry": {
+    "n": 27,
+    "decision_ok": 27,
+    "strict_ok": 27,
+    "failed_ids": []
+   },
+   "x_minor_flags_sum": {
+    "n": 24,
+    "decision_ok": 24,
+    "strict_ok": 24,
+    "failed_ids": []
+   },
+   "x_ocr_heavy": {
+    "n": 40,
+    "decision_ok": 1,
+    "strict_ok": 1,
+    "failed_ids": [
+     "stress-0002-x_ocr_heavy",
+     "stress-0009-x_ocr_heavy",
+     "stress-0011-x_ocr_heavy",
+     "stress-0015-x_ocr_heavy",
+     "stress-0020-x_ocr_heavy"
+    ]
+   },
+   "x_sanctions_typo2": {
+    "n": 24,
+    "decision_ok": 15,
+    "strict_ok": 15,
+    "failed_ids": [
+     "stress-0052-x_sanctions_typo2",
+     "stress-0084-x_sanctions_typo2",
+     "stress-0095-x_sanctions_typo2",
+     "stress-0161-x_sanctions_typo2",
+     "stress-0190-x_sanctions_typo2"
+    ]
+   },
+   "x_signed_pdf": {
+    "n": 45,
+    "decision_ok": 45,
+    "strict_ok": 45,
+    "failed_ids": []
+   },
+   "x_tax_cert_tampered": {
+    "n": 38,
+    "decision_ok": 0,
+    "strict_ok": 0,
+    "failed_ids": [
+     "stress-0018-x_tax_cert_tampered",
+     "stress-0026-x_tax_cert_tampered",
+     "stress-0037-x_tax_cert_tampered",
+     "stress-0054-x_tax_cert_tampered",
+     "stress-0062-x_tax_cert_tampered"
+    ]
+   },
+   "x_unicode_name": {
+    "n": 32,
+    "decision_ok": 32,
+    "strict_ok": 32,
+    "failed_ids": []
+   }
+  },
+  "median_ms": 23
+ },
+ "failures": [
+  {
+   "id": "stress-0002-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "GB",
+   "title": "Scan with two digit misreads in the account and one in the holder name (44693SB9 / Kai1iis Interiors Ltd)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 10,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0009-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "IN",
+   "title": "Scan with two digit misreads in the account and one in the holder name (2O2456I3994 / Sury0day Fabrication LLP)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 14,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0011-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (499Z92400B8 / He1traar Logistics Labs Corp)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 12,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0015-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (287961Z8O279 / Ta1riia Manufacturing LLC)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 15,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0017-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "GB",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Velgunix Security Engg. Ltd)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 22,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0018-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "US",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Lorkatek Data Systems Supply LLC)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 24,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0020-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (I4189I6645 / Sawt0oth Packaging LLC)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 17,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0021-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (86S8397367S3 / Prairie Packaging LLC)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 13,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0023-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (069648B2O65 / Zenroon Ana1ytics Corp)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 10,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0026-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Calsaus Logistics Steel Limited)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 26,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0027-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "GB",
+   "title": "Scan with two digit misreads in the account and one in the holder name (3S3135I8 / L0rroion Components Ltd)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 14,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0028-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (56778S2S11 / N0rguora Software Corp)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 12,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0029-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "US",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Evergreen Inds Corp)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 26,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0031-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "IN",
+   "title": "Scan with two digit misreads in the account and one in the holder name (I4404118472B22 / Pragati Exp0rts LLP)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 13,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0033-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "GB",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Zorviar Engg Plastics LLP)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 20,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0037-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "GB",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Mardenix Components Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 27,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0039-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "US",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Zentraon Inds Inc)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 19,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0044-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "GB",
+   "title": "Scan with two digit misreads in the account and one in the holder name (11Z2056O / Harb0ur Interiors LLP)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 11,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0052-x_sanctions_typo2",
+   "scenario": "x_sanctions_typo2",
+   "country": "GB",
+   "title": "Sanctioned name with two spelling changes (Blackthorn Offshore Tuding Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 28,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "stress-0053-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (9Z021506S3 / Evergreen Supp1y Freight Corp)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 17,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0054-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Arviia Pharma Limited)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 21,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0055-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "US",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Granite Mfg Corp)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 17,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0056-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "IN",
+   "title": "Scan with two digit misreads in the account and one in the holder name (SB966546499 / Pravinix Ceramics Private Limited)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 13,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0059-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "IN",
+   "title": "Scan with two digit misreads in the account and one in the holder name (2033S9Z09765 / Britratek Pharma LLP)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 17,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0062-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Bharat Fabrication Steel Private Limited)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 18,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0064-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Kelvient Cables Limited)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 14,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0069-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (4O7882B32567 / Zengunix Labs Inc)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 9,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0071-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "US",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Kaikanix Supply Inc)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 21,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0076-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "IN",
+   "title": "Scan with two digit misreads in the account and one in the holder name (3309S2Z39674 / Narmada Castings Private Limited)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 19,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0084-x_sanctions_typo2",
+   "scenario": "x_sanctions_typo2",
+   "country": "US",
+   "title": "Sanctioned name with two spelling changes (Merdian Crest Shipeing Co)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 31,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "stress-0086-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "IN",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Nilgiri Engg Pharma LLP)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 24,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0095-x_sanctions_typo2",
+   "scenario": "x_sanctions_typo2",
+   "country": "US",
+   "title": "Sanctioned name with two spelling changes (Oron Val Metals LLC)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 17,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "stress-0100-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (I43O385636 / Liberty L0gistics LLC)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 45,
+   "ms": 8,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0101-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "US",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Lakeshore Inds LLC)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 22,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0107-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "GB",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Brightwater Logistics Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 16,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0108-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "IN",
+   "title": "Scan with two digit misreads in the account and one in the holder name (7SB773566603663 / Fensatek Po1ymers Limited)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 9,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0111-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Arihant Fabrication LLP)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 20,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0114-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "GB",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Solent Print Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 30,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0116-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Indus Exports Polymers Private Limited)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 29,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0119-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (639783BB33 / Drar0is Fabrication Corp)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 10,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0120-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Kelliar Packaging Ceramics Private Limited)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 19,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0123-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "US",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Markaia Inds Labs Corp)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 28,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0124-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "IN",
+   "title": "Scan with two digit misreads in the account and one in the holder name (2069291I19I373 / Pragati Texti1es LLP)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 15,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0132-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (08390664OB6 / Ca1theia Freight LLC)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 15,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0134-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "IN",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Tallius Foods Engg. LLP)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 23,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0139-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "US",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Lakeshore Electric Inc)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 25,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0141-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "IN",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Kaideex Agro Engg Limited)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 14,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0143-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Marroora Ceramics LLP)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 13,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0145-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "IN",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Belkaent Engg LLP)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 26,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0147-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Bharat Auto Components Private Limited)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 22,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0151-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (46986OZ18239 / Granite Logistics Ana1ytics Corp)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 14,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0155-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Navkar Ceramics Cables Limited)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 20,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0157-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (9437594S1B / Marr0ion Data Systems LLC)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 16,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0161-x_sanctions_typo2",
+   "scenario": "x_sanctions_typo2",
+   "country": "US",
+   "title": "Sanctioned name with two spelling changes (Oron Vale Mtals LLC)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 13,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "stress-0162-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "GB",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Pennine Engg. Print PLC)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 13,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0163-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "IN",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Yortraora Engg Packaging LLP)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 13,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0164-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "GB",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Lumguent Supplies LLP)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 23,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0165-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "DE",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Weser Logistik GmbH)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 26,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0169-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "GB",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Ashford Engineering Catering Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 27,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0171-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "US",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Calmoia Inds Inc)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 24,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0175-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (I97335S74747 / Prairie Supp1y Corp)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 45,
+   "ms": 11,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0177-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (373S694S360 / Kair0ion Freight Labs Corp)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 16,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0179-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "DE",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Lordetek Systeme GmbH)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 26,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0180-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "GB",
+   "title": "Scan with two digit misreads in the account and one in the holder name (S41931B9 / Oakridge Catering L0gistics Limited)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 15,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0182-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Ganesha Polymers Foods Limited)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 17,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0189-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "DE",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Weser Logistik Metallbau GmbH)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 21,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0190-x_sanctions_typo2",
+   "scenario": "x_sanctions_typo2",
+   "country": "US",
+   "title": "Sanctioned name with two spelling changes (Oron Vale Metls LLC)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 14,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "stress-0195-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "IN",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Sahyadri Engg Limited)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 20,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0196-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "IN",
+   "title": "Scan with two digit misreads in the account and one in the holder name (7457209O064B102 / Vengu1y Agro Private Limited)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 45,
+   "ms": 7,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0197-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "GB",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Cotswold Engg. Ltd)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 15,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0201-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (79065BS2092 / N0rthstar Data Systems LLC)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 18,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0204-x_sanctions_typo2",
+   "scenario": "x_sanctions_typo2",
+   "country": "US",
+   "title": "Sanctioned name with two spelling changes (Meridian Crest Shippig Co)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 24,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "stress-0205-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "IN",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Vindhya Pharma Engg. Limited)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 23,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0206-x_sanctions_typo2",
+   "scenario": "x_sanctions_typo2",
+   "country": "GB",
+   "title": "Sanctioned name with two spelling changes (Blacktyrn Offshore Trading Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 21,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "stress-0207-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Corviex Textiles Private Limited)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 24,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0210-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "DE",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Nordwerk Kunststoffe GmbH)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 30,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0213-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "US",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Cordeus Logistics LLC)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 27,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0218-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "GB",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Dradely Catering Limited)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 27,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0219-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "IN",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Lummous Engg Auto Components Private Limited)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 24,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0220-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (O4038293I754 / Xanka1y Freight LLC)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 16,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0227-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "IN",
+   "title": "Scan with two digit misreads in the account and one in the holder name (3298B495110S137 / Ve1kaar Foods Private Limited)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 45,
+   "ms": 9,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0228-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (SS62029257 / Marr0ar Freight LLC)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 8,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0229-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "GB",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Chiltern Consulting LLP)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 14,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0232-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "GB",
+   "title": "Scan with two digit misreads in the account and one in the holder name (7ZZ69986 / Arguex L0gistics Print LLP)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 11,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0237-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Fendeus Textiles Private Limited)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 15,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0238-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "GB",
+   "title": "Scan with two digit misreads in the account and one in the holder name (97B1B485 / Xanr0ora Logistics Limited)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 8,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0240-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "IN",
+   "title": "Scan with two digit misreads in the account and one in the holder name (1S61B895345 / Ta1deent Infotech Logistics Private Limited)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 15,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0243-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Utkal Foods LLP)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 23,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0246-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (2B1306S5015 / B1uegrass Analytics Supply Corp)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 12,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0251-x_abbrev_nonprefix",
+   "scenario": "x_abbrev_nonprefix",
+   "country": "US",
+   "title": "Bank letter uses a non-prefix abbreviation (Engg / Mfg / Intl / Tech) (Cascade Software Mfg. Inc)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 25,
+   "ms": 28,
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0253-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (O77S9497657 / Evergreen Packaging C0rp)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 45,
+   "ms": 16,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0254-x_sanctions_typo2",
+   "scenario": "x_sanctions_typo2",
+   "country": "US",
+   "title": "Sanctioned name with two spelling changes (Orioo Vale yetals LLC)",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 0,
+   "ms": 23,
+   "codes": []
+  },
+  {
+   "id": "stress-0255-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "GB",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Amisaus Print Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 20,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0257-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "GB",
+   "title": "Scan with two digit misreads in the account and one in the holder name (I652430I / Ashf0rd Security Limited)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 16,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0262-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "GB",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Veldeia Catering Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 27,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0265-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "GB",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Wessex Supplies LLP)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 24,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0269-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "DE",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Weser Elektro GmbH)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 30,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0270-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "GB",
+   "title": "Scan with two digit misreads in the account and one in the holder name (S8Z03942 / Dramoex Consu1ting Engineering LLP)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 15,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0271-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "DE",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Torlitek Maschinenbau GmbH)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 18,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0278-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Pragati Agro Private Limited)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 21,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0279-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "DE",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Calroex Messtechnik Logistik GmbH)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 15,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0280-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "GB",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Chiltern Logistics Plastics Ltd)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 15,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  },
+  {
+   "id": "stress-0281-x_ocr_heavy",
+   "scenario": "x_ocr_heavy",
+   "country": "US",
+   "title": "Scan with two digit misreads in the account and one in the holder name (S44568S87955 / Copper1ine Fabrication LLC)",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 8,
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC"
+   ]
+  },
+  {
+   "id": "stress-0291-x_sanctions_typo2",
+   "scenario": "x_sanctions_typo2",
+   "country": "US",
+   "title": "Sanctioned name with two spelling changes (Meridian Cest Shipping Co)",
+   "expected": "awaiting_reviewer",
+   "got": "rejected",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status rejected != expected pending",
+    "substatus rejected_compliance != expected awaiting_reviewer",
+    "missing expected finding SANCTIONS_NEAR"
+   ],
+   "risk": 100,
+   "ms": 29,
+   "codes": [
+    "SANCTIONS_HIT"
+   ]
+  },
+  {
+   "id": "stress-0299-x_tax_cert_tampered",
+   "scenario": "x_tax_cert_tampered",
+   "country": "IN",
+   "title": "Tax certificate edited: the vendor's name pasted over another company's (real holder Shree Packaging Fabrication Limited)",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 26,
+   "codes": [
+    "NAME_MISMATCH_TAXCERT",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ]
+  }
+ ]
+}

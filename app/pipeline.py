@@ -18,6 +18,7 @@ from . import config, db, rules, screening
 from .llm import (DOC_FIELDS, LLMError, get_llm, grounded, pdf_text, vendor_mail_is_safe)
 from .rules import finding
 from .validators import bank as bk
+from .validators import docintegrity
 from .validators import names as nm
 from .validators import taxid as tx
 
@@ -163,7 +164,22 @@ def s_read_documents(ctx: Ctx):
             d["values"][k] = val
         d["usable"] = True
         d["ungrounded"] = bad
-        summaries[dtype] = f"{len(d['values'])} fields read"
+        d["scanned"] = not text.strip()
+        # integrity: read the raw file, not the AI's reading of the page
+        integ = docintegrity.analyze(path)
+        d["integrity"] = integ
+        if integ["conflicts"]:
+            parts = "; ".join(f"{k.replace('_', ' ')}: " + " vs ".join(screening.mask(x) if k in ("account_number", "iban") else x for x in v)
+                              for k, v in integ["conflicts"].items())
+            ctx.add(finding("DOC_CONFLICTING_VALUES",
+                            f"The {label} contains two different values for the same field ({parts}). One is hidden under the visible page"
+                            + (f"; the file was edited {integ['incremental_updates']} time(s) after it was created." if integ["incremental_updates"] else "."),
+                            field=dtype, evidence={k: [screening.mask(x) if k in ("account_number", "iban") else x for x in v]
+                                                   for k, v in integ["conflicts"].items()} | {"incremental_updates": integ["incremental_updates"]}))
+        elif integ["incremental_updates"]:
+            ctx.add(finding("DOC_EDITED", f"The {label} was saved with {integ['incremental_updates']} later edit(s).", field=dtype,
+                            evidence={"incremental_updates": integ["incremental_updates"], "producer": integ["producer"]}))
+        summaries[dtype] = f"{len(d['values'])} fields read" + (" (scan)" if d["scanned"] else "")
     n = len(ctx.docs)
     return {"headline": f"Read {n} document(s): " + ", ".join(f"{k}: {v}" for k, v in summaries.items()) if n else "No documents to read.",
             "details": {"documents": {k: {"detected_as": v["detected"], "legible": v["legible"], "grounding": v["grounding"],
@@ -255,6 +271,28 @@ def s_validate(ctx: Ctx):
             "details": {"checks": [{"field": k, "ok": ok, "detail": d} for k, ok, d in checks]}}
 
 
+_OCR_TO_DIGIT = {"O": "0", "D": "0", "Q": "0", "I": "1", "L": "1", "S": "5", "B": "8", "Z": "2", "G": "6"}
+
+
+def _ocr_reconcile(ctx, dtype, field, doc_value, form_value) -> bool:
+    """On a SCAN only: a doc value that differs from the form solely where the scan shows a
+    look-alike LETTER in a position where the form has the matching DIGIT is an OCR misread,
+    not a different number. (A letter there cannot be a valid value, so this cannot hide a
+    genuinely different account.)"""
+    if not ctx.docs.get(dtype, {}).get("scanned"):
+        return False
+    d, f = re.sub(r"[^A-Z0-9]", "", doc_value.upper()), re.sub(r"[^A-Z0-9]", "", form_value.upper())
+    if len(d) != len(f) or d == f:
+        return False
+    diffs = [(a, b) for a, b in zip(d, f) if a != b]
+    if len(diffs) > 2 or not all(b.isdigit() and _OCR_TO_DIGIT.get(a) == b for a, b in diffs):
+        return False
+    ctx.add(finding("DOC_OCR_RECONCILED", f"The scanned {DOC_LABEL[dtype]} reads {field.replace('_', ' ')} as '{doc_value}'; "
+                    f"{', '.join(f'{a}->{b}' for a, b in diffs)} is a scan misread, so it matches the form.", field=f"{dtype}.{field}",
+                    evidence={"read": doc_value, "form": form_value}))
+    return True
+
+
 def _compare_into(ctx, a, b, where, unresolved_code, ask_mismatch, field, grey_code=None):
     """Compare two names; record variants, queue grey zone for the AI, or flag a mismatch."""
     cmpd = nm.compare_names(a, b)
@@ -304,13 +342,36 @@ def s_cross_check(ctx: Ctx):
                             f"The PAN inside the GSTIN ({ctx.tax.info['pan']}) has type '{ch}' = {tx.PAN_ENTITY[ch]}, but the vendor declares '{f.get('entity_type')}'.",
                             field="tax_id", evidence={"pan": ctx.tax.info["pan"], "pan_char": ch, "pan_means": tx.PAN_ENTITY[ch],
                                                       "declared": f.get("entity_type")}))
-    # ---- 3. IFSC vs bank name -----------------------------------------------------
-    if f.get("ifsc") and f.get("bank_name") and bk.validate_ifsc(f["ifsc"]).ok:
-        m = bk.ifsc_bank_matches_name(f["ifsc"], f["bank_name"])
-        if m is False:
-            ctx.add(finding("BANK_NAME_IFSC_MISMATCH",
-                            f"IFSC {f['ifsc'].upper()} belongs to {bk.IFSC_BANKS.get(f['ifsc'].upper()[:4])}, but the form says '{f['bank_name']}'.",
-                            field="ifsc", evidence={"ifsc": f["ifsc"], "ifsc_bank": bk.IFSC_BANKS.get(f["ifsc"].upper()[:4]), "stated": f["bank_name"]}))
+    # ---- 2b. India: PAN initial vs name, GSTIN state vs addresses ----------------
+    if c == "IN" and ctx.tax and ctx.tax.ok and ctx.tax.info.get("kind") == "GSTIN":
+        pan = ctx.tax.info["pan"]
+        who = (ctx.doc_val("tax_cert", "legal_name") if ctx.usable("tax_cert") else None) or f.get("legal_name", "")
+        if tx.pan_name_initial_ok(pan, who) is False:
+            ctx.add(finding("PAN_NAME_MISMATCH",
+                            f"The PAN inside the GSTIN ({pan}) is for a business whose name starts with '{pan[4]}', but the vendor is '{who}'.",
+                            field="tax_id", evidence={"pan": pan, "pan_5th_char": pan[4], "name": who}))
+        gst_state = ctx.tax.info["state_code"]
+        cert_pin = tx.pin_from_address(ctx.doc_val("tax_cert", "address") or "") if ctx.usable("tax_cert") else None
+        form_pin = tx.pin_from_address(f.get("address", ""), f.get("postal_code", ""))
+        if cert_pin and tx.pin_states(cert_pin) and gst_state not in tx.pin_states(cert_pin):
+            ctx.add(finding("GSTIN_STATE_MISMATCH",
+                            f"The GSTIN is registered in state {gst_state}, but the certificate's own address (PIN {cert_pin}) is in state {'/'.join(sorted(tx.pin_states(cert_pin)))}.",
+                            field="tax_cert", evidence={"gstin_state": gst_state, "certificate_pin": cert_pin}))
+        elif form_pin and tx.pin_states(form_pin) and gst_state not in tx.pin_states(form_pin):
+            ctx.add(finding("GSTIN_BRANCH_STATE",
+                            f"Form address (PIN {form_pin}) is outside the GSTIN's state {gst_state}; the certificate is consistent, so this looks like a branch registration.",
+                            field="address", evidence={"gstin_state": gst_state, "form_pin": form_pin}))
+    # ---- 3. bank code vs bank name (IFSC / IBAN BLZ / sort code) -------------------
+    code_ok = (bk.validate_ifsc(f["ifsc"]).ok if f.get("ifsc") else bk.validate_iban(f["iban"]).ok if f.get("iban")
+               else bk.validate_sort_code(f["sort_code"]).ok if f.get("sort_code") else False)
+    code_bank, code_src = bk.bank_from_code(c, f) if code_ok else (None, "")
+    if code_bank and f.get("bank_name") and not bk.bank_names_match(code_bank, f["bank_name"]):
+        ctx.add(finding("BANK_CODE_MISMATCH", f"The {code_src} belongs to {code_bank}, but the form says '{f['bank_name']}'.",
+                        field="bank_name", evidence={"code": code_src, "code_bank": code_bank, "stated": f["bank_name"]}))
+    bad_parts = bk.gb_iban_parts_mismatch(f)
+    if bad_parts:
+        ctx.add(finding("IBAN_PARTS_MISMATCH", f"The IBAN does not contain the {' and '.join(p.replace('_', ' ') for p in bad_parts)} given on the form.",
+                        field="iban", ask="Your IBAN does not match the sort code / account number you gave. Please check all three and resend them."))
     # ---- 4. tax certificate vs form -----------------------------------------------
     legal = f.get("legal_name", "")
     if ctx.usable("tax_cert"):
@@ -318,7 +379,9 @@ def s_cross_check(ctx: Ctx):
         if dt and ctx.has_field("tax_id"):
             dn = tx.validate_tax_id(c, dt).normalized or re.sub(r"[\s\-]", "", dt).upper()
             fn_ = (ctx.tax.normalized if ctx.tax else re.sub(r"[\s\-]", "", f["tax_id"]).upper())
-            if dn != fn_:
+            if dn != fn_ and _ocr_reconcile(ctx, "tax_cert", "tax_id", dt, fn_):
+                pass
+            elif dn != fn_:
                 ctx.add(finding("TAXID_MISMATCH_DOC", f"Form tax ID {fn_} differs from certificate {dn}.", field="tax_id",
                                 evidence={"form": fn_, "certificate": dn},
                                 ask=f"The tax ID on your form ({fn_}) is different from the one on your certificate ({dn}). Please confirm which is correct and send the matching certificate."))
@@ -334,7 +397,8 @@ def s_cross_check(ctx: Ctx):
     if ctx.usable("bank_proof"):
         for fld, label in (("iban", "IBAN"), ("account_number", "account number")):
             dv, fv = ctx.doc_val("bank_proof", fld), f.get(fld)
-            if dv and fv and re.sub(r"[\s\-]", "", dv).upper() != re.sub(r"[\s\-]", "", fv).upper():
+            if dv and fv and re.sub(r"[\s\-]", "", dv).upper() != re.sub(r"[\s\-]", "", fv).upper() \
+                    and not _ocr_reconcile(ctx, "bank_proof", fld, dv, fv):
                 ctx.add(finding("BANK_ACCOUNT_MISMATCH_DOC", f"Form {label} ends {screening.mask(fv)[-4:]}, bank letter ends {screening.mask(dv)[-4:]}.",
                                 field=fld, evidence={"form": screening.mask(fv), "letter": screening.mask(dv)},
                                 ask=f"The {label} on your form does not match your bank letter. Please confirm the correct {label}."))
@@ -343,6 +407,11 @@ def s_cross_check(ctx: Ctx):
             ctx.add(finding("BANK_ACCOUNT_MISMATCH_DOC", "IFSC on form differs from the bank letter.", field="ifsc",
                             ask="The IFSC on your form does not match your bank letter. Please confirm the correct IFSC."))
         dh = ctx.doc_val("bank_proof", "account_holder")
+        if dh and ctx.docs["bank_proof"].get("scanned") and nm.ocr_fix_name(dh) != dh:
+            fixed = nm.ocr_fix_name(dh)
+            ctx.add(finding("DOC_OCR_RECONCILED", f"The scanned bank letter reads the holder as '{dh}'; read as '{fixed}' (digit/letter scan misread).",
+                            field="bank_proof.account_holder", evidence={"read": dh, "corrected": fixed}))
+            dh = fixed
         if dh:
             holder = dh
             if holder_form and nm.compare_names(holder_form, dh)["verdict"] == "different":
@@ -406,7 +475,7 @@ def s_screening(ctx: Ctx):
     hit = screening.sanctions_best_match(names)
     tax_norm = ctx.tax.normalized if ctx.tax and ctx.tax.ok else (f.get("tax_id") or "")
     facts = {"sanctions_best_score": hit["score"] if hit else 0}
-    if hit and hit["score"] >= config.SANCTIONS_REJECT:
+    if hit and hit.get("exact", hit["score"] >= config.SANCTIONS_REJECT):
         ctx.add(finding("SANCTIONS_HIT", f"'{hit['candidate']}' matches sanctions-list entry {hit['entry_id']} ('{hit['listed_as']}').", field="legal_name", evidence=hit))
     elif hit and hit["score"] >= config.SANCTIONS_REVIEW:
         ctx.add(finding("SANCTIONS_NEAR", f"'{hit['candidate']}' is {hit['score']:.0%} similar to sanctions entry {hit['entry_id']} ('{hit['listed_as']}').", field="legal_name", evidence=hit))
@@ -417,7 +486,7 @@ def s_screening(ctx: Ctx):
         ctx.add(finding("BANK_ACCOUNT_SHARED", f"This bank account already belongs to {v['legal_name']} ({v['vendor_id']}, {v['status']}).",
                         field="bank", evidence=v))
     for v in screening.find_lookalikes(ctx.conn, vid, names, tax_norm):
-        ctx.add(finding("LOOKALIKE_VENDOR", f"Name is {v['similarity']:.0%} similar to existing vendor '{v['legal_name']}' ({v['vendor_id']}, {v['status']}) but has a different tax ID.",
+        ctx.add(finding("LOOKALIKE_VENDOR", f"Name looks like existing vendor '{v['legal_name']}' ({v['vendor_id']}, {v['status']}): {v.get('why', 'similar')}, but the tax ID is different.",
                         field="legal_name", evidence=v))
     old_key = (ctx.vendor.get("data") or {}).get("approved_account_key")
     if old_key and ctx.account_key and old_key != ctx.account_key:

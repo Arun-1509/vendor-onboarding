@@ -155,3 +155,45 @@ def detect_tax_id_country(raw: str) -> str | None:
     if re.fullmatch(r"\d{9}", re.sub(r"\D", "", raw or "")) and "-" in (raw or ""):
         return "US"
     return None
+
+
+# ------------------------------------------------- India: cross-field checks --
+# For a non-individual PAN, the 5th character is the first letter of the entity's name.
+_PAN_NAME_RULE = set("CFATBLJG")
+
+
+def pan_name_initial_ok(pan: str, legal_name: str) -> bool | None:
+    """True/False if checkable, None otherwise (individual/HUF PANs use the surname)."""
+    if not pan or len(pan) != 10 or pan[3] not in _PAN_NAME_RULE or not legal_name:
+        return None
+    from .names import split_name
+    core = [t for t in split_name(re.sub(r"(?i)^m\s*/\s*s\.?\s+", "", legal_name))[0] if t not in ("the", "ms")]
+    if not core:
+        return None
+    return core[0][0].upper() == pan[4]
+
+
+# First two digits of an Indian PIN code -> GST state codes it can belong to.
+# (Postal circles do not follow state lines exactly, so each prefix lists every state it touches.)
+_PIN_STATES = {
+    "11": {"07"}, "12": {"06"}, "13": {"06"}, "14": {"03"}, "15": {"03"}, "16": {"03", "04"}, "17": {"02"},
+    "18": {"01", "38"}, "19": {"01", "38"}, "20": {"09"}, "21": {"09"}, "22": {"09"}, "23": {"09"},
+    "24": {"09", "05"}, "25": {"09", "05"}, "26": {"09", "05"}, "27": {"09"}, "28": {"09"},
+    "30": {"08"}, "31": {"08"}, "32": {"08"}, "33": {"08"}, "34": {"08"}, "36": {"24"}, "37": {"24"},
+    "38": {"24"}, "39": {"24", "26", "25"}, "40": {"27", "30"}, "41": {"27"}, "42": {"27"}, "43": {"27"},
+    "44": {"27"}, "45": {"23"}, "46": {"23"}, "47": {"23"}, "48": {"23"}, "49": {"22"},
+    "50": {"36", "37"}, "51": {"37", "36"}, "52": {"37"}, "53": {"37"}, "56": {"29"}, "57": {"29"},
+    "58": {"29"}, "59": {"29"}, "60": {"33", "34"}, "61": {"33"}, "62": {"33"}, "63": {"33"}, "64": {"33"},
+    "67": {"32", "34"}, "68": {"32"}, "69": {"32"}, "70": {"19"}, "71": {"19"}, "72": {"19"}, "73": {"19", "11"},
+    "74": {"19", "35"}, "75": {"21"}, "76": {"21"}, "77": {"21"}, "78": {"18"}, "79": {"12", "13", "14", "15", "16", "17"},
+    "80": {"10"}, "81": {"10", "20"}, "82": {"10", "20"}, "83": {"20"}, "84": {"10"}, "85": {"10"},
+}
+
+
+def pin_from_address(*parts: str) -> str | None:
+    found = re.findall(r"(?<!\d)([1-9]\d{2}\s?\d{3})(?!\d)", " ".join(p or "" for p in parts))
+    return found[-1].replace(" ", "") if found else None
+
+
+def pin_states(pin: str | None) -> set[str]:
+    return _PIN_STATES.get((pin or "")[:2], set())

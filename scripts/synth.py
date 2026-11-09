@@ -10,6 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from synthetic.generator import generate  # noqa: E402
+from synthetic.stress import generate_stress  # noqa: E402
 
 
 def main():
@@ -18,7 +19,7 @@ def main():
     ap.add_argument("--n", type=int, default=800)
     ap.add_argument("--seed", type=int, default=11)
     a = ap.parse_args()
-    out = generate(a.n, a.seed, a.split)
+    out = generate_stress(a.n, a.seed) if a.split == "stress" else generate(a.n, a.seed, a.split)
     import json
     d = json.loads((out / "cases.json").read_text(encoding="utf-8"))
     c = Counter(x["expect"]["substatus"] for x in d["cases"])

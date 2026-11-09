@@ -1,0 +1,132 @@
+{
+ "split": "stress",
+ "seed": 47,
+ "llm_mode": "mock",
+ "metrics": {
+  "n": 300,
+  "decision_accuracy": 1.0,
+  "strict_accuracy": 1.0,
+  "macro_f1": 1.0,
+  "unsafe_approval_rate": 0.0,
+  "straight_through_rate": 1.0,
+  "errors": {
+   "unsafe_approvals": 0,
+   "missed_rejects": 0,
+   "disclosure_leaks": 0,
+   "over_escalations": 0,
+   "false_holds": 0,
+   "other": 0
+  },
+  "weighted_cost": 0,
+  "confusion": {
+   "approved": {
+    "approved": 174,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_vendor": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_reviewer": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 126,
+    "rejected": 0
+   },
+   "rejected": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   }
+  },
+  "per_class": {
+   "approved": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 174
+   },
+   "awaiting_vendor": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 0
+   },
+   "awaiting_reviewer": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 126
+   },
+   "rejected": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 0
+   }
+  },
+  "per_scenario": {
+   "x_abbrev_nonprefix": {
+    "n": 33,
+    "decision_ok": 33,
+    "strict_ok": 33,
+    "failed_ids": []
+   },
+   "x_lookalike_translit": {
+    "n": 37,
+    "decision_ok": 37,
+    "strict_ok": 37,
+    "failed_ids": []
+   },
+   "x_lookalike_xcountry": {
+    "n": 27,
+    "decision_ok": 27,
+    "strict_ok": 27,
+    "failed_ids": []
+   },
+   "x_minor_flags_sum": {
+    "n": 24,
+    "decision_ok": 24,
+    "strict_ok": 24,
+    "failed_ids": []
+   },
+   "x_ocr_heavy": {
+    "n": 40,
+    "decision_ok": 40,
+    "strict_ok": 40,
+    "failed_ids": []
+   },
+   "x_sanctions_typo2": {
+    "n": 24,
+    "decision_ok": 24,
+    "strict_ok": 24,
+    "failed_ids": []
+   },
+   "x_signed_pdf": {
+    "n": 45,
+    "decision_ok": 45,
+    "strict_ok": 45,
+    "failed_ids": []
+   },
+   "x_tax_cert_tampered": {
+    "n": 38,
+    "decision_ok": 38,
+    "strict_ok": 38,
+    "failed_ids": []
+   },
+   "x_unicode_name": {
+    "n": 32,
+    "decision_ok": 32,
+    "strict_ok": 32,
+    "failed_ids": []
+   }
+  },
+  "median_ms": 31
+ },
+ "failures": []
+}

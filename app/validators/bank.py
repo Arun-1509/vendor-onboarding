@@ -85,14 +85,67 @@ def validate_swift(raw: str) -> Check:
     return Check(True, "", "SWIFT/BIC format is valid.", s, {"country": s[4:6]})
 
 
+# Bank-code directories (demo subsets; production = RBI IFSC master, Bundesbank BLZ file, UK EISCD).
+DE_BLZ_BANKS = {"50070010": "Deutsche Bank", "10070000": "Deutsche Bank", "50040000": "Commerzbank",
+                "70020270": "HypoVereinsbank", "20050550": "Hamburger Sparkasse", "50010517": "ING-DiBa",
+                "37050198": "Sparkasse KoelnBonn"}
+GB_SORT_BANKS = {"20": "Barclays Bank", "30": "Lloyds Bank", "40": "HSBC UK", "60": "NatWest", "09": "Santander UK",
+                 "83": "Royal Bank of Scotland"}
+GB_IBAN_BANKS = {"BARC": "Barclays Bank", "LOYD": "Lloyds Bank", "HBUK": "HSBC UK", "NWBK": "NatWest",
+                 "ABBY": "Santander UK", "RBOS": "Royal Bank of Scotland"}
+_GENERIC_BANK = {"bank", "ag", "plc", "uk", "the", "of", "ltd", "limited", "na", "national", "association",
+                 "co", "sparkasse", "and", "india", "eg", "se"}
+
+
+def _bank_tokens(name: str) -> set[str]:
+    return {t for t in re.sub(r"[^a-z0-9 ]", " ", (name or "").lower()).split() if t not in _GENERIC_BANK}
+
+
+def bank_names_match(a: str, b: str) -> bool:
+    """'Deutsche Bank AG' ~ 'Deutsche Bank'; 'Hamburger Sparkasse' !~ 'Sparkasse KoelnBonn'."""
+    ta, tb = _bank_tokens(a), _bank_tokens(b)
+    if not ta or not tb:
+        return fuzz.token_set_ratio((a or "").lower(), (b or "").lower()) >= 90
+    return any(fuzz.ratio(x, y) >= 88 for x in ta for y in tb)
+
+
+def bank_from_code(country: str, form: dict) -> tuple[str | None, str]:
+    """-> (bank that the bank CODE belongs to, which code was used). None if unknown."""
+    if form.get("ifsc"):
+        c = _clean(form["ifsc"])
+        return IFSC_BANKS.get(c[:4]), f"IFSC {c}"
+    iban = _clean(form.get("iban", ""))
+    if iban.startswith("DE") and len(iban) == 22:
+        return DE_BLZ_BANKS.get(iban[4:12]), f"IBAN bank code (BLZ) {iban[4:12]}"
+    if iban.startswith("GB") and len(iban) == 22:
+        return GB_IBAN_BANKS.get(iban[4:8]), f"IBAN bank code {iban[4:8]}"
+    sc = re.sub(r"\D", "", form.get("sort_code", "") or "")
+    if country == "GB" and len(sc) == 6:
+        return GB_SORT_BANKS.get(sc[:2]), f"sort code {sc[:2]}-{sc[2:4]}-{sc[4:]}"
+    return None, ""
+
+
 def ifsc_bank_matches_name(ifsc: str, bank_name: str) -> bool | None:
     """True/False if we can tell, None if the IFSC bank code is not in our table."""
     bank = IFSC_BANKS.get(_clean(ifsc)[:4])
     if not bank or not bank_name:
         return None
-    a = re.sub(r"[^a-z0-9 ]", "", bank.lower())
-    b = re.sub(r"[^a-z0-9 ]", "", bank_name.lower())
-    return fuzz.partial_ratio(a, b) >= 80
+    return bank_names_match(bank, bank_name)
+
+
+def gb_iban_parts_mismatch(form: dict) -> list[str]:
+    """A UK IBAN embeds the sort code and account number; they must agree with the separate fields."""
+    iban = _clean(form.get("iban", ""))
+    if not (iban.startswith("GB") and len(iban) == 22):
+        return []
+    out = []
+    sc = re.sub(r"\D", "", form.get("sort_code", "") or "")
+    acct = re.sub(r"\D", "", form.get("account_number", "") or "")
+    if sc and iban[8:14] != sc:
+        out.append("sort_code")
+    if acct and iban[14:22] != acct:
+        out.append("account_number")
+    return out
 
 
 def normalize_account_key(country: str, form: dict) -> str:

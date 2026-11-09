@@ -81,7 +81,7 @@ SCENARIOS = {
     "variant_legal_form":    (4, APPROVE, ["NAME_VARIANT"], [], "'Pvt Ltd' on form, 'Private Limited' on certificate"),
     "variant_case_punct":    (3, APPROVE, [], [], "Upper-case / punctuation / '&' vs 'and' differences only"),
     "variant_trade_name":    (3, APPROVE, ["NAME_TRADE_NAME"], [], "Bank account in the declared trade name"),
-    "variant_abbreviation":  (3, APPROVE, ["NAME_VARIANT_AI"], [], "Bank letter abbreviates one word of the name"),
+    "variant_abbreviation":  (3, APPROVE, [], [], "Bank letter abbreviates one word of the name"),
     "variant_id_formatting": (3, APPROVE, [], [], "IDs typed with spaces / lower case"),
     "ocr_misread":           (3, APPROVE, [], ["BANK_ACCOUNT_MISMATCH_DOC", "TAXID_MISMATCH_DOC"], "Scan where OCR reads one digit as a look-alike letter"),
     "free_email_company":    (2, APPROVE, ["FREE_EMAIL_DOMAIN"], [], "Small company using a free email domain"),

@@ -1,0 +1,300 @@
+{
+ "split": "test",
+ "seed": 29,
+ "llm_mode": "mock",
+ "metrics": {
+  "n": 800,
+  "decision_accuracy": 1.0,
+  "strict_accuracy": 1.0,
+  "macro_f1": 1.0,
+  "unsafe_approval_rate": 0.0,
+  "straight_through_rate": 1.0,
+  "errors": {
+   "unsafe_approvals": 0,
+   "missed_rejects": 0,
+   "disclosure_leaks": 0,
+   "over_escalations": 0,
+   "false_holds": 0,
+   "other": 0
+  },
+  "weighted_cost": 0,
+  "confusion": {
+   "approved": {
+    "approved": 307,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_vendor": {
+    "approved": 0,
+    "awaiting_vendor": 234,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_reviewer": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 233,
+    "rejected": 0
+   },
+   "rejected": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 26
+   }
+  },
+  "per_class": {
+   "approved": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 307
+   },
+   "awaiting_vendor": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 234
+   },
+   "awaiting_reviewer": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 233
+   },
+   "rejected": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 26
+   }
+  },
+  "per_scenario": {
+   "account_vs_letter": {
+    "n": 19,
+    "decision_ok": 19,
+    "strict_ok": 19,
+    "failed_ids": []
+   },
+   "bank_change": {
+    "n": 22,
+    "decision_ok": 22,
+    "strict_ok": 22,
+    "failed_ids": []
+   },
+   "bank_code_mismatch": {
+    "n": 14,
+    "decision_ok": 14,
+    "strict_ok": 14,
+    "failed_ids": []
+   },
+   "bank_typo": {
+    "n": 27,
+    "decision_ok": 27,
+    "strict_ok": 27,
+    "failed_ids": []
+   },
+   "blurry_scan": {
+    "n": 19,
+    "decision_ok": 19,
+    "strict_ok": 19,
+    "failed_ids": []
+   },
+   "branch_gstin": {
+    "n": 19,
+    "decision_ok": 19,
+    "strict_ok": 19,
+    "failed_ids": []
+   },
+   "cert_state_mismatch": {
+    "n": 21,
+    "decision_ok": 21,
+    "strict_ok": 21,
+    "failed_ids": []
+   },
+   "clean": {
+    "n": 87,
+    "decision_ok": 87,
+    "strict_ok": 87,
+    "failed_ids": []
+   },
+   "clean_scan": {
+    "n": 32,
+    "decision_ok": 32,
+    "strict_ok": 32,
+    "failed_ids": []
+   },
+   "combo_fraud_plus_fix": {
+    "n": 23,
+    "decision_ok": 23,
+    "strict_ok": 23,
+    "failed_ids": []
+   },
+   "country_contradiction": {
+    "n": 13,
+    "decision_ok": 13,
+    "strict_ok": 13,
+    "failed_ids": []
+   },
+   "extra_word_name": {
+    "n": 7,
+    "decision_ok": 7,
+    "strict_ok": 7,
+    "failed_ids": []
+   },
+   "free_email_company": {
+    "n": 13,
+    "decision_ok": 13,
+    "strict_ok": 13,
+    "failed_ids": []
+   },
+   "holder_is_person": {
+    "n": 22,
+    "decision_ok": 22,
+    "strict_ok": 22,
+    "failed_ids": []
+   },
+   "invalid_email": {
+    "n": 15,
+    "decision_ok": 15,
+    "strict_ok": 15,
+    "failed_ids": []
+   },
+   "lookalike_vendor": {
+    "n": 29,
+    "decision_ok": 29,
+    "strict_ok": 29,
+    "failed_ids": []
+   },
+   "missing_doc": {
+    "n": 26,
+    "decision_ok": 26,
+    "strict_ok": 26,
+    "failed_ids": []
+   },
+   "missing_field": {
+    "n": 20,
+    "decision_ok": 20,
+    "strict_ok": 20,
+    "failed_ids": []
+   },
+   "ocr_misread": {
+    "n": 20,
+    "decision_ok": 20,
+    "strict_ok": 20,
+    "failed_ids": []
+   },
+   "pan_entity_mismatch": {
+    "n": 11,
+    "decision_ok": 11,
+    "strict_ok": 11,
+    "failed_ids": []
+   },
+   "pan_name_mismatch": {
+    "n": 13,
+    "decision_ok": 13,
+    "strict_ok": 13,
+    "failed_ids": []
+   },
+   "prior_rejected": {
+    "n": 12,
+    "decision_ok": 12,
+    "strict_ok": 12,
+    "failed_ids": []
+   },
+   "sanctions_exact": {
+    "n": 26,
+    "decision_ok": 26,
+    "strict_ok": 26,
+    "failed_ids": []
+   },
+   "sanctions_near": {
+    "n": 19,
+    "decision_ok": 19,
+    "strict_ok": 19,
+    "failed_ids": []
+   },
+   "sanctions_word_overlap": {
+    "n": 15,
+    "decision_ok": 15,
+    "strict_ok": 15,
+    "failed_ids": []
+   },
+   "shared_account": {
+    "n": 23,
+    "decision_ok": 23,
+    "strict_ok": 23,
+    "failed_ids": []
+   },
+   "stale_bank_letter": {
+    "n": 23,
+    "decision_ok": 23,
+    "strict_ok": 23,
+    "failed_ids": []
+   },
+   "tampered_bank_letter": {
+    "n": 22,
+    "decision_ok": 22,
+    "strict_ok": 22,
+    "failed_ids": []
+   },
+   "taxid_dup_other_name": {
+    "n": 11,
+    "decision_ok": 11,
+    "strict_ok": 11,
+    "failed_ids": []
+   },
+   "taxid_form_vs_cert": {
+    "n": 15,
+    "decision_ok": 15,
+    "strict_ok": 15,
+    "failed_ids": []
+   },
+   "taxid_typo": {
+    "n": 26,
+    "decision_ok": 26,
+    "strict_ok": 26,
+    "failed_ids": []
+   },
+   "variant_abbreviation": {
+    "n": 23,
+    "decision_ok": 23,
+    "strict_ok": 23,
+    "failed_ids": []
+   },
+   "variant_case_punct": {
+    "n": 21,
+    "decision_ok": 21,
+    "strict_ok": 21,
+    "failed_ids": []
+   },
+   "variant_id_formatting": {
+    "n": 28,
+    "decision_ok": 28,
+    "strict_ok": 28,
+    "failed_ids": []
+   },
+   "variant_legal_form": {
+    "n": 25,
+    "decision_ok": 25,
+    "strict_ok": 25,
+    "failed_ids": []
+   },
+   "variant_trade_name": {
+    "n": 24,
+    "decision_ok": 24,
+    "strict_ok": 24,
+    "failed_ids": []
+   },
+   "wrong_doc": {
+    "n": 15,
+    "decision_ok": 15,
+    "strict_ok": 15,
+    "failed_ids": []
+   }
+  },
+  "median_ms": 31
+ },
+ "failures": []
+}

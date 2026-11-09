@@ -179,7 +179,7 @@ def main():
 
     # ================= HAPPY PATHS ==================================================
     cid = "H1_happy_india"
-    g = gstin("07", "AAFCK2231L")
+    g = gstin("27", "AAFCK2231L")
     f = form_in("Kestrel Analytics Private Limited", g, "50200098765432")
     case(cid, "happy", "Clean Indian vendor (everything consistent)", f,
          {"tax_cert": tax_cert(cid, "IN", f["legal_name"], g, f["address"]),
@@ -187,7 +187,7 @@ def main():
          {"status": "approved", "substatus": "approved", "max_risk": 0, "must_not_have": ["NAME_VARIANT", "LOOKALIKE_VENDOR"]})
 
     cid = "H2_happy_germany"
-    ib = iban("DE", "50010517" + "5407324931")
+    ib = iban("DE", "50070010" + "5407324931")
     f = form_de("Rheinwerk Maschinenbau GmbH", de_vat("81234567"), ib)
     case(cid, "happy", "Clean German vendor (VAT ID + IBAN valid)", f,
          {"tax_cert": tax_cert(cid, "DE", f["legal_name"], f["tax_id"], f["address"]),
@@ -195,10 +195,10 @@ def main():
          {"status": "approved", "max_risk": 0})
 
     cid = "H3_happy_uk"
-    f = form_gb("Harbourline Marine Ltd", gb_vat("5551234"), "40-47-84", "70872490")
+    f = form_gb("Harbourline Marine Ltd", gb_vat("5551234"), "40-47-84", "70872490", bank="HSBC UK")
     case(cid, "happy", "Clean UK vendor", f,
          {"tax_cert": tax_cert(cid, "GB", f["legal_name"], f["tax_id"], f["address"]),
-          "bank_proof": bank_letter(cid, "Barclays Bank", f["legal_name"], ident_gb("40-47-84", "70872490"))},
+          "bank_proof": bank_letter(cid, "HSBC UK", f["legal_name"], ident_gb("40-47-84", "70872490"))},
          {"status": "approved", "max_risk": 0})
 
     cid = "H4_happy_us"
@@ -301,7 +301,7 @@ def main():
     case(cid, "edge4", "Claims to be a Pvt Ltd, but its PAN is an INDIVIDUAL's; IFSC bank != named bank", f,
          {"tax_cert": tax_cert(cid, "IN", f["legal_name"], g, f["address"]),
           "bank_proof": bank_letter(cid, "HDFC Bank", f["legal_name"], ident_in("12312312312312", "ICIC0000771"))},
-         {"status": "pending", "substatus": "awaiting_reviewer", "must_have": ["ENTITY_TYPE_MISMATCH_PAN", "BANK_NAME_IFSC_MISMATCH"]})
+         {"status": "pending", "substatus": "awaiting_reviewer", "must_have": ["ENTITY_TYPE_MISMATCH_PAN", "BANK_CODE_MISMATCH"]})
 
     cid = "E4b_country_contradiction"
     g = gstin("29", "AAKCT4455U")
@@ -354,7 +354,7 @@ def main():
          {"status": "pending", "substatus": "awaiting_vendor", "must_have": ["WRONG_DOCUMENT"]})
 
     cid = "V6_stale_bank_letter"
-    g = gstin("36", "AAQCR3300A")
+    g = gstin("36", "AAQCD3300A")
     f = form_in("Deccan Cables Private Limited", g, "55660077889911", "HDFC0009900", city="Hyderabad", pin="500001")
     case(cid, "fixable", "Bank letter is ~200 days old", f,
          {"tax_cert": tax_cert(cid, "IN", f["legal_name"], g, f["address"]),
@@ -362,7 +362,7 @@ def main():
          {"status": "pending", "substatus": "awaiting_vendor", "must_have": ["DOC_STALE"]})
 
     cid = "V7_blurry_scan"
-    g = gstin("03", "AARCS7766B")
+    g = gstin("03", "AARCP7766B")
     f = form_in("Punjab Agro Foods Private Limited", g, "88990011223344", "PUNB0555500", "Punjab National Bank", city="Ludhiana", pin="141001")
     blurry = make_blurry_png(DOCS / cid / "bank_proof.png", ["BANK ACCOUNT CONFIRMATION LETTER", "Bank: Punjab National Bank", f"Account Holder: {f['legal_name']}", "Account Number: 88990011223344", "IFSC: PUNB0555500"])
     case(cid, "fixable", "Bank letter is a blurry phone photo", f,
