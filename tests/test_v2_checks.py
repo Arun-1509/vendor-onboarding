@@ -74,3 +74,20 @@ def test_tampered_pdf_is_detected(tmp_path: Path):
     r = docintegrity.analyze(edited)
     assert r["incremental_updates"] == 1
     assert sorted(r["conflicts"]["account_number"]) == ["111122223333", "999988887777"]
+
+
+def test_gemini_model_autopick_skips_retired_models():
+    from app.llm import GeminiLLM
+    g = GeminiLLM.__new__(GeminiLLM)
+    old = (GeminiLLM._available, set(GeminiLLM._dead))
+    try:
+        GeminiLLM._available = ["gemini-2.0-flash", "gemini-3-flash-preview", "gemini-flash-latest",
+                                "gemini-2.5-flash-image", "gemma-3-27b-it", "gemini-2.5-pro"]
+        GeminiLLM._dead.clear()
+        picks = g.models_for("gemini-1.0-retired")             # configured name the key can't use
+        assert picks[0] == "gemini-flash-latest"
+        assert "gemini-2.5-flash-image" not in picks and "gemma-3-27b-it" not in picks
+        GeminiLLM._dead.add("gemini-flash-latest")              # answered 404 once -> skipped after
+        assert "gemini-flash-latest" not in g.models_for("gemini-1.0-retired")
+    finally:
+        GeminiLLM._available, GeminiLLM._dead = old[0], old[1]

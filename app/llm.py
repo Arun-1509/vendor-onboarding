@@ -256,6 +256,46 @@ class GeminiLLM(AnthropicLLM):
         import httpx
         self.http = client or httpx.Client(timeout=config.LLM_TIMEOUT_S)
 
+    # Google retires model names for new keys without notice ("no longer available to new users").
+    # So we ask the key which models it can use, once, and pick from that list.
+    _available: list | None = None
+    _dead: set = set()                                          # models that answered 404 for this key
+
+    def available_models(self) -> list:
+        if GeminiLLM._available is None:
+            try:
+                r = self.http.get("https://generativelanguage.googleapis.com/v1beta/models",
+                                  params={"key": config.GEMINI_API_KEY, "pageSize": 1000})
+                ms = r.json().get("models", []) if r.status_code == 200 else []
+                GeminiLLM._available = [m["name"].split("/")[-1] for m in ms
+                                        if "generateContent" in m.get("supportedGenerationMethods", [])]
+            except Exception:
+                return []                                       # try again next call
+        return GeminiLLM._available
+
+    @staticmethod
+    def _rank(name: str):
+        """Higher is better: a text 'flash' model, newest version, stable before preview, full before lite."""
+        import re
+        bad = ("image", "tts", "audio", "live", "embed", "vision", "thinking", "exp", "learnlm", "gemma", "computer", "robotics", "native")
+        if not name.startswith("gemini-") or "flash" not in name or any(b in name for b in bad):
+            return None
+        v = re.search(r"gemini-(\d+(?:\.\d+)?)", name)
+        return (0 if "lite" in name else 1, 1 if name.endswith("latest") else 0,
+                float(v.group(1)) if v else 0, 0 if "preview" in name else 1)
+
+    def models_for(self, primary: str) -> list:
+        """Configured model and fallback if the key can use them; otherwise the best ones it can use."""
+        avail = self.available_models()
+        wanted = [primary, config.GEMINI_FALLBACK]
+        if not avail:
+            picks = wanted
+        else:
+            ranked = sorted((n for n in avail if self._rank(n)), key=self._rank, reverse=True)
+            picks = [m for m in wanted if m in avail] + ranked
+        live = [m for m in dict.fromkeys(picks) if m not in GeminiLLM._dead]
+        return live[:4] or list(dict.fromkeys(wanted))
+
     @staticmethod
     def _parts(content: list) -> list:
         parts = []
@@ -274,8 +314,10 @@ class GeminiLLM(AnthropicLLM):
                 "generationConfig": {"temperature": 0, "maxOutputTokens": max(max_tokens, 1500) + 2000,
                                      "responseMimeType": "application/json",
                                      "responseSchema": _gemini_schema(schema)}}
-        last = None
-        for m in dict.fromkeys([primary, config.GEMINI_FALLBACK]):
+        last, first = None, None
+        for m in self.models_for(primary):
+            if last is not None and first is None:
+                first = last
             for attempt in range(2):                            # one retry for rate limits / blips
                 try:
                     r = self.http.post(self.URL.format(model=m), params={"key": config.GEMINI_API_KEY}, json=body)
@@ -288,6 +330,8 @@ class GeminiLLM(AnthropicLLM):
                     time.sleep(1.5 * (attempt + 1))
                     continue
                 if r.status_code != 200:
+                    if r.status_code == 404:
+                        GeminiLLM._dead.add(m)
                     last = LLMError(f"{m} returned {r.status_code}: {r.text[:160]}")
                     break
                 try:
@@ -301,7 +345,7 @@ class GeminiLLM(AnthropicLLM):
                 except Exception as e:                          # safety block, empty, or malformed JSON
                     last = LLMError(f"{m} gave an unusable answer: {e}")
                 break
-        raise LLMError(f"LLM call failed: {last}")
+        raise LLMError(f"LLM call failed: {first or last}" + (f" (fallback: {last})" if first and first is not last else ""))
 
 
 # ============================================================ templates ====

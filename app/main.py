@@ -111,11 +111,18 @@ def _run_in_background(sid: str):
     threading.Thread(target=work, daemon=True).start()
 
 
+def _gemini_models():
+    from .llm import GeminiLLM
+    g = GeminiLLM()
+    return {"extract": g.models_for(config.GEMINI_MODEL), "judge": g.models_for(config.GEMINI_JUDGE_MODEL),
+            "available": len(g.available_models())}
+
+
 @app.get("/api/health")
 def health():
     return {"ok": True, "llm_mode": "mock" if config.MOCK_LLM else "live", "stage_pace_ms": STAGE_PACE_MS,
             "provider": config.PROVIDER_LABEL,
-            "models": ({"extract": config.GEMINI_MODEL, "judge": config.GEMINI_JUDGE_MODEL, "write": config.GEMINI_MODEL} if config.PROVIDER == "gemini" else {"extract": config.MODEL_EXTRACT, "judge": config.MODEL_JUDGE, "write": config.MODEL_WRITE})}
+            "models": (_gemini_models() if config.PROVIDER == "gemini" and not config.MOCK_LLM else {"extract": config.MODEL_EXTRACT, "judge": config.MODEL_JUDGE, "write": config.MODEL_WRITE})}
 
 
 @app.post("/api/submissions")
