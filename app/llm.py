@@ -262,6 +262,7 @@ class GeminiLLM(AnthropicLLM):
     _dead: set = set()                                          # models that answered 404 for this key
     _no_think: set = set()                                      # models that reject thinkingConfig
     _cool: dict = {}                                            # model -> time until which it is rate-limited
+    _retry_after: float = 5.0                                   # seconds Google last asked us to wait
     trace: list = []                                            # last calls: model, status, seconds (no content)
 
     @classmethod
@@ -344,7 +345,7 @@ class GeminiLLM(AnthropicLLM):
             if m is models[0] and last is not None:
                 if "429" not in str(last) and "Timeout" not in type(last).__name__:
                     break                                       # real errors: don't loop
-                time.sleep(2.0)
+                time.sleep(min(max(GeminiLLM._retry_after, 2.0), 20.0))   # Google says how long; cap it
             think = self._thinking(m)
             for attempt in range(2):                            # one retry for rate limits / blips
                 b = body if think is None else {**body, "generationConfig": {**body["generationConfig"], "thinkingConfig": think}}
@@ -363,6 +364,9 @@ class GeminiLLM(AnthropicLLM):
                     continue
                 if r.status_code == 429:                        # free-tier quota: move on, don't wait
                     GeminiLLM._cool[m] = time.time() + 60
+                    import re
+                    hint = re.search(r'"retryDelay":\s*"(\d+(?:\.\d+)?)s"', r.text or "")
+                    GeminiLLM._retry_after = float(hint.group(1)) if hint else 5.0
                     last = LLMError(f"{m} returned 429 (rate limit)")
                     break
                 if r.status_code in (500, 502, 503, 504):
