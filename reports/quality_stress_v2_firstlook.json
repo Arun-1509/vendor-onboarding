@@ -1,0 +1,43 @@
+{
+ "split": "stress",
+ "seed": 47,
+ "llm_mode": "mock",
+ "metrics": {
+  "n": 300,
+  "decision_accuracy": 0.917,
+  "strict_accuracy": 0.917,
+  "macro_f1": 0.73,
+  "unsafe_approval_rate": 0.0079,
+  "straight_through_rate": 0.862,
+  "weighted_cost": 74,
+  "errors": {
+   "unsafe_approvals": 1,
+   "missed_rejects": 0,
+   "disclosure_leaks": 0,
+   "over_escalations": 0,
+   "false_holds": 24,
+   "other": 0
+  },
+  "confusion": {},
+  "per_class": {},
+  "per_scenario": {
+   "x_abbrev_nonprefix": {
+    "n": 33,
+    "decision_ok": 14,
+    "strict_ok": 14
+   },
+   "x_ocr_heavy": {
+    "n": 40,
+    "decision_ok": 35,
+    "strict_ok": 35
+   },
+   "x_sanctions_typo2": {
+    "n": 24,
+    "decision_ok": 23,
+    "strict_ok": 23
+   }
+  }
+ },
+ "note": "First v2 run on the stress set, before the three fixes it prompted (abbreviation dictionary, OCR-in-names, token-aligned sanctions matching). Recorded from that run's output; per-scenario rows only for the scenarios that failed.",
+ "failures": []
+}

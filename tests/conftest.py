@@ -5,6 +5,7 @@ from pathlib import Path
 
 _tmp = tempfile.mkdtemp(prefix="vo-tests-")
 os.environ["MOCK_LLM"] = "1"
+os.environ["STAGE_PACE_MS"] = "0"
 os.environ["VAR_DIR"] = _tmp
 os.environ["DB_PATH"] = str(Path(_tmp) / "vendors.db")
 os.environ["UPLOAD_DIR"] = str(Path(_tmp) / "uploads")

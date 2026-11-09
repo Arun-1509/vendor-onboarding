@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "vendor-onboarding",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "uvicorn", "app.main:app", "--port", "8000"],
+      "port": 8000,
+      "env": {"MOCK_LLM": "1", "VAR_DIR": "./var/app"}
+    }
+  ]
+}

@@ -514,6 +514,9 @@ def s_decision(ctx: Ctx):
 def _next_step(codes):
     if codes & {"SANCTIONS_HIT", "SANCTIONS_NEAR", "PRIOR_REJECTED"}:
         return "escalate to Compliance; do not contact the vendor about the screening result"
+    if codes & {"DOC_CONFLICTING_VALUES"}:
+        return ("treat the document as edited: confirm the account directly with the bank, using contact details from the bank's "
+                "own website (never from this submission), before any approval")
     if codes & {"BANK_CHANGE_REQUEST", "BANK_ACCOUNT_SHARED", "LOOKALIKE_VENDOR", "TAXID_DUPLICATE_OTHER_NAME"}:
         return ("phone the number ALREADY ON FILE for the existing vendor (not the number in this submission) "
                 "and confirm the details before any approval")

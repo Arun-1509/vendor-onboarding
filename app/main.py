@@ -39,6 +39,9 @@ MAX_FILE_BYTES = 6 * 1024 * 1024
 ALLOWED_EXT = {".pdf", ".png", ".jpg", ".jpeg", ".webp"}
 RATE_PER_HOUR = int(__import__("os").getenv("RATE_PER_HOUR", "30"))
 DAILY_RUN_CAP = int(__import__("os").getenv("DAILY_RUN_CAP", "300"))
+# Offline runs finish in ~100 ms; pause between stages so the live run view can be followed.
+# Live-model runs are naturally slower, so no pause there. Labelled "paced" in the UI.
+STAGE_PACE_MS = int(__import__("os").getenv("STAGE_PACE_MS", "550" if config.MOCK_LLM else "0"))
 _hits: dict[str, deque] = defaultdict(deque)
 _daily = {"day": "", "n": 0}
 _bus: dict[str, dict] = {}
@@ -71,8 +74,12 @@ def _run_in_background(sid: str):
     with _bus_lock:
         _bus[sid] = {"events": [], "done": False}
 
+    pace = STAGE_PACE_MS / 1000.0
+
     def emit(e):
         _bus[sid]["events"].append(e)
+        if pace and e.get("type") == "stage_end":      # offline runs take ~0.1 s; pace them so people can follow
+            time.sleep(pace)
 
     def work():
         conn = _conn()
@@ -89,7 +96,7 @@ def _run_in_background(sid: str):
 
 @app.get("/api/health")
 def health():
-    return {"ok": True, "llm_mode": "mock" if config.MOCK_LLM else "live",
+    return {"ok": True, "llm_mode": "mock" if config.MOCK_LLM else "live", "stage_pace_ms": STAGE_PACE_MS,
             "provider": config.PROVIDER_LABEL,
             "models": ({"extract": config.GEMINI_MODEL, "judge": config.GEMINI_JUDGE_MODEL, "write": config.GEMINI_MODEL} if config.PROVIDER == "gemini" else {"extract": config.MODEL_EXTRACT, "judge": config.MODEL_JUDGE, "write": config.MODEL_WRITE})}
 
@@ -219,6 +226,46 @@ def vendor_detail(vendor_id: str):
            "audit": [db.row(r) for r in c.execute("SELECT seq,at,event,payload,hash FROM audit WHERE vendor_id=? ORDER BY seq", (vendor_id,))]}
     c.close()
     return out
+
+
+@app.get("/api/runs")
+def recent_runs(limit: int = 15):
+    c = _conn()
+    rows = []
+    for r in c.execute("""SELECT r.run_id, r.vendor_id, r.submission_id, r.status, r.substatus, r.risk_score, r.llm_mode,
+                          r.started_at, r.finished_at, v.legal_name, v.country, s.source, s.version
+                          FROM runs r LEFT JOIN vendors v ON v.vendor_id=r.vendor_id LEFT JOIN submissions s ON s.submission_id=r.submission_id
+                          WHERE r.status!='running' ORDER BY r.run_id DESC LIMIT ?""", (min(limit, 100),)):
+        rows.append(dict(r))
+    c.close()
+    return rows
+
+
+@app.post("/api/quality/spotcheck")
+def quality_spotcheck(request: Request, n: int = 12):
+    """Validate on vendors generated RIGHT NOW (random seed), scored against their labels."""
+    import random as _r
+    import tempfile
+    from pathlib import Path as _P
+    from synthetic.generator import SCENARIOS, Generator
+    from . import quality
+    _guard(request)
+    n = max(1, min(n, 30))
+    seed = _r.randint(1, 10**9)
+    with tempfile.TemporaryDirectory() as tmp:
+        g = Generator(seed, _P(tmp))
+        seeds = json.loads((config.DATA_DIR / "seed_vendors.json").read_text())["vendors"]
+        g.used_names |= {v["form"]["legal_name"].lower() for v in seeds}
+        rows = []
+        for i in range(n):
+            sc = _r.Random(seed + i).choice(LIVE_SCENARIOS)
+            res = getattr(g, f"s_{sc}")(f"spot-{i}")
+            st, sub = SCENARIOS[sc][1]
+            case = {"id": f"spot-{i}", "scenario": sc, "title": SCENARIOS[sc][4] + (f" ({res['note']})" if res.get("note") else ""),
+                    "country": res["form"]["country"], "form": res["form"], "docs": {k: str(v) for k, v in res["docs"].items()},
+                    "expect": {"status": st, "substatus": sub}}
+            rows.append(quality.run_case(case, config.DATA_DIR / "seed_vendors.json", get_llm()))
+    return {"seed": seed, "n": n, "correct": sum(r["decision_ok"] for r in rows), "rows": rows}
 
 
 @app.get("/api/runs/{run_id}")
@@ -356,7 +403,10 @@ def audit_verify():
 def submission_run(sid: str):
     c = _conn()
     r = db.row(c.execute("SELECT * FROM runs WHERE submission_id=? ORDER BY run_id DESC LIMIT 1", (sid,)).fetchone())
-    sub = db.row(c.execute("SELECT vendor_id, version FROM submissions WHERE submission_id=?", (sid,)).fetchone())
+    sub = db.row(c.execute("SELECT vendor_id, version, docs, form, source FROM submissions WHERE submission_id=?", (sid,)).fetchone())
+    if sub:
+        sub["documents"] = sorted((sub.pop("docs") or {}).keys())
+        sub["legal_name"] = (sub.pop("form") or {}).get("legal_name", "")
     if r and r["status"] != "running":
         r["steps"] = [db.row(x) for x in c.execute("SELECT * FROM run_steps WHERE run_id=? ORDER BY seq", (r["run_id"],))]
         r["emails"] = [db.row(x) for x in c.execute("SELECT * FROM emails WHERE run_id=? ORDER BY id", (r["run_id"],))]
@@ -505,7 +555,59 @@ def eval_status():
             "seconds": round(time.time() - _eval["started"], 1) if _eval["started"] else 0}
 
 
+# ===================================================== synthetic: a fresh, unseen vendor ====
+LIVE_SCENARIOS = ["clean", "clean_scan", "variant_legal_form", "variant_trade_name", "variant_abbreviation", "ocr_misread",
+                  "branch_gstin", "missing_field", "missing_doc", "wrong_doc", "stale_bank_letter", "taxid_typo", "bank_typo",
+                  "account_vs_letter", "holder_is_person", "blurry_scan", "pan_entity_mismatch", "pan_name_mismatch",
+                  "cert_state_mismatch", "country_contradiction", "bank_code_mismatch", "tampered_bank_letter",
+                  "sanctions_near", "sanctions_exact", "sanctions_word_overlap"]
+
+
+@app.get("/api/synthetic/scenarios")
+def synthetic_scenarios():
+    from synthetic.generator import SCENARIOS
+    return [{"id": k, "title": SCENARIOS[k][4], "expected": SCENARIOS[k][1][1]} for k in LIVE_SCENARIOS]
+
+
+@app.post("/api/synthetic/submit")
+def synthetic_submit(request: Request, scenario: str = "random"):
+    """Generate a brand-new vendor the system has never seen (random names, IDs, documents),
+    run it, and return the label so the UI can show 'expected vs decided'."""
+    import random as _r
+    from synthetic.generator import SCENARIOS, Generator
+    _guard(request)
+    sc = _r.choice(LIVE_SCENARIOS) if scenario == "random" else scenario
+    if sc not in LIVE_SCENARIOS:
+        raise HTTPException(404, "unknown scenario")
+    seed = _r.randint(1, 10**9)
+    out = config.VAR_DIR / "synthetic_live"
+    g = Generator(seed, out)
+    c = _conn()
+    g.used_names |= {r["legal_name"].lower() for r in c.execute("SELECT legal_name FROM vendors")}
+    cid = f"live-{seed}"
+    res = getattr(g, f"s_{sc}")(cid)
+    docs = {k: str(v) for k, v in res.get("docs", {}).items()}
+    vid, sid = service.create_submission(c, res["form"], docs, source=f"synthetic:{sc}")
+    c.close()
+    _run_in_background(sid)
+    st, sub = SCENARIOS[sc][1]
+    return {"vendor_id": vid, "submission_id": sid, "scenario": sc, "title": SCENARIOS[sc][4], "note": res.get("note", ""),
+            "expected": sub, "seed": seed}
+
+
 # ===================================================== files the UI needs ====
+@app.get("/api/submissions/{sid}/doc/{doc_type}")
+def submission_doc(sid: str, doc_type: str):
+    """Serve a document that belongs to a submission (only paths recorded in the database)."""
+    c = _conn()
+    r = c.execute("SELECT docs FROM submissions WHERE submission_id=?", (sid,)).fetchone()
+    c.close()
+    path = json.loads(r["docs"]).get(doc_type) if r else None
+    if not path or not __import__("pathlib").Path(path).exists():
+        raise HTTPException(404, "no such document")
+    return FileResponse(path)
+
+
 @app.get("/api/sample-docs/{case_id}/{doc_type}")
 def sample_doc(case_id: str, doc_type: str):
     case = next((c for c in evaluation.load_cases() if c["id"] == case_id), None)

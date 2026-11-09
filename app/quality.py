@@ -39,7 +39,7 @@ def run_case(case: dict, master_file: Path, llm) -> dict:
     conn = db.connect(":memory:")
     try:
         service.seed_vendor_master(conn, master_file)
-        docs = {k: str(ROOT / v) for k, v in case["docs"].items() if v}
+        docs = {k: (v if Path(v).is_absolute() else str(ROOT / v)) for k, v in case["docs"].items() if v}
         _, sid = service.create_submission(conn, case["form"], docs, source="quality")
         t0 = time.time()
         res = pipeline.process_submission(conn, sid, llm)

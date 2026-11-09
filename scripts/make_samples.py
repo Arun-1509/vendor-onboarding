@@ -377,6 +377,36 @@ def main():
           "bank_proof": bank_letter(cid, "HDFC Bank", f["legal_name"], ident_in("21436587092143", "HDFC0003344"))},
          {"status": "pending", "substatus": "awaiting_vendor", "must_have": ["NAME_MISMATCH_TAXCERT"]})
 
+    # ================= EDGE CASE 5: documents that lie ==============================
+    from synthetic.docs import tamper_overlay
+    cid = "E5a_edited_bank_letter"
+    g = gstin("29", "AABCO5521K")
+    f = form_in("Orchid Polymers Private Limited", g, "77001234998877", "ICIC0002211", "ICICI Bank", city="Bengaluru", pin="560001")
+    orig = DOCS / cid / "_genuine.pdf"
+    bank_letter(cid, "ICICI Bank", f["legal_name"], ident_in("50100088776655", "ICIC0002211"))
+    (DOCS / cid / "bank_proof.pdf").rename(orig)
+    tamper_overlay(orig, DOCS / cid / "bank_proof.pdf", 2, "Account Number: 77001234998877", 110)
+    orig.unlink()
+    case(cid, "edge5", "Bank letter looks perfect, but a new account number was pasted over the genuine one", f,
+         {"tax_cert": tax_cert(cid, "IN", f["legal_name"], g, f["address"]), "bank_proof": f"samples/docs/{cid}/bank_proof.pdf"},
+         {"status": "pending", "substatus": "awaiting_reviewer", "must_have": ["DOC_CONFLICTING_VALUES"]})
+
+    cid = "E5b_gstin_of_other_company"
+    g = gstin("27", "AABCM7781Q")
+    f = form_in("Lotus Packaging Private Limited", g, "66005544332211", "HDFC0004455", city="Pune", pin="411001")
+    case(cid, "edge5", "GSTIN is valid and on the certificate, but its PAN belongs to a company whose name starts with 'M'", f,
+         {"tax_cert": tax_cert(cid, "IN", f["legal_name"], g, f["address"]),
+          "bank_proof": bank_letter(cid, "HDFC Bank", f["legal_name"], ident_in("66005544332211", "HDFC0004455"))},
+         {"status": "pending", "substatus": "awaiting_reviewer", "must_have": ["PAN_NAME_MISMATCH"]})
+
+    cid = "E1d_lookalike_padded"
+    g = gstin("27", "AAECG6612H")
+    f = form_in("Globex Logistics Solutions India Pvt Ltd", g, "92011122233344", "UTIB0000456", "Axis Bank", city="Mumbai", pin="400001")
+    case(cid, "edge1", "Approved vendor's exact name plus 'India', with its own tax ID and bank: an impostor pattern", f,
+         {"tax_cert": tax_cert(cid, "IN", f["legal_name"], g, f["address"]),
+          "bank_proof": bank_letter(cid, "Axis Bank", f["legal_name"], ident_in("92011122233344", "UTIB0000456"))},
+         {"status": "pending", "substatus": "awaiting_reviewer", "must_have": ["LOOKALIKE_VENDOR"]})
+
     # ================= compliance =====================================================
     cid = "R1_sanctions_match"
     g = gstin("27", "AATCM1212E")

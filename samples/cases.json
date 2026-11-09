@@ -803,6 +803,105 @@
       }
     },
     {
+      "id": "E5a_edited_bank_letter",
+      "group": "edge5",
+      "title": "Bank letter looks perfect, but a new account number was pasted over the genuine one",
+      "form": {
+        "legal_name": "Orchid Polymers Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Bengaluru",
+        "city": "Bengaluru",
+        "postal_code": "560001",
+        "tax_id": "29AABCO5521K1ZA",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@orchidpolymersprivat.in",
+        "bank_name": "ICICI Bank",
+        "account_holder": "Orchid Polymers Private Limited",
+        "account_number": "77001234998877",
+        "ifsc": "ICIC0002211",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples\\docs\\E5a_edited_bank_letter\\tax_cert.pdf",
+        "bank_proof": "samples/docs/E5a_edited_bank_letter/bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_reviewer",
+        "must_have": [
+          "DOC_CONFLICTING_VALUES"
+        ]
+      }
+    },
+    {
+      "id": "E5b_gstin_of_other_company",
+      "group": "edge5",
+      "title": "GSTIN is valid and on the certificate, but its PAN belongs to a company whose name starts with 'M'",
+      "form": {
+        "legal_name": "Lotus Packaging Private Limited",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Pune",
+        "city": "Pune",
+        "postal_code": "411001",
+        "tax_id": "27AABCM7781Q1ZM",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@lotuspackagingprivat.in",
+        "bank_name": "HDFC Bank",
+        "account_holder": "Lotus Packaging Private Limited",
+        "account_number": "66005544332211",
+        "ifsc": "HDFC0004455",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples\\docs\\E5b_gstin_of_other_company\\tax_cert.pdf",
+        "bank_proof": "samples\\docs\\E5b_gstin_of_other_company\\bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_reviewer",
+        "must_have": [
+          "PAN_NAME_MISMATCH"
+        ]
+      }
+    },
+    {
+      "id": "E1d_lookalike_padded",
+      "group": "edge1",
+      "title": "Approved vendor's exact name plus 'India', with its own tax ID and bank: an impostor pattern",
+      "form": {
+        "legal_name": "Globex Logistics Solutions India Pvt Ltd",
+        "trade_name": "",
+        "entity_type": "pvt_ltd",
+        "country": "IN",
+        "address": "Plot 14, MIDC Industrial Area, Mumbai",
+        "city": "Mumbai",
+        "postal_code": "400001",
+        "tax_id": "27AAECG6612H1ZO",
+        "contact_name": "Priya Nair",
+        "contact_email": "accounts@globexlogisticssolut.in",
+        "bank_name": "Axis Bank",
+        "account_holder": "Globex Logistics Solutions India Pvt Ltd",
+        "account_number": "92011122233344",
+        "ifsc": "UTIB0000456",
+        "currency": "INR"
+      },
+      "docs": {
+        "tax_cert": "samples\\docs\\E1d_lookalike_padded\\tax_cert.pdf",
+        "bank_proof": "samples\\docs\\E1d_lookalike_padded\\bank_proof.pdf"
+      },
+      "expect": {
+        "status": "pending",
+        "substatus": "awaiting_reviewer",
+        "must_have": [
+          "LOOKALIKE_VENDOR"
+        ]
+      }
+    },
+    {
       "id": "R1_sanctions_match",
       "group": "reject",
       "title": "Name matches an entry on the (fictional) sanctions list",
