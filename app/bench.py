@@ -25,7 +25,7 @@ from .llm import MockLLM
 
 ROOT = config.ROOT
 BENCH = ROOT / "bench"
-SETS = ["blind", "diverse"]
+SETS = ["blind", "diverse", "holdout"]
 FIELD_KEYS = {"tax_cert": ["legal_name", "tax_id", "address", "issue_date"],
               "bank_proof": ["account_holder", "bank_name", "account_number", "iban", "ifsc", "sort_code", "routing_number", "issue_date"]}
 

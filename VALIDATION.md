@@ -152,6 +152,31 @@ Run on the deployed site (free Gemini tier, ~3 model calls per vendor). Raw resu
 - **The one live miss (B27):** the model called a bank *statement* a bank letter, so it was accepted as bank proof. The perfect reader never made this mistake. **Fix:** code now double-checks the AI. A bank-proof file whose text says "statement of account", "opening/closing balance" or "Kontoauszug" is treated as a statement and the vendor is asked for a letter. On all 300+ benchmark and sample PDFs this matched only B27.
 - **Reading accuracy:** 873 / 882 printed fields read exactly (99.0%). The 9 misses are four phone-photo address misreads in the rerun (a dropped or changed postcode digit, one garbled street) plus, in the first run, an address digit dropped in a table, and phone-photo misreads (a postcode letter, an address, a GSTIN with a stray prefix). The GSTIN one is caught by the checksum, so no bad ID gets through. The first scoring counted dates read exactly as printed (e.g. `09.12.2024`) as wrong because it wanted ISO form; that was a scoring bug, fixed in `app/bench.py`.
 
+## Unseen test written by ChatGPT (2026-11-10)
+
+To test generalisation with an author from a different AI company, ChatGPT was given only a description of the
+process, the five existing vendors and the sanctions list (`bench/holdout/CHATGPT_PROMPT.md`), not the code or rules.
+Its 37 cases and expected outcomes are kept verbatim (`bench/holdout/chatgpt_raw.json`). The only edit was mechanical:
+its `{{TAX_ID}}`-style placeholders were replaced with checksum-valid numbers (`synthetic/holdout.py`).
+
+| | Decisions correct | Unsafe approvals | Sanctions rejected |
+|---|---|---|---|
+| **First look (the number to quote)** | **29 / 37 (78.4%)** | 3 | 4 / 4 |
+| After the general fixes below | 35 / 37 | 0 | 4 / 4 |
+
+(An earlier 73% was a test-harness bug: ChatGPT copied existing vendors' account numbers but not their bank codes, and I filled random ones, so two loyal vendors looked like bank changes. Fixed in the harness, not the model.)
+
+**What it found, and the general rule that now covers it**
+- A lookalike of an existing vendor reused its tax ID and bank account but moved the contact to ProtonMail: approved. Now an existing vendor's contact moving to another email domain goes to a reviewer (`CONTACT_CHANGE`).
+- A new company used an existing vendor's exact mailbox: approved. Now one mailbox shared by two companies goes to a reviewer (`CONTACT_SHARED`).
+- An edited bank statement was only refused as the wrong document. Now every uploaded file gets the tamper check, including refused ones.
+- "O'Connell" vs "OConnell", and "Brand, a trade name of Company LLC", were false holds. Apostrophes now join words; "a trade/trading/business name of X" resolves to X.
+- "Kanalweg 19" on the form vs "Kanalweg 9" on the certificate: approved. Same postcode/city but another street number now asks the vendor to confirm (`ADDRESS_MISMATCH_DOC`). A different city is NOT flagged: the first version of this rule wrongly held 10 real branch-registration vendors in the dev/test sets, so it was narrowed before shipping.
+
+**Kept as policy differences (2):** H05 "Meridian Crest Marine Services" shares the full distinctive part of a sanctioned name; ChatGPT would approve, we send it to compliance (screening practice: a human clears near-matches). H33's story says a new account number was emailed afterwards, which no form or document in the submission shows.
+
+**Did the fixes memorise the 37 cases?** `scripts/generalization_check.py` builds 50 fresh vendors sharing nothing with the holdout (new names, all 4 countries, other phrasings), each rule with positives and near-miss negatives: **49/50**. The one miss is a seed-data quirk the system rightly flags (existing vendor Acme has a Karnataka GSTIN but a Mumbai address). Dev, test, stress, blind, messy-documents and the 29 demo cases all stay at 100%.
+
 ## Limits (say these before you're asked)
 - **I wrote both the generator and the rules.** The stress set and the first-look numbers are how I guard against fooling myself, but synthetic data is cleaner than real inboxes. The real test is a pilot on a few hundred historic submissions with known outcomes.
 - **Offline mode simulates the document reader.** `scripts/live_check.py` measures the live model:

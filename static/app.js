@@ -607,7 +607,7 @@ async function outboxView(view) {
 async function benchCard(host) {
   let b; try { b = await api('/benchmark'); } catch (e) { host.replaceChildren(); return; }
   const sets = b.sets || {}; const live = (b.live && b.live.sets) || {};
-  const NAME = { blind: 'Blind answer key', diverse: 'Messy documents' };
+  const NAME = { blind: 'Blind answer key', diverse: 'Messy documents', holdout: 'ChatGPT holdout (unseen)' };
   const acc = m => m ? pct(m.decision_accuracy) : '–', uns = m => m ? String(m.errors.unsafe_approvals + m.errors.missed_rejects) : '–';
   const rows = Object.entries(sets).map(([k, v]) => h('tr', {}, h('td', {}, h('b', {}, NAME[k] || k)),
     h('td', { class: 'num' }, v.n), h('td', { class: 'num b' }, acc(v.first_look)), h('td', { class: 'num v' }, acc(v.after_fixes)), h('td', { class: 'num v', title: live[k] && live[k].quota_held ? `${live[k].quota_held} vendors hit the free Gemini quota and were safely held for a reviewer; accuracy is over the ${live[k].answered} the model answered` : '' }, live[k] ? (live[k].answered_accuracy != null ? pct(live[k].answered_accuracy) : acc(live[k].metrics)) + (live[k].quota_held ? ` (${live[k].answered} answered)` : '') : '–'),

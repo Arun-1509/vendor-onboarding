@@ -1,0 +1,56 @@
+{
+ "total": [
+  49,
+  50
+ ],
+ "by_rule": {
+  "apostrophe/positive": [
+   4,
+   4
+  ],
+  "apostrophe/negative": [
+   4,
+   4
+  ],
+  "trade_name_of/positive": [
+   4,
+   4
+  ],
+  "trade_name_of/negative": [
+   4,
+   4
+  ],
+  "contact_shared/positive": [
+   4,
+   4
+  ],
+  "contact_shared/negative": [
+   4,
+   4
+  ],
+  "tamper_wrong_type/positive": [
+   4,
+   4
+  ],
+  "tamper_wrong_type/negative": [
+   4,
+   4
+  ],
+  "street_number/positive": [
+   4,
+   4
+  ],
+  "street_number/negative": [
+   4,
+   4
+  ],
+  "contact_change/positive": [
+   5,
+   5
+  ],
+  "contact_change/negative": [
+   4,
+   5
+  ]
+ }
+}

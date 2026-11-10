@@ -25,12 +25,16 @@ _FORM_WORDS = {
 }
 # 'M/s Sharma & Sons' (Indian honorific for firms) and 'Acme Inc DBA Acme Direct' (US 'doing business as')
 _HONORIFIC = re.compile(r"^\s*(m/s\.?|messrs\.?)\s+", re.I)
+_TRADE_OF = re.compile(r"^.*?,?\s+(?:an?\s+)?(?:trade|trading|business)\s+name\s+of\s+(.+)$", re.I)
 _DBA = re.compile(r"\s+(?:dba|d/b/a|d\.b\.a\.|t/a|trading as|doing business as)\s+", re.I)
 
 
 def strip_decorations(name: str) -> str:
     """Remove a leading 'M/s' and anything after 'DBA' / 'trading as' (the trade-name part)."""
     s = _HONORIFIC.sub("", name or "")
+    m = _TRADE_OF.match(s)                     # 'Cedar Pantry, a trade name of Cedar Foods LLC' -> the legal entity
+    if m and m.group(1).strip():
+        s = m.group(1)
     parts = _DBA.split(s, maxsplit=1)
     return parts[0] if parts[0].strip() else s
 # groups of words that mean the same legal form
@@ -56,6 +60,7 @@ def normalize(name: str) -> str:
     s = unicodedata.normalize("NFKD", strip_decorations(name or ""))
     s = "".join(c for c in s if not unicodedata.combining(c)).lower()
     s = s.replace("&", " and ")
+    s = re.sub(r"['’`´]", "", s)                 # O'Connell == OConnell: an apostrophe joins, it does not split
     s = re.sub(r"[^a-z0-9 ]+", " ", s)
     return re.sub(r"\s+", " ", s).strip()
 

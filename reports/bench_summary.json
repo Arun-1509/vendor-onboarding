@@ -355,7 +355,7 @@
       "failed_ids": []
      }
     },
-    "median_ms": 33
+    "median_ms": 45
    }
   },
   "diverse": {
@@ -731,11 +731,308 @@
       "failed_ids": []
      }
     },
-    "median_ms": 29
+    "median_ms": 41
+   }
+  },
+  "holdout": {
+   "n": 37,
+   "description": "37 vendors written by ChatGPT (a different AI company) from a description of the process only: no code, no rules. Scored once before any change.",
+   "document_styles": {
+    "table": 13,
+    "kv/de": 5,
+    "prose/de": 2,
+    "kv": 11,
+    "stamped": 13,
+    "twocol": 7,
+    "prose": 7,
+    "multipage": 6,
+    "twocol/de": 2,
+    "multipage/de": 1,
+    "photo/de": 1,
+    "photo": 1,
+    "table/de": 2,
+    "stamped/de": 1
+   },
+   "first_look": {
+    "n": 37,
+    "decision_accuracy": 0.7838,
+    "strict_accuracy": 0.7838,
+    "macro_f1": 0.814,
+    "unsafe_approval_rate": 0.12,
+    "straight_through_rate": 0.75,
+    "errors": {
+     "unsafe_approvals": 3,
+     "missed_rejects": 0,
+     "disclosure_leaks": 2,
+     "over_escalations": 0,
+     "false_holds": 3,
+     "other": 0
+    },
+    "weighted_cost": 173,
+    "confusion": {
+     "approved": {
+      "approved": 9,
+      "awaiting_vendor": 2,
+      "awaiting_reviewer": 1,
+      "rejected": 0
+     },
+     "awaiting_vendor": {
+      "approved": 1,
+      "awaiting_vendor": 10,
+      "awaiting_reviewer": 0,
+      "rejected": 0
+     },
+     "awaiting_reviewer": {
+      "approved": 2,
+      "awaiting_vendor": 2,
+      "awaiting_reviewer": 6,
+      "rejected": 0
+     },
+     "rejected": {
+      "approved": 0,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 0,
+      "rejected": 4
+     }
+    },
+    "per_class": {
+     "approved": {
+      "precision": 0.75,
+      "recall": 0.75,
+      "f1": 0.75,
+      "support": 12
+     },
+     "awaiting_vendor": {
+      "precision": 0.7143,
+      "recall": 0.9091,
+      "f1": 0.8,
+      "support": 11
+     },
+     "awaiting_reviewer": {
+      "precision": 0.8571,
+      "recall": 0.6,
+      "f1": 0.7059,
+      "support": 10
+     },
+     "rejected": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 4
+     }
+    },
+    "per_scenario": {
+     "approved": {
+      "n": 12,
+      "decision_ok": 9,
+      "strict_ok": 9,
+      "failed_ids": [
+       "H05",
+       "H07",
+       "H10"
+      ]
+     },
+     "awaiting_reviewer": {
+      "n": 10,
+      "decision_ok": 6,
+      "strict_ok": 6,
+      "failed_ids": [
+       "H28",
+       "H29",
+       "H30",
+       "H33"
+      ]
+     },
+     "awaiting_vendor": {
+      "n": 11,
+      "decision_ok": 10,
+      "strict_ok": 10,
+      "failed_ids": [
+       "H23"
+      ]
+     },
+     "rejected": {
+      "n": 4,
+      "decision_ok": 4,
+      "strict_ok": 4,
+      "failed_ids": []
+     }
+    },
+    "median_ms": 106
+   },
+   "first_look_failures": [
+    {
+     "id": "H05",
+     "title": "Unrelated name resemblance",
+     "expected": "approved",
+     "got": "awaiting_reviewer"
+    },
+    {
+     "id": "H07",
+     "title": "Trading name on bank proof",
+     "expected": "approved",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "H10",
+     "title": "British punctuation difference",
+     "expected": "approved",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "H23",
+     "title": "Tax certificate omits form address",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    },
+    {
+     "id": "H28",
+     "title": "Near-match existing vendor impersonation",
+     "expected": "awaiting_reviewer",
+     "got": "approved"
+    },
+    {
+     "id": "H29",
+     "title": "Altered bank holder name",
+     "expected": "awaiting_reviewer",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "H30",
+     "title": "Suspicious shared contact with existing supplier",
+     "expected": "awaiting_reviewer",
+     "got": "approved"
+    },
+    {
+     "id": "H33",
+     "title": "High-risk bank change after review",
+     "expected": "awaiting_reviewer",
+     "got": "awaiting_vendor"
+    }
+   ],
+   "after_fixes": {
+    "n": 37,
+    "decision_accuracy": 0.9459,
+    "strict_accuracy": 0.9459,
+    "macro_f1": 0.9533,
+    "unsafe_approval_rate": 0.0,
+    "straight_through_rate": 0.9167,
+    "errors": {
+     "unsafe_approvals": 0,
+     "missed_rejects": 0,
+     "disclosure_leaks": 1,
+     "over_escalations": 0,
+     "false_holds": 1,
+     "other": 0
+    },
+    "weighted_cost": 11,
+    "confusion": {
+     "approved": {
+      "approved": 11,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 1,
+      "rejected": 0
+     },
+     "awaiting_vendor": {
+      "approved": 0,
+      "awaiting_vendor": 11,
+      "awaiting_reviewer": 0,
+      "rejected": 0
+     },
+     "awaiting_reviewer": {
+      "approved": 0,
+      "awaiting_vendor": 1,
+      "awaiting_reviewer": 9,
+      "rejected": 0
+     },
+     "rejected": {
+      "approved": 0,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 0,
+      "rejected": 4
+     }
+    },
+    "per_class": {
+     "approved": {
+      "precision": 1.0,
+      "recall": 0.9167,
+      "f1": 0.9565,
+      "support": 12
+     },
+     "awaiting_vendor": {
+      "precision": 0.9167,
+      "recall": 1.0,
+      "f1": 0.9565,
+      "support": 11
+     },
+     "awaiting_reviewer": {
+      "precision": 0.9,
+      "recall": 0.9,
+      "f1": 0.9,
+      "support": 10
+     },
+     "rejected": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 4
+     }
+    },
+    "per_scenario": {
+     "approved": {
+      "n": 12,
+      "decision_ok": 11,
+      "strict_ok": 11,
+      "failed_ids": [
+       "H05"
+      ]
+     },
+     "awaiting_reviewer": {
+      "n": 10,
+      "decision_ok": 9,
+      "strict_ok": 9,
+      "failed_ids": [
+       "H33"
+      ]
+     },
+     "awaiting_vendor": {
+      "n": 11,
+      "decision_ok": 11,
+      "strict_ok": 11,
+      "failed_ids": []
+     },
+     "rejected": {
+      "n": 4,
+      "decision_ok": 4,
+      "strict_ok": 4,
+      "failed_ids": []
+     }
+    },
+    "median_ms": 71
    }
   }
  },
  "findings": [
+  {
+   "set": "holdout",
+   "found": "A lookalike of an existing vendor reused its tax ID and bank account but switched the contact to a ProtonMail address, and was approved.",
+   "fix": "An existing vendor whose contact email moves to another domain goes to a reviewer (account takeover starts with the mailbox)."
+  },
+  {
+   "set": "holdout",
+   "found": "A new company used an existing vendor's exact contact email and was approved.",
+   "fix": "One mailbox used by two different companies goes to a reviewer, like a shared bank account."
+  },
+  {
+   "set": "holdout",
+   "found": "An edited bank STATEMENT was only refused as the wrong document; the edit was never flagged.",
+   "fix": "The tamper check runs on every uploaded file, including ones then refused as the wrong kind."
+  },
+  {
+   "set": "holdout",
+   "found": "'O'Connell' vs 'OConnell' and 'Brand, a trade name of Company LLC' were treated as different payees; a street number differing from the certificate (same city) was approved.",
+   "fix": "Apostrophes join words; 'a trade/trading/business name of X' resolves to X; same postcode/city but another street number asks the vendor to confirm."
+  },
   {
    "set": "diverse",
    "found": "Bank-letter dates printed as 10/07/2026 or 9 November 2026 were not matched to the ISO date the reader returns, so the 90-day check silently skipped them.",

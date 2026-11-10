@@ -1,0 +1,3608 @@
+{
+ "split": "blind",
+ "seed": 101,
+ "n": 50,
+ "generated_for": "2026-11-10",
+ "master": [
+  {
+   "vendor_id": "V-0001",
+   "status": "approved",
+   "form": {
+    "legal_name": "Globex Logistics Solutions Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Plot 14, MIDC Industrial Area, Mumbai",
+    "city": "Mumbai",
+    "postal_code": "400001",
+    "tax_id": "27AABCG4411K1ZR",
+    "contact_name": "Priya Nair",
+    "contact_email": "accounts@globexlogisticssolut.in",
+    "bank_name": "HDFC Bank",
+    "account_holder": "Globex Logistics Solutions Pvt Ltd",
+    "account_number": "50100234567890",
+    "ifsc": "HDFC0000123",
+    "currency": "INR"
+   }
+  },
+  {
+   "vendor_id": "V-0002",
+   "status": "approved",
+   "form": {
+    "legal_name": "Northwind Components GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Industriestrasse 22, 60311 Frankfurt",
+    "city": "Frankfurt",
+    "postal_code": "60311",
+    "tax_id": "DE136695976",
+    "contact_name": "Jonas Weber",
+    "contact_email": "buchhaltung@northwindcomponentsg.de",
+    "bank_name": "Deutsche Bank",
+    "account_holder": "Northwind Components GmbH",
+    "iban": "DE89370400440532013000",
+    "currency": "EUR"
+   }
+  },
+  {
+   "vendor_id": "V-0003",
+   "status": "approved",
+   "form": {
+    "legal_name": "Brightpath Consulting Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "12 Quay Street, Bristol",
+    "city": "Bristol",
+    "postal_code": "BS1 4ST",
+    "tax_id": "GB123456782",
+    "contact_name": "Hannah Cole",
+    "contact_email": "finance@brightpathconsulting.co.uk",
+    "bank_name": "Barclays Bank",
+    "account_holder": "Brightpath Consulting Ltd",
+    "sort_code": "20-00-00",
+    "account_number": "55779911",
+    "currency": "GBP"
+   }
+  },
+  {
+   "vendor_id": "V-0004",
+   "status": "approved",
+   "form": {
+    "legal_name": "Summit Office Supplies LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "900 Main St, Omaha, NE",
+    "city": "Omaha",
+    "postal_code": "68102",
+    "tax_id": "12-3456789",
+    "contact_name": "Marcus Hill",
+    "contact_email": "ap@summitofficesupplies.com",
+    "bank_name": "JPMorgan Chase",
+    "account_holder": "Summit Office Supplies LLC",
+    "routing_number": "021000021",
+    "account_number": "123456789012",
+    "currency": "USD"
+   }
+  },
+  {
+   "vendor_id": "V-0005",
+   "status": "approved",
+   "form": {
+    "legal_name": "Acme Technologies Private Limited",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Plot 14, MIDC Industrial Area, Mumbai",
+    "city": "Mumbai",
+    "postal_code": "400001",
+    "tax_id": "29AABCA7788M1ZV",
+    "contact_name": "Priya Nair",
+    "contact_email": "accounts@acmetechnologiespriv.in",
+    "bank_name": "ICICI Bank",
+    "account_holder": "Acme Technologies Private Limited",
+    "account_number": "60200011223344",
+    "ifsc": "ICIC0000456",
+    "currency": "INR"
+   }
+  }
+ ],
+ "author_note": "generalisation probes",
+ "cases": [
+  {
+   "id": "G001",
+   "scenario": "approved",
+   "group": "positive",
+   "title": "[apostrophe/positive] form has an apostrophe, certificate prints it without",
+   "story": "form has an apostrophe, certificate prints it without",
+   "why": "apostrophe",
+   "difficulty": "positive",
+   "country": "IN",
+   "form": {
+    "legal_name": "Jornanix's Auto Components Limited",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "IN",
+    "address": "Shed 9, GIDC Estate, Mumbai",
+    "city": "Mumbai",
+    "postal_code": "400001",
+    "tax_id": "27ESYCJ7805D1ZZ",
+    "contact_name": "Rahul Mehta",
+    "contact_email": "billing@jornanixautocomponents.in",
+    "bank_name": "State Bank of India",
+    "account_holder": "Jornanix's Auto Components Limited",
+    "currency": "INR",
+    "account_number": "922512393704",
+    "ifsc": "SBIN0028285",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G001/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G001/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "gst_certificate",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Jornanixs Auto Components Limited",
+      "tax_id": "27ESYCJ7805D1ZZ",
+      "address": "Shed 9, GIDC Estate, Mumbai, Mumbai 400001",
+      "issue_date": "12.08.2025"
+     },
+     "issued_iso": "2025-08-12"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "State Bank of India",
+      "account_number": "922512393704",
+      "ifsc": "SBIN0028285",
+      "account_holder": "Jornanix's Auto Components Limited",
+      "issue_date": "22.10.2026"
+     },
+     "issued_iso": "2026-10-22"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G002",
+   "scenario": "awaiting_reviewer",
+   "group": "negative",
+   "title": "[apostrophe/negative] certificate names a genuinely different company",
+   "story": "certificate names a genuinely different company",
+   "why": "apostrophe",
+   "difficulty": "negative",
+   "country": "IN",
+   "form": {
+    "legal_name": "Navkar Pharma Limited",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "IN",
+    "address": "Unit 7, Electronic City Phase 1, New Delhi",
+    "city": "New Delhi",
+    "postal_code": "110001",
+    "tax_id": "07ZFLCN9852R1ZC",
+    "contact_name": "Sneha Kulkarni",
+    "contact_email": "billing@navkarpharma.in",
+    "bank_name": "Kotak Mahindra Bank",
+    "account_holder": "Navkar Pharma Limited",
+    "currency": "INR",
+    "account_number": "81742924741166",
+    "ifsc": "KKBK0508435",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G002/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G002/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "gst_certificate",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "O'Keldeora Castings Exports LLP",
+      "tax_id": "07ZFLCN9852R1ZC",
+      "address": "Unit 7, Electronic City Phase 1, New Delhi, New Delhi 110001",
+      "issue_date": "12-Sep-2026"
+     },
+     "issued_iso": "2026-09-12"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Kotak Mahindra Bank",
+      "account_number": "81742924741166",
+      "ifsc": "KKBK0508435",
+      "account_holder": "Navkar Pharma Limited",
+      "issue_date": "19.09.2026"
+     },
+     "issued_iso": "2026-09-19"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G003",
+   "scenario": "approved",
+   "group": "positive",
+   "title": "[trade_name_of/positive] bank holder '<brand>, trading name of <legal>'",
+   "story": "bank holder '<brand>, trading name of <legal>'",
+   "why": "trade_name_of",
+   "difficulty": "positive",
+   "country": "IN",
+   "form": {
+    "legal_name": "Armous Engineering Fabrication Private Limited",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "3rd Floor, Prestige Towers, MG Road, Lucknow",
+    "city": "Lucknow",
+    "postal_code": "226001",
+    "tax_id": "09ZTHCA7634L1ZG",
+    "contact_name": "Sneha Kulkarni",
+    "contact_email": "billing@armousengineeringfabri.in",
+    "bank_name": "Canara Bank",
+    "account_holder": "Armous Engineering Fabrication Private Limited",
+    "currency": "INR",
+    "account_number": "28820020872335",
+    "ifsc": "CNRB0690506",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G003/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G003/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "gst_certificate",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Armous Engineering Fabrication Private Limited",
+      "tax_id": "09ZTHCA7634L1ZG",
+      "address": "3rd Floor, Prestige Towers, MG Road, Lucknow, Lucknow 226001",
+      "issue_date": "03/01/2026"
+     },
+     "issued_iso": "2026-01-03"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "stamped",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Canara Bank",
+      "account_number": "28820020872335",
+      "ifsc": "CNRB0690506",
+      "account_holder": "Armous Hub, trading name of Armous Engineering Fabrication Private Limited",
+      "issue_date": "15-Oct-2026"
+     },
+     "issued_iso": "2026-10-15"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G004",
+   "scenario": "awaiting_reviewer",
+   "group": "negative",
+   "title": "[trade_name_of/negative] holder is the vendor's brand but a trade name of ANOTHER company",
+   "story": "holder is the vendor's brand but a trade name of ANOTHER company",
+   "why": "trade_name_of",
+   "difficulty": "negative",
+   "country": "IN",
+   "form": {
+    "legal_name": "Tejas Chemicals Exports LLP",
+    "trade_name": "",
+    "entity_type": "llp",
+    "country": "IN",
+    "address": "45 Anna Salai, Hyderabad",
+    "city": "Hyderabad",
+    "postal_code": "500001",
+    "tax_id": "36WLDFT3048V1Z5",
+    "contact_name": "Sneha Kulkarni",
+    "contact_email": "accounts@tejaschemicalsexports.in",
+    "bank_name": "Axis Bank",
+    "account_holder": "Tejas Chemicals Exports LLP",
+    "currency": "INR",
+    "account_number": "321219510724638",
+    "ifsc": "UTIB0719338",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G004/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G004/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "gst_certificate",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Tejas Chemicals Exports LLP",
+      "tax_id": "36WLDFT3048V1Z5",
+      "address": "45 Anna Salai, Hyderabad, Hyderabad 500001",
+      "issue_date": "02/05/2025"
+     },
+     "issued_iso": "2025-05-02"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Axis Bank",
+      "account_number": "321219510724638",
+      "ifsc": "UTIB0719338",
+      "account_holder": "Tejas Direct, a trade name of Arsais Exports LLP",
+      "issue_date": "05-Sep-2026"
+     },
+     "issued_iso": "2026-09-05"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G005",
+   "scenario": "awaiting_reviewer",
+   "group": "positive",
+   "title": "[contact_shared/positive] new company uses an existing vendor's exact mailbox",
+   "story": "new company uses an existing vendor's exact mailbox",
+   "why": "contact_shared",
+   "difficulty": "positive",
+   "country": "IN",
+   "form": {
+    "legal_name": "Talroent Engineering Private Limited",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "45 Anna Salai, Chennai",
+    "city": "Chennai",
+    "postal_code": "600002",
+    "tax_id": "33BXFCT7297C1ZW",
+    "contact_name": "Ananya Iyer",
+    "contact_email": "accounts@globexlogisticssolut.in",
+    "bank_name": "Kotak Mahindra Bank",
+    "account_holder": "Talroent Engineering Private Limited",
+    "currency": "INR",
+    "account_number": "35112133290599",
+    "ifsc": "KKBK0481447",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G005/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G005/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "gst_certificate",
+     "layout": "prose",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Talroent Engineering Private Limited",
+      "tax_id": "33BXFCT7297C1ZW",
+      "address": "45 Anna Salai, Chennai, Chennai 600002",
+      "issue_date": "18/06/2025"
+     },
+     "issued_iso": "2025-06-18"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Kotak Mahindra Bank",
+      "account_number": "35112133290599",
+      "ifsc": "KKBK0481447",
+      "account_holder": "Talroent Engineering Private Limited",
+      "issue_date": "18-Oct-2026"
+     },
+     "issued_iso": "2026-10-18"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G006",
+   "scenario": "approved",
+   "group": "negative",
+   "title": "[contact_shared/negative] similar-looking but different mailbox",
+   "story": "similar-looking but different mailbox",
+   "why": "contact_shared",
+   "difficulty": "negative",
+   "country": "IN",
+   "form": {
+    "legal_name": "Jormoion Ceramics Limited",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "IN",
+    "address": "Shed 9, GIDC Estate, Kochi",
+    "city": "Kochi",
+    "postal_code": "682001",
+    "tax_id": "32CBECJ7529G1ZI",
+    "contact_name": "Sneha Kulkarni",
+    "contact_email": "ap2@northwindcomponentsg-x.de",
+    "bank_name": "Canara Bank",
+    "account_holder": "Jormoion Ceramics Limited",
+    "currency": "INR",
+    "account_number": "53664803461977",
+    "ifsc": "CNRB0322564",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G006/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G006/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "gst_certificate",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Jormoion Ceramics Limited",
+      "tax_id": "32CBECJ7529G1ZI",
+      "address": "Shed 9, GIDC Estate, Kochi, Kochi 682001",
+      "issue_date": "11.06.2025"
+     },
+     "issued_iso": "2025-06-11"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "prose",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Canara Bank",
+      "account_number": "53664803461977",
+      "ifsc": "CNRB0322564",
+      "account_holder": "Jormoion Ceramics Limited",
+      "issue_date": "23/10/2026"
+     },
+     "issued_iso": "2026-10-23"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G007",
+   "scenario": "awaiting_reviewer",
+   "group": "positive",
+   "title": "[tamper_wrong_type/positive] bank STATEMENT with a pasted-over account",
+   "story": "bank STATEMENT with a pasted-over account",
+   "why": "tamper_wrong_type",
+   "difficulty": "positive",
+   "country": "IN",
+   "form": {
+    "legal_name": "Shree Packaging Limited",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "IN",
+    "address": "Unit 7, Electronic City Phase 1, Mumbai",
+    "city": "Mumbai",
+    "postal_code": "400001",
+    "tax_id": "27LPKCS2266F1Z2",
+    "contact_name": "Vikram Rao",
+    "contact_email": "billing@shreepackaging.in",
+    "bank_name": "Canara Bank",
+    "account_holder": "Shree Packaging Limited",
+    "currency": "INR",
+    "account_number": "59470049161",
+    "ifsc": "CNRB0935649",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G007/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G007/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "gst_certificate",
+     "layout": "prose",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Shree Packaging Limited",
+      "tax_id": "27LPKCS2266F1Z2",
+      "address": "Unit 7, Electronic City Phase 1, Mumbai, Mumbai 400001",
+      "issue_date": "12.05.2025"
+     },
+     "issued_iso": "2025-05-12"
+    },
+    "bank_proof": {
+     "doc_type": "bank_statement",
+     "kind": "bank_statement",
+     "layout": "stamped",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Canara Bank",
+      "account_number": "59470049161",
+      "ifsc": "CNRB0935649",
+      "account_holder": "Shree Packaging Limited",
+      "issue_date": "20-Oct-2026"
+     },
+     "issued_iso": "2026-10-20"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G008",
+   "scenario": "awaiting_vendor",
+   "group": "negative",
+   "title": "[tamper_wrong_type/negative] honest bank statement (no edits)",
+   "story": "honest bank statement (no edits)",
+   "why": "tamper_wrong_type",
+   "difficulty": "negative",
+   "country": "IN",
+   "form": {
+    "legal_name": "Vindhya Textiles Private Limited",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "45 Anna Salai, Bengaluru",
+    "city": "Bengaluru",
+    "postal_code": "560001",
+    "tax_id": "29UAWCV1352Q1ZP",
+    "contact_name": "Priya Nair",
+    "contact_email": "accounts@vindhyatextiles.in",
+    "bank_name": "Kotak Mahindra Bank",
+    "account_holder": "Vindhya Textiles Private Limited",
+    "currency": "INR",
+    "account_number": "81803373874641",
+    "ifsc": "KKBK0949102",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G008/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G008/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "gst_certificate",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Vindhya Textiles Private Limited",
+      "tax_id": "29UAWCV1352Q1ZP",
+      "address": "45 Anna Salai, Bengaluru, Bengaluru 560001",
+      "issue_date": "10/04/2026"
+     },
+     "issued_iso": "2026-04-10"
+    },
+    "bank_proof": {
+     "doc_type": "bank_statement",
+     "kind": "bank_statement",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Kotak Mahindra Bank",
+      "account_number": "81803373874641",
+      "ifsc": "KKBK0949102",
+      "account_holder": "Vindhya Textiles Private Limited",
+      "issue_date": "25-Sep-2026"
+     },
+     "issued_iso": "2026-09-25"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_vendor"
+   }
+  },
+  {
+   "id": "G009",
+   "scenario": "awaiting_vendor",
+   "group": "positive",
+   "title": "[street_number/positive] same city, different street number on certificate",
+   "story": "same city, different street number on certificate",
+   "why": "street_number",
+   "difficulty": "positive",
+   "country": "IN",
+   "form": {
+    "legal_name": "Praviora Exports Private Limited",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Unit 7, Electronic City Phase 1, Chennai",
+    "city": "Chennai",
+    "postal_code": "600002",
+    "tax_id": "33ASICP3077F1ZG",
+    "contact_name": "Rahul Mehta",
+    "contact_email": "ap@pravioraexports.in",
+    "bank_name": "Bank of Baroda",
+    "account_holder": "Praviora Exports Private Limited",
+    "currency": "INR",
+    "account_number": "35951380717109",
+    "ifsc": "BARB0463534",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G009/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G009/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "gst_certificate",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Praviora Exports Private Limited",
+      "tax_id": "33ASICP3077F1ZG",
+      "address": "Unit 8, Electronic City Phase 1, Chennai, Chennai 600002",
+      "issue_date": "19/04/2026"
+     },
+     "issued_iso": "2026-04-19"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "multipage",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Bank of Baroda",
+      "account_number": "35951380717109",
+      "ifsc": "BARB0463534",
+      "account_holder": "Praviora Exports Private Limited",
+      "issue_date": "08.10.2026"
+     },
+     "issued_iso": "2026-10-08"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_vendor"
+   }
+  },
+  {
+   "id": "G010",
+   "scenario": "approved",
+   "group": "negative",
+   "title": "[street_number/negative] same address written differently (caps, abbreviations)",
+   "story": "same address written differently (caps, abbreviations)",
+   "why": "street_number",
+   "difficulty": "negative",
+   "country": "IN",
+   "form": {
+    "legal_name": "Deccan Ceramics Private Limited",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Unit 7, Electronic City Phase 1, Ahmedabad",
+    "city": "Ahmedabad",
+    "postal_code": "380001",
+    "tax_id": "24UNZCD3836O1ZI",
+    "contact_name": "Vikram Rao",
+    "contact_email": "finance@deccanceramics.in",
+    "bank_name": "Kotak Mahindra Bank",
+    "account_holder": "Deccan Ceramics Private Limited",
+    "currency": "INR",
+    "account_number": "34777567141",
+    "ifsc": "KKBK0862486",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G010/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G010/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "gst_certificate",
+     "layout": "prose",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Deccan Ceramics Private Limited",
+      "tax_id": "24UNZCD3836O1ZI",
+      "address": "UNIT 7, ELECTRONIC CITY PHASE 1, AHMEDABAD, Ahmedabad 380001",
+      "issue_date": "14/02/2026"
+     },
+     "issued_iso": "2026-02-14"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Kotak Mahindra Bank",
+      "account_number": "34777567141",
+      "ifsc": "KKBK0862486",
+      "account_holder": "Deccan Ceramics Private Limited",
+      "issue_date": "11-Sep-2026"
+     },
+     "issued_iso": "2026-09-11"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G011",
+   "scenario": "approved",
+   "group": "positive",
+   "title": "[apostrophe/positive] form has an apostrophe, certificate prints it without",
+   "story": "form has an apostrophe, certificate prints it without",
+   "why": "apostrophe",
+   "difficulty": "positive",
+   "country": "DE",
+   "form": {
+    "legal_name": "Aminaent's Messtechnik AG",
+    "trade_name": "",
+    "entity_type": "ag",
+    "country": "DE",
+    "address": "Industriestrasse 22, 80331 Muenchen",
+    "city": "Muenchen",
+    "postal_code": "80331",
+    "tax_id": "DE357397469",
+    "contact_name": "Felix Wagner",
+    "contact_email": "accounts@aminaentmesstechnik.de",
+    "bank_name": "Hamburger Sparkasse",
+    "account_holder": "Aminaent's Messtechnik AG",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE98200505502123363576",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G011/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G011/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Aminaents Messtechnik AG",
+      "tax_id": "DE357397469",
+      "address": "Industriestrasse 22, 80331 Muenchen, 80331 Muenchen",
+      "issue_date": "10.08.2026"
+     },
+     "issued_iso": "2026-08-10"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Hamburger Sparkasse",
+      "iban": "DE98200505502123363576",
+      "account_holder": "Aminaent's Messtechnik AG",
+      "issue_date": "03.10.2026"
+     },
+     "issued_iso": "2026-10-03"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G012",
+   "scenario": "awaiting_reviewer",
+   "group": "negative",
+   "title": "[apostrophe/negative] certificate names a genuinely different company",
+   "story": "certificate names a genuinely different company",
+   "why": "apostrophe",
+   "difficulty": "negative",
+   "country": "DE",
+   "form": {
+    "legal_name": "Kaithely Metallbau Kunststoffe GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Am Gewerbepark 14, 70173 Stuttgart",
+    "city": "Stuttgart",
+    "postal_code": "70173",
+    "tax_id": "DE687387103",
+    "contact_name": "Anna Schmidt",
+    "contact_email": "ap@kaithelymetallbaukunst.de",
+    "bank_name": "ING-DiBa",
+    "account_holder": "Kaithely Metallbau Kunststoffe GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE64500105173440558003",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G012/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G012/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "O'Rheinland Antriebstechnik GmbH",
+      "tax_id": "DE687387103",
+      "address": "Am Gewerbepark 14, 70173 Stuttgart, 70173 Stuttgart",
+      "issue_date": "1 November 2025"
+     },
+     "issued_iso": "2025-11-01"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "ING-DiBa",
+      "iban": "DE64500105173440558003",
+      "account_holder": "Kaithely Metallbau Kunststoffe GmbH",
+      "issue_date": "7 November 2026"
+     },
+     "issued_iso": "2026-11-07"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G013",
+   "scenario": "approved",
+   "group": "positive",
+   "title": "[trade_name_of/positive] bank holder '<brand>, a trade name of <legal>'",
+   "story": "bank holder '<brand>, a trade name of <legal>'",
+   "why": "trade_name_of",
+   "difficulty": "positive",
+   "country": "DE",
+   "form": {
+    "legal_name": "Normonix Werkzeugbau Industriebedarf GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Industriestrasse 22, 80331 Muenchen",
+    "city": "Muenchen",
+    "postal_code": "80331",
+    "tax_id": "DE152856254",
+    "contact_name": "Felix Wagner",
+    "contact_email": "ap@normonixwerkzeugbauind.de",
+    "bank_name": "ING-DiBa",
+    "account_holder": "Normonix Werkzeugbau Industriebedarf GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE33500105173254790175",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G013/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G013/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Normonix Werkzeugbau Industriebedarf GmbH",
+      "tax_id": "DE152856254",
+      "address": "Industriestrasse 22, 80331 Muenchen, 80331 Muenchen",
+      "issue_date": "30.04.2025"
+     },
+     "issued_iso": "2025-04-30"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "ING-DiBa",
+      "iban": "DE33500105173254790175",
+      "account_holder": "Normonix Works, a trade name of Normonix Werkzeugbau Industriebedarf GmbH",
+      "issue_date": "2026-09-25"
+     },
+     "issued_iso": "2026-09-25"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G014",
+   "scenario": "awaiting_reviewer",
+   "group": "negative",
+   "title": "[trade_name_of/negative] holder is the vendor's brand but a trade name of ANOTHER company",
+   "story": "holder is the vendor's brand but a trade name of ANOTHER company",
+   "why": "trade_name_of",
+   "difficulty": "negative",
+   "country": "DE",
+   "form": {
+    "legal_name": "Lausitz Elektro GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Werkstrasse 18, 60311 Frankfurt",
+    "city": "Frankfurt",
+    "postal_code": "60311",
+    "tax_id": "DE129172098",
+    "contact_name": "Anna Schmidt",
+    "contact_email": "ap@lausitzelektro.de",
+    "bank_name": "HypoVereinsbank",
+    "account_holder": "Lausitz Elektro GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE46700202701769820379",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G014/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G014/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "multipage",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Lausitz Elektro GmbH",
+      "tax_id": "DE129172098",
+      "address": "Werkstrasse 18, 60311 Frankfurt, 60311 Frankfurt",
+      "issue_date": "2025-10-12"
+     },
+     "issued_iso": "2025-10-12"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "stamped",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "HypoVereinsbank",
+      "iban": "DE46700202701769820379",
+      "account_holder": "Lausitz Direct, a trade name of Quinmotek Messtechnik GmbH",
+      "issue_date": "22 August 2026"
+     },
+     "issued_iso": "2026-08-22"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G015",
+   "scenario": "awaiting_reviewer",
+   "group": "positive",
+   "title": "[contact_shared/positive] new company uses an existing vendor's exact mailbox",
+   "story": "new company uses an existing vendor's exact mailbox",
+   "why": "contact_shared",
+   "difficulty": "positive",
+   "country": "DE",
+   "form": {
+    "legal_name": "Kaitranix Technik GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Hafenweg 5, 20095 Hamburg",
+    "city": "Hamburg",
+    "postal_code": "20095",
+    "tax_id": "DE417656080",
+    "contact_name": "Lena Fischer",
+    "contact_email": "ap@summitofficesupplies.com",
+    "bank_name": "HypoVereinsbank",
+    "account_holder": "Kaitranix Technik GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE04700202703008500756",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G015/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G015/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Kaitranix Technik GmbH",
+      "tax_id": "DE417656080",
+      "address": "Hafenweg 5, 20095 Hamburg, 20095 Hamburg",
+      "issue_date": "24.08.2025"
+     },
+     "issued_iso": "2025-08-24"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "multipage",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "HypoVereinsbank",
+      "iban": "DE04700202703008500756",
+      "account_holder": "Kaitranix Technik GmbH",
+      "issue_date": "27.09.2026"
+     },
+     "issued_iso": "2026-09-27"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G016",
+   "scenario": "approved",
+   "group": "negative",
+   "title": "[contact_shared/negative] similar-looking but different mailbox",
+   "story": "similar-looking but different mailbox",
+   "why": "contact_shared",
+   "difficulty": "negative",
+   "country": "DE",
+   "form": {
+    "legal_name": "Moselland Elektro Kunststoffe GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Hafenweg 5, 50667 Koeln",
+    "city": "Koeln",
+    "postal_code": "50667",
+    "tax_id": "DE149110249",
+    "contact_name": "Anna Schmidt",
+    "contact_email": "ap2@brightpathconsulting-x.co.uk",
+    "bank_name": "Deutsche Bank",
+    "account_holder": "Moselland Elektro Kunststoffe GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE76100700001105888790",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G016/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G016/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Moselland Elektro Kunststoffe GmbH",
+      "tax_id": "DE149110249",
+      "address": "Hafenweg 5, 50667 Koeln, 50667 Koeln",
+      "issue_date": "23.04.2026"
+     },
+     "issued_iso": "2026-04-23"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "stamped",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Deutsche Bank",
+      "iban": "DE76100700001105888790",
+      "account_holder": "Moselland Elektro Kunststoffe GmbH",
+      "issue_date": "24.09.2026"
+     },
+     "issued_iso": "2026-09-24"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G017",
+   "scenario": "awaiting_reviewer",
+   "group": "positive",
+   "title": "[tamper_wrong_type/positive] bank STATEMENT with a pasted-over account",
+   "story": "bank STATEMENT with a pasted-over account",
+   "why": "tamper_wrong_type",
+   "difficulty": "positive",
+   "country": "DE",
+   "form": {
+    "legal_name": "Moselland Werkzeugbau Antriebstechnik GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Kaiserstrasse 71, 70173 Stuttgart",
+    "city": "Stuttgart",
+    "postal_code": "70173",
+    "tax_id": "DE515259706",
+    "contact_name": "Lena Fischer",
+    "contact_email": "ap@mosellandwerkzeugbauan.de",
+    "bank_name": "Sparkasse KoelnBonn",
+    "account_holder": "Moselland Werkzeugbau Antriebstechnik GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE43370501987685603842",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G017/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G017/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Moselland Werkzeugbau Antriebstechnik GmbH",
+      "tax_id": "DE515259706",
+      "address": "Kaiserstrasse 71, 70173 Stuttgart, 70173 Stuttgart",
+      "issue_date": "10.01.2026"
+     },
+     "issued_iso": "2026-01-10"
+    },
+    "bank_proof": {
+     "doc_type": "bank_statement",
+     "kind": "bank_statement",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Sparkasse KoelnBonn",
+      "iban": "DE43370501987685603842",
+      "account_holder": "Moselland Werkzeugbau Antriebstechnik GmbH",
+      "issue_date": "12.09.2026"
+     },
+     "issued_iso": "2026-09-12"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G018",
+   "scenario": "awaiting_vendor",
+   "group": "negative",
+   "title": "[tamper_wrong_type/negative] honest bank statement (no edits)",
+   "story": "honest bank statement (no edits)",
+   "why": "tamper_wrong_type",
+   "difficulty": "negative",
+   "country": "DE",
+   "form": {
+    "legal_name": "Torvinix Logistik AG",
+    "trade_name": "",
+    "entity_type": "ag",
+    "country": "DE",
+    "address": "Industriestrasse 22, 50667 Koeln",
+    "city": "Koeln",
+    "postal_code": "50667",
+    "tax_id": "DE202127511",
+    "contact_name": "Jonas Weber",
+    "contact_email": "ap@torvinixlogistik.de",
+    "bank_name": "Commerzbank",
+    "account_holder": "Torvinix Logistik AG",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE40500400005235868727",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G018/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G018/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "stamped",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Torvinix Logistik AG",
+      "tax_id": "DE202127511",
+      "address": "Industriestrasse 22, 50667 Koeln, 50667 Koeln",
+      "issue_date": "23.07.2026"
+     },
+     "issued_iso": "2026-07-23"
+    },
+    "bank_proof": {
+     "doc_type": "bank_statement",
+     "kind": "bank_statement",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Commerzbank",
+      "iban": "DE40500400005235868727",
+      "account_holder": "Torvinix Logistik AG",
+      "issue_date": "2026-09-07"
+     },
+     "issued_iso": "2026-09-07"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_vendor"
+   }
+  },
+  {
+   "id": "G019",
+   "scenario": "awaiting_vendor",
+   "group": "positive",
+   "title": "[street_number/positive] same city, different street number on certificate",
+   "story": "same city, different street number on certificate",
+   "why": "street_number",
+   "difficulty": "positive",
+   "country": "DE",
+   "form": {
+    "legal_name": "Talrous Verpackung GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Am Gewerbepark 14, 60311 Frankfurt",
+    "city": "Frankfurt",
+    "postal_code": "60311",
+    "tax_id": "DE528944076",
+    "contact_name": "Jonas Weber",
+    "contact_email": "ap@talrousverpackung.de",
+    "bank_name": "Deutsche Bank",
+    "account_holder": "Talrous Verpackung GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE73500700106868540153",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G019/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G019/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "prose",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Talrous Verpackung GmbH",
+      "tax_id": "DE528944076",
+      "address": "Am Gewerbepark 16, 60311 Frankfurt, 60311 Frankfurt",
+      "issue_date": "23 April 2026"
+     },
+     "issued_iso": "2026-04-23"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Deutsche Bank",
+      "iban": "DE73500700106868540153",
+      "account_holder": "Talrous Verpackung GmbH",
+      "issue_date": "2026-10-17"
+     },
+     "issued_iso": "2026-10-17"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_vendor"
+   }
+  },
+  {
+   "id": "G020",
+   "scenario": "approved",
+   "group": "negative",
+   "title": "[street_number/negative] same address written differently (caps, abbreviations)",
+   "story": "same address written differently (caps, abbreviations)",
+   "why": "street_number",
+   "difficulty": "negative",
+   "country": "DE",
+   "form": {
+    "legal_name": "Xanroly Elektro AG",
+    "trade_name": "",
+    "entity_type": "ag",
+    "country": "DE",
+    "address": "Am Gewerbepark 14, 50667 Koeln",
+    "city": "Koeln",
+    "postal_code": "50667",
+    "tax_id": "DE676966597",
+    "contact_name": "Felix Wagner",
+    "contact_email": "billing@xanrolyelektro.de",
+    "bank_name": "Deutsche Bank",
+    "account_holder": "Xanroly Elektro AG",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE31500700109763330048",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G020/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G020/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Xanroly Elektro AG",
+      "tax_id": "DE676966597",
+      "address": "AM GEWERBEPARK 14, 50667 KOELN, Koeln 50667",
+      "issue_date": "2025-12-27"
+     },
+     "issued_iso": "2025-12-27"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Deutsche Bank",
+      "iban": "DE31500700109763330048",
+      "account_holder": "Xanroly Elektro AG",
+      "issue_date": "7 September 2026"
+     },
+     "issued_iso": "2026-09-07"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G021",
+   "scenario": "approved",
+   "group": "positive",
+   "title": "[apostrophe/positive] form has an apostrophe, certificate prints it without",
+   "story": "form has an apostrophe, certificate prints it without",
+   "why": "apostrophe",
+   "difficulty": "positive",
+   "country": "GB",
+   "form": {
+    "legal_name": "Albion's Analytics Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "9 Station Approach, London",
+    "city": "London",
+    "postal_code": "EC1A 1BB",
+    "tax_id": "GB134470681",
+    "contact_name": "Hannah Cole",
+    "contact_email": "billing@albionanalytics.co.uk",
+    "bank_name": "Lloyds Bank",
+    "account_holder": "Albion's Analytics Ltd",
+    "currency": "GBP",
+    "account_number": "29896211",
+    "ifsc": "",
+    "iban": "GB62LOYD30039829896211",
+    "sort_code": "30-03-98",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G021/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G021/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Albions Analytics Ltd",
+      "tax_id": "GB134470681",
+      "address": "9 Station Approach, London, London EC1A 1BB",
+      "issue_date": "31 December 2025"
+     },
+     "issued_iso": "2025-12-31"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Lloyds Bank",
+      "account_number": "29896211",
+      "iban": "GB62LOYD30039829896211",
+      "sort_code": "30-03-98",
+      "account_holder": "Albion's Analytics Ltd",
+      "issue_date": "28 October 2026"
+     },
+     "issued_iso": "2026-10-28"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G022",
+   "scenario": "awaiting_reviewer",
+   "group": "negative",
+   "title": "[apostrophe/negative] certificate names a genuinely different company",
+   "story": "certificate names a genuinely different company",
+   "why": "apostrophe",
+   "difficulty": "negative",
+   "country": "GB",
+   "form": {
+    "legal_name": "Brightwater Analytics LLP",
+    "trade_name": "",
+    "entity_type": "llp",
+    "country": "GB",
+    "address": "4 Canal Side, Edinburgh",
+    "city": "Edinburgh",
+    "postal_code": "EH1 1YZ",
+    "tax_id": "GB139506754",
+    "contact_name": "Amelia Shaw",
+    "contact_email": "ap@brightwateranalytics.co.uk",
+    "bank_name": "HSBC UK",
+    "account_holder": "Brightwater Analytics LLP",
+    "currency": "GBP",
+    "account_number": "82948072",
+    "ifsc": "",
+    "iban": "GB98HBUK40627682948072",
+    "sort_code": "40-62-76",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G022/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G022/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "stamped",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "O'Pennine Plastics Limited",
+      "tax_id": "GB139506754",
+      "address": "4 Canal Side, Edinburgh, Edinburgh EH1 1YZ",
+      "issue_date": "30 June 2026"
+     },
+     "issued_iso": "2026-06-30"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "HSBC UK",
+      "account_number": "82948072",
+      "iban": "GB98HBUK40627682948072",
+      "sort_code": "40-62-76",
+      "account_holder": "Brightwater Analytics LLP",
+      "issue_date": "20/09/2026"
+     },
+     "issued_iso": "2026-09-20"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G023",
+   "scenario": "approved",
+   "group": "positive",
+   "title": "[trade_name_of/positive] bank holder '<brand>, a business name of <legal>'",
+   "story": "bank holder '<brand>, a business name of <legal>'",
+   "why": "trade_name_of",
+   "difficulty": "positive",
+   "country": "GB",
+   "form": {
+    "legal_name": "Thames Engineering Consulting Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "12 Quay Street, Bristol",
+    "city": "Bristol",
+    "postal_code": "BS1 4ST",
+    "tax_id": "GB126511007",
+    "contact_name": "George Hunt",
+    "contact_email": "accounts@thamesengineeringconsu.co.uk",
+    "bank_name": "Barclays Bank",
+    "account_holder": "Thames Engineering Consulting Ltd",
+    "currency": "GBP",
+    "account_number": "54853853",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "20-14-95",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G023/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G023/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Thames Engineering Consulting Ltd",
+      "tax_id": "GB126511007",
+      "address": "12 Quay Street, Bristol, Bristol BS1 4ST",
+      "issue_date": "21/06/2025"
+     },
+     "issued_iso": "2025-06-21"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Barclays Bank",
+      "account_number": "54853853",
+      "sort_code": "20-14-95",
+      "account_holder": "Thames Hub, a business name of Thames Engineering Consulting Ltd",
+      "issue_date": "08/09/2026"
+     },
+     "issued_iso": "2026-09-08"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G024",
+   "scenario": "awaiting_reviewer",
+   "group": "negative",
+   "title": "[trade_name_of/negative] holder is the vendor's brand but a trade name of ANOTHER company",
+   "story": "holder is the vendor's brand but a trade name of ANOTHER company",
+   "why": "trade_name_of",
+   "difficulty": "negative",
+   "country": "GB",
+   "form": {
+    "legal_name": "Kestrel Security Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "9 Station Approach, Edinburgh",
+    "city": "Edinburgh",
+    "postal_code": "EH1 1YZ",
+    "tax_id": "GB354245462",
+    "contact_name": "George Hunt",
+    "contact_email": "finance@kestrelsecurity.co.uk",
+    "bank_name": "NatWest",
+    "account_holder": "Kestrel Security Ltd",
+    "currency": "GBP",
+    "account_number": "47476027",
+    "ifsc": "",
+    "iban": "GB84NWBK60753847476027",
+    "sort_code": "60-75-38",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G024/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G024/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Kestrel Security Ltd",
+      "tax_id": "GB354245462",
+      "address": "9 Station Approach, Edinburgh, Edinburgh EH1 1YZ",
+      "issue_date": "19 February 2026"
+     },
+     "issued_iso": "2026-02-19"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "NatWest",
+      "account_number": "47476027",
+      "iban": "GB84NWBK60753847476027",
+      "sort_code": "60-75-38",
+      "account_holder": "Kestrel Direct, a trade name of Wessex Facilities PLC",
+      "issue_date": "5 September 2026"
+     },
+     "issued_iso": "2026-09-05"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G025",
+   "scenario": "awaiting_reviewer",
+   "group": "positive",
+   "title": "[contact_shared/positive] new company uses an existing vendor's exact mailbox",
+   "story": "new company uses an existing vendor's exact mailbox",
+   "why": "contact_shared",
+   "difficulty": "positive",
+   "country": "GB",
+   "form": {
+    "legal_name": "Soltheora Plastics Limited",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "77 King Street, London",
+    "city": "London",
+    "postal_code": "EC1A 1BB",
+    "tax_id": "GB357483130",
+    "contact_name": "Oliver Price",
+    "contact_email": "buchhaltung@northwindcomponentsg.de",
+    "bank_name": "Barclays Bank",
+    "account_holder": "Soltheora Plastics Limited",
+    "currency": "GBP",
+    "account_number": "89000713",
+    "ifsc": "",
+    "iban": "GB46BARC20200089000713",
+    "sort_code": "20-20-00",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G025/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G025/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Soltheora Plastics Limited",
+      "tax_id": "GB357483130",
+      "address": "77 King Street, London, London EC1A 1BB",
+      "issue_date": "26 June 2026"
+     },
+     "issued_iso": "2026-06-26"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Barclays Bank",
+      "account_number": "89000713",
+      "iban": "GB46BARC20200089000713",
+      "sort_code": "20-20-00",
+      "account_holder": "Soltheora Plastics Limited",
+      "issue_date": "11/09/2026"
+     },
+     "issued_iso": "2026-09-11"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G026",
+   "scenario": "approved",
+   "group": "negative",
+   "title": "[contact_shared/negative] similar-looking but different mailbox",
+   "story": "similar-looking but different mailbox",
+   "why": "contact_shared",
+   "difficulty": "negative",
+   "country": "GB",
+   "form": {
+    "legal_name": "Solent Supplies PLC",
+    "trade_name": "",
+    "entity_type": "plc",
+    "country": "GB",
+    "address": "4 Canal Side, Edinburgh",
+    "city": "Edinburgh",
+    "postal_code": "EH1 1YZ",
+    "tax_id": "GB952533225",
+    "contact_name": "Oliver Price",
+    "contact_email": "ap2@summitofficesupplies-x.com",
+    "bank_name": "Lloyds Bank",
+    "account_holder": "Solent Supplies PLC",
+    "currency": "GBP",
+    "account_number": "30145262",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "30-99-12",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G026/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G026/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "multipage",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Solent Supplies PLC",
+      "tax_id": "GB952533225",
+      "address": "4 Canal Side, Edinburgh, Edinburgh EH1 1YZ",
+      "issue_date": "2 April 2025"
+     },
+     "issued_iso": "2025-04-02"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "prose",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Lloyds Bank",
+      "account_number": "30145262",
+      "sort_code": "30-99-12",
+      "account_holder": "Solent Supplies PLC",
+      "issue_date": "15 September 2026"
+     },
+     "issued_iso": "2026-09-15"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G027",
+   "scenario": "awaiting_reviewer",
+   "group": "positive",
+   "title": "[tamper_wrong_type/positive] bank STATEMENT with a pasted-over account",
+   "story": "bank STATEMENT with a pasted-over account",
+   "why": "tamper_wrong_type",
+   "difficulty": "positive",
+   "country": "GB",
+   "form": {
+    "legal_name": "Quinrous Interiors PLC",
+    "trade_name": "",
+    "entity_type": "plc",
+    "country": "GB",
+    "address": "77 King Street, London",
+    "city": "London",
+    "postal_code": "EC1A 1BB",
+    "tax_id": "GB593856974",
+    "contact_name": "Oliver Price",
+    "contact_email": "ap@quinrousinteriors.co.uk",
+    "bank_name": "Barclays Bank",
+    "account_holder": "Quinrous Interiors PLC",
+    "currency": "GBP",
+    "account_number": "46805930",
+    "ifsc": "",
+    "iban": "GB44BARC20343646805930",
+    "sort_code": "20-34-36",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G027/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G027/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "stamped",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Quinrous Interiors PLC",
+      "tax_id": "GB593856974",
+      "address": "77 King Street, London, London EC1A 1BB",
+      "issue_date": "03/10/2025"
+     },
+     "issued_iso": "2025-10-03"
+    },
+    "bank_proof": {
+     "doc_type": "bank_statement",
+     "kind": "bank_statement",
+     "layout": "stamped",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Barclays Bank",
+      "account_number": "46805930",
+      "iban": "GB44BARC20343646805930",
+      "sort_code": "20-34-36",
+      "account_holder": "Quinrous Interiors PLC",
+      "issue_date": "11/10/2026"
+     },
+     "issued_iso": "2026-10-11"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G028",
+   "scenario": "awaiting_vendor",
+   "group": "negative",
+   "title": "[tamper_wrong_type/negative] honest bank statement (no edits)",
+   "story": "honest bank statement (no edits)",
+   "why": "tamper_wrong_type",
+   "difficulty": "negative",
+   "country": "GB",
+   "form": {
+    "legal_name": "Fenlion Facilities LLP",
+    "trade_name": "",
+    "entity_type": "llp",
+    "country": "GB",
+    "address": "Unit 3, Riverside Park, Leeds",
+    "city": "Leeds",
+    "postal_code": "LS1 4AP",
+    "tax_id": "GB682497882",
+    "contact_name": "George Hunt",
+    "contact_email": "accounts@fenlionfacilities.co.uk",
+    "bank_name": "Santander UK",
+    "account_holder": "Fenlion Facilities LLP",
+    "currency": "GBP",
+    "account_number": "78732655",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "09-03-13",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G028/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G028/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "prose",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Fenlion Facilities LLP",
+      "tax_id": "GB682497882",
+      "address": "Unit 3, Riverside Park, Leeds, Leeds LS1 4AP",
+      "issue_date": "18/04/2025"
+     },
+     "issued_iso": "2025-04-18"
+    },
+    "bank_proof": {
+     "doc_type": "bank_statement",
+     "kind": "bank_statement",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Santander UK",
+      "account_number": "78732655",
+      "sort_code": "09-03-13",
+      "account_holder": "Fenlion Facilities LLP",
+      "issue_date": "20 September 2026"
+     },
+     "issued_iso": "2026-09-20"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_vendor"
+   }
+  },
+  {
+   "id": "G029",
+   "scenario": "awaiting_vendor",
+   "group": "positive",
+   "title": "[street_number/positive] same city, different street number on certificate",
+   "story": "same city, different street number on certificate",
+   "why": "street_number",
+   "difficulty": "positive",
+   "country": "GB",
+   "form": {
+    "legal_name": "Kaisaion Print Limited",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "77 King Street, Edinburgh",
+    "city": "Edinburgh",
+    "postal_code": "EH1 1YZ",
+    "tax_id": "GB141445787",
+    "contact_name": "Oliver Price",
+    "contact_email": "finance@kaisaionprint.co.uk",
+    "bank_name": "Barclays Bank",
+    "account_holder": "Kaisaion Print Limited",
+    "currency": "GBP",
+    "account_number": "46130568",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "20-89-14",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G029/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G029/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "multipage",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Kaisaion Print Limited",
+      "tax_id": "GB141445787",
+      "address": "78 King Street, Edinburgh, Edinburgh EH1 1YZ",
+      "issue_date": "29 November 2025"
+     },
+     "issued_iso": "2025-11-29"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Barclays Bank",
+      "account_number": "46130568",
+      "sort_code": "20-89-14",
+      "account_holder": "Kaisaion Print Limited",
+      "issue_date": "31 October 2026"
+     },
+     "issued_iso": "2026-10-31"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_vendor"
+   }
+  },
+  {
+   "id": "G030",
+   "scenario": "approved",
+   "group": "negative",
+   "title": "[street_number/negative] same address written differently (caps, abbreviations)",
+   "story": "same address written differently (caps, abbreviations)",
+   "why": "street_number",
+   "difficulty": "negative",
+   "country": "GB",
+   "form": {
+    "legal_name": "Belmoar Interiors LLP",
+    "trade_name": "",
+    "entity_type": "llp",
+    "country": "GB",
+    "address": "12 Quay Street, London",
+    "city": "London",
+    "postal_code": "EC1A 1BB",
+    "tax_id": "GB727314443",
+    "contact_name": "Amelia Shaw",
+    "contact_email": "accounts@belmoarinteriors.co.uk",
+    "bank_name": "Barclays Bank",
+    "account_holder": "Belmoar Interiors LLP",
+    "currency": "GBP",
+    "account_number": "20384205",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "20-77-44",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G030/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G030/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "stamped",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Belmoar Interiors LLP",
+      "tax_id": "GB727314443",
+      "address": "12 QUAY ST., LONDON, London EC1A 1BB",
+      "issue_date": "12/04/2025"
+     },
+     "issued_iso": "2025-04-12"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Barclays Bank",
+      "account_number": "20384205",
+      "sort_code": "20-77-44",
+      "account_holder": "Belmoar Interiors LLP",
+      "issue_date": "11 October 2026"
+     },
+     "issued_iso": "2026-10-11"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G031",
+   "scenario": "approved",
+   "group": "positive",
+   "title": "[apostrophe/positive] form has an apostrophe, certificate prints it without",
+   "story": "form has an apostrophe, certificate prints it without",
+   "why": "apostrophe",
+   "difficulty": "positive",
+   "country": "US",
+   "form": {
+    "legal_name": "Cascade's Manufacturing Inc",
+    "trade_name": "",
+    "entity_type": "inc",
+    "country": "US",
+    "address": "2100 Logistics Dr, Denver, CO",
+    "city": "Denver",
+    "postal_code": "80202",
+    "tax_id": "32-0347494",
+    "contact_name": "Mason Hayes",
+    "contact_email": "ap@cascademanufacturing.com",
+    "bank_name": "U.S. Bank",
+    "account_holder": "Cascade's Manufacturing Inc",
+    "currency": "USD",
+    "account_number": "1066336696",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "190187891",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G031/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G031/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "w9",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Cascades Manufacturing Inc",
+      "tax_id": "32-0347494",
+      "address": "2100 Logistics Dr, Denver, CO, Denver 80202",
+      "issue_date": "June 30, 2026"
+     },
+     "issued_iso": "2026-06-30"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "multipage",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "U.S. Bank",
+      "account_number": "1066336696",
+      "routing_number": "190187891",
+      "account_holder": "Cascade's Manufacturing Inc",
+      "issue_date": "09/14/2026"
+     },
+     "issued_iso": "2026-09-14"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G032",
+   "scenario": "awaiting_reviewer",
+   "group": "negative",
+   "title": "[apostrophe/negative] certificate names a genuinely different company",
+   "story": "certificate names a genuinely different company",
+   "why": "apostrophe",
+   "difficulty": "negative",
+   "country": "US",
+   "form": {
+    "legal_name": "Lorrinix Labs LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "310 Lake Ave, Chicago, IL",
+    "city": "Chicago",
+    "postal_code": "60601",
+    "tax_id": "11-8159909",
+    "contact_name": "Emily Carter",
+    "contact_email": "finance@lorrinixlabs.com",
+    "bank_name": "Bank of America",
+    "account_holder": "Lorrinix Labs LLC",
+    "currency": "USD",
+    "account_number": "268606531980",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "077923408",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G032/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G032/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "w9",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "O'Marnaar Packaging Inc",
+      "tax_id": "11-8159909",
+      "address": "310 Lake Ave, Chicago, IL, Chicago 60601",
+      "issue_date": "October 03, 2026"
+     },
+     "issued_iso": "2026-10-03"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Bank of America",
+      "account_number": "268606531980",
+      "routing_number": "077923408",
+      "account_holder": "Lorrinix Labs LLC",
+      "issue_date": "11/04/2026"
+     },
+     "issued_iso": "2026-11-04"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G033",
+   "scenario": "approved",
+   "group": "positive",
+   "title": "[trade_name_of/positive] bank holder '<brand>, a business name of <legal>'",
+   "story": "bank holder '<brand>, a business name of <legal>'",
+   "why": "trade_name_of",
+   "difficulty": "positive",
+   "country": "US",
+   "form": {
+    "legal_name": "Arlion Analytics Inc",
+    "trade_name": "",
+    "entity_type": "inc",
+    "country": "US",
+    "address": "310 Lake Ave, Atlanta, GA",
+    "city": "Atlanta",
+    "postal_code": "30303",
+    "tax_id": "23-8223535",
+    "contact_name": "Jacob Reed",
+    "contact_email": "billing@arlionanalytics.com",
+    "bank_name": "Wells Fargo Bank",
+    "account_holder": "Arlion Analytics Inc",
+    "currency": "USD",
+    "account_number": "475640466269",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "236866102",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G033/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G033/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "w9",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Arlion Analytics Inc",
+      "tax_id": "23-8223535",
+      "address": "310 Lake Ave, Atlanta, GA, Atlanta 30303",
+      "issue_date": "03/16/2026"
+     },
+     "issued_iso": "2026-03-16"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Wells Fargo Bank",
+      "account_number": "475640466269",
+      "routing_number": "236866102",
+      "account_holder": "Arlion Hub, a business name of Arlion Analytics Inc",
+      "issue_date": "10/06/2026"
+     },
+     "issued_iso": "2026-10-06"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G034",
+   "scenario": "awaiting_reviewer",
+   "group": "negative",
+   "title": "[trade_name_of/negative] holder is the vendor's brand but a trade name of ANOTHER company",
+   "story": "holder is the vendor's brand but a trade name of ANOTHER company",
+   "why": "trade_name_of",
+   "difficulty": "negative",
+   "country": "US",
+   "form": {
+    "legal_name": "Zormoion Packaging LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "45 Main St, Floor 2, Atlanta, GA",
+    "city": "Atlanta",
+    "postal_code": "30303",
+    "tax_id": "48-3263439",
+    "contact_name": "Emily Carter",
+    "contact_email": "accounts@zormoionpackaging.com",
+    "bank_name": "U.S. Bank",
+    "account_holder": "Zormoion Packaging LLC",
+    "currency": "USD",
+    "account_number": "233280528598",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "019997036",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G034/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G034/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "w9",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Zormoion Packaging LLC",
+      "tax_id": "48-3263439",
+      "address": "45 Main St, Floor 2, Atlanta, GA, Atlanta 30303",
+      "issue_date": "July 30, 2025"
+     },
+     "issued_iso": "2025-07-30"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "multipage",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "U.S. Bank",
+      "account_number": "233280528598",
+      "routing_number": "019997036",
+      "account_holder": "Zormoion Direct, a trade name of Ironwood Fabrication LLC",
+      "issue_date": "09/06/2026"
+     },
+     "issued_iso": "2026-09-06"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G035",
+   "scenario": "awaiting_reviewer",
+   "group": "positive",
+   "title": "[contact_shared/positive] new company uses an existing vendor's exact mailbox",
+   "story": "new company uses an existing vendor's exact mailbox",
+   "why": "contact_shared",
+   "difficulty": "positive",
+   "country": "US",
+   "form": {
+    "legal_name": "Liberty Supply Corp",
+    "trade_name": "",
+    "entity_type": "corp",
+    "country": "US",
+    "address": "500 Commerce Blvd, Denver, CO",
+    "city": "Denver",
+    "postal_code": "80202",
+    "tax_id": "05-1616378",
+    "contact_name": "Mason Hayes",
+    "contact_email": "buchhaltung@northwindcomponentsg.de",
+    "bank_name": "PNC Bank",
+    "account_holder": "Liberty Supply Corp",
+    "currency": "USD",
+    "account_number": "24005291860",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "147212188",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G035/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G035/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "w9",
+     "layout": "stamped",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Liberty Supply Corp",
+      "tax_id": "05-1616378",
+      "address": "500 Commerce Blvd, Denver, CO, Denver 80202",
+      "issue_date": "08/05/2025"
+     },
+     "issued_iso": "2025-08-05"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "PNC Bank",
+      "account_number": "24005291860",
+      "routing_number": "147212188",
+      "account_holder": "Liberty Supply Corp",
+      "issue_date": "September 23, 2026"
+     },
+     "issued_iso": "2026-09-23"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G036",
+   "scenario": "approved",
+   "group": "negative",
+   "title": "[contact_shared/negative] similar-looking but different mailbox",
+   "story": "similar-looking but different mailbox",
+   "why": "contact_shared",
+   "difficulty": "negative",
+   "country": "US",
+   "form": {
+    "legal_name": "Northstar Supply LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "500 Commerce Blvd, Seattle, WA",
+    "city": "Seattle",
+    "postal_code": "98101",
+    "tax_id": "87-3618068",
+    "contact_name": "Jacob Reed",
+    "contact_email": "ap2@northwindcomponentsg-x.de",
+    "bank_name": "Truist Bank",
+    "account_holder": "Northstar Supply LLC",
+    "currency": "USD",
+    "account_number": "5505198639",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "163797771",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G036/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G036/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "w9",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Northstar Supply LLC",
+      "tax_id": "87-3618068",
+      "address": "500 Commerce Blvd, Seattle, WA, Seattle 98101",
+      "issue_date": "April 28, 2026"
+     },
+     "issued_iso": "2026-04-28"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Truist Bank",
+      "account_number": "5505198639",
+      "routing_number": "163797771",
+      "account_holder": "Northstar Supply LLC",
+      "issue_date": "September 14, 2026"
+     },
+     "issued_iso": "2026-09-14"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G037",
+   "scenario": "awaiting_reviewer",
+   "group": "positive",
+   "title": "[tamper_wrong_type/positive] bank STATEMENT with a pasted-over account",
+   "story": "bank STATEMENT with a pasted-over account",
+   "why": "tamper_wrong_type",
+   "difficulty": "positive",
+   "country": "US",
+   "form": {
+    "legal_name": "Prairie Software Inc",
+    "trade_name": "",
+    "entity_type": "inc",
+    "country": "US",
+    "address": "45 Main St, Floor 2, Chicago, IL",
+    "city": "Chicago",
+    "postal_code": "60601",
+    "tax_id": "80-5898247",
+    "contact_name": "Jacob Reed",
+    "contact_email": "ap@prairiesoftware.com",
+    "bank_name": "Wells Fargo Bank",
+    "account_holder": "Prairie Software Inc",
+    "currency": "USD",
+    "account_number": "39502670143",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "049361700",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G037/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G037/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "w9",
+     "layout": "multipage",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Prairie Software Inc",
+      "tax_id": "80-5898247",
+      "address": "45 Main St, Floor 2, Chicago, IL, Chicago 60601",
+      "issue_date": "May 12, 2025"
+     },
+     "issued_iso": "2025-05-12"
+    },
+    "bank_proof": {
+     "doc_type": "bank_statement",
+     "kind": "bank_statement",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Wells Fargo Bank",
+      "account_number": "39502670143",
+      "routing_number": "049361700",
+      "account_holder": "Prairie Software Inc",
+      "issue_date": "September 20, 2026"
+     },
+     "issued_iso": "2026-09-20"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G038",
+   "scenario": "awaiting_vendor",
+   "group": "negative",
+   "title": "[tamper_wrong_type/negative] honest bank statement (no edits)",
+   "story": "honest bank statement (no edits)",
+   "why": "tamper_wrong_type",
+   "difficulty": "negative",
+   "country": "US",
+   "form": {
+    "legal_name": "Prairie Freight Inc",
+    "trade_name": "",
+    "entity_type": "inc",
+    "country": "US",
+    "address": "310 Lake Ave, Atlanta, GA",
+    "city": "Atlanta",
+    "postal_code": "30303",
+    "tax_id": "76-3012199",
+    "contact_name": "Mason Hayes",
+    "contact_email": "ap@prairiefreight.com",
+    "bank_name": "Wells Fargo Bank",
+    "account_holder": "Prairie Freight Inc",
+    "currency": "USD",
+    "account_number": "1855846364",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "275062239",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G038/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G038/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "w9",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Prairie Freight Inc",
+      "tax_id": "76-3012199",
+      "address": "310 Lake Ave, Atlanta, GA, Atlanta 30303",
+      "issue_date": "June 19, 2026"
+     },
+     "issued_iso": "2026-06-19"
+    },
+    "bank_proof": {
+     "doc_type": "bank_statement",
+     "kind": "bank_statement",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Wells Fargo Bank",
+      "account_number": "1855846364",
+      "routing_number": "275062239",
+      "account_holder": "Prairie Freight Inc",
+      "issue_date": "September 06, 2026"
+     },
+     "issued_iso": "2026-09-06"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_vendor"
+   }
+  },
+  {
+   "id": "G039",
+   "scenario": "awaiting_vendor",
+   "group": "positive",
+   "title": "[street_number/positive] same city, different street number on certificate",
+   "story": "same city, different street number on certificate",
+   "why": "street_number",
+   "difficulty": "positive",
+   "country": "US",
+   "form": {
+    "legal_name": "Granite Analytics Fabrication LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "310 Lake Ave, Denver, CO",
+    "city": "Denver",
+    "postal_code": "80202",
+    "tax_id": "71-0394918",
+    "contact_name": "Olivia Brooks",
+    "contact_email": "ap@graniteanalyticsfabric.com",
+    "bank_name": "PNC Bank",
+    "account_holder": "Granite Analytics Fabrication LLC",
+    "currency": "USD",
+    "account_number": "352866603450",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "175868973",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G039/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G039/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "w9",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Granite Analytics Fabrication LLC",
+      "tax_id": "71-0394918",
+      "address": "320 Lake Ave, Denver, CO, Denver 80202",
+      "issue_date": "02/26/2026"
+     },
+     "issued_iso": "2026-02-26"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "PNC Bank",
+      "account_number": "352866603450",
+      "routing_number": "175868973",
+      "account_holder": "Granite Analytics Fabrication LLC",
+      "issue_date": "09/09/2026"
+     },
+     "issued_iso": "2026-09-09"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_vendor"
+   }
+  },
+  {
+   "id": "G040",
+   "scenario": "approved",
+   "group": "negative",
+   "title": "[street_number/negative] same address written differently (caps, abbreviations)",
+   "story": "same address written differently (caps, abbreviations)",
+   "why": "street_number",
+   "difficulty": "negative",
+   "country": "US",
+   "form": {
+    "legal_name": "Northstar Data Systems LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "500 Commerce Blvd, Denver, CO",
+    "city": "Denver",
+    "postal_code": "80202",
+    "tax_id": "10-1367015",
+    "contact_name": "Jacob Reed",
+    "contact_email": "billing@northstardatasystems.com",
+    "bank_name": "Wells Fargo Bank",
+    "account_holder": "Northstar Data Systems LLC",
+    "currency": "USD",
+    "account_number": "6687415196",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "204830979",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G040/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G040/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "w9",
+     "layout": "multipage",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Northstar Data Systems LLC",
+      "tax_id": "10-1367015",
+      "address": "500 COMMERCE BLVD, DENVER, CO, Denver 80202",
+      "issue_date": "September 24, 2025"
+     },
+     "issued_iso": "2025-09-24"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "stamped",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Wells Fargo Bank",
+      "account_number": "6687415196",
+      "routing_number": "204830979",
+      "account_holder": "Northstar Data Systems LLC",
+      "issue_date": "10/01/2026"
+     },
+     "issued_iso": "2026-10-01"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G041",
+   "scenario": "awaiting_reviewer",
+   "group": "positive",
+   "title": "[contact_change/positive] Globex Logistics Solutions Pvt Ltd resubmits with a new email domain",
+   "story": "Globex Logistics Solutions Pvt Ltd resubmits with a new email domain",
+   "why": "contact_change",
+   "difficulty": "positive",
+   "country": "IN",
+   "form": {
+    "legal_name": "Globex Logistics Solutions Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Plot 14, MIDC Industrial Area, Mumbai",
+    "city": "Mumbai",
+    "postal_code": "400001",
+    "tax_id": "27AABCG4411K1ZR",
+    "contact_name": "Priya Nair",
+    "contact_email": "finance@globex-pay.com",
+    "bank_name": "HDFC Bank",
+    "account_holder": "Globex Logistics Solutions Pvt Ltd",
+    "currency": "INR",
+    "account_number": "50100234567890",
+    "ifsc": "HDFC0000123",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G041/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G041/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "gst_certificate",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Globex Logistics Solutions Pvt Ltd",
+      "tax_id": "27AABCG4411K1ZR",
+      "address": "Plot 14, MIDC Industrial Area, Mumbai, Mumbai 400001",
+      "issue_date": "31.03.2025"
+     },
+     "issued_iso": "2025-03-31"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "HDFC Bank",
+      "account_number": "50100234567890",
+      "ifsc": "HDFC0000123",
+      "account_holder": "Globex Logistics Solutions Pvt Ltd",
+      "issue_date": "19-Oct-2026"
+     },
+     "issued_iso": "2026-10-19"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G042",
+   "scenario": "approved",
+   "group": "negative",
+   "title": "[contact_change/negative] Globex Logistics Solutions Pvt Ltd resubmits unchanged",
+   "story": "Globex Logistics Solutions Pvt Ltd resubmits unchanged",
+   "why": "contact_change",
+   "difficulty": "negative",
+   "country": "IN",
+   "form": {
+    "legal_name": "Globex Logistics Solutions Pvt Ltd",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Plot 14, MIDC Industrial Area, Mumbai",
+    "city": "Mumbai",
+    "postal_code": "400001",
+    "tax_id": "27AABCG4411K1ZR",
+    "contact_name": "Priya Nair",
+    "contact_email": "accounts@globexlogisticssolut.in",
+    "bank_name": "HDFC Bank",
+    "account_holder": "Globex Logistics Solutions Pvt Ltd",
+    "currency": "INR",
+    "account_number": "50100234567890",
+    "ifsc": "HDFC0000123",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G042/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G042/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "gst_certificate",
+     "layout": "prose",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Globex Logistics Solutions Pvt Ltd",
+      "tax_id": "27AABCG4411K1ZR",
+      "address": "Plot 14, MIDC Industrial Area, Mumbai, Mumbai 400001",
+      "issue_date": "16.09.2026"
+     },
+     "issued_iso": "2026-09-16"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "multipage",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "HDFC Bank",
+      "account_number": "50100234567890",
+      "ifsc": "HDFC0000123",
+      "account_holder": "Globex Logistics Solutions Pvt Ltd",
+      "issue_date": "04.11.2026"
+     },
+     "issued_iso": "2026-11-04"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G043",
+   "scenario": "awaiting_reviewer",
+   "group": "positive",
+   "title": "[contact_change/positive] Northwind Components GmbH resubmits with a new email domain",
+   "story": "Northwind Components GmbH resubmits with a new email domain",
+   "why": "contact_change",
+   "difficulty": "positive",
+   "country": "DE",
+   "form": {
+    "legal_name": "Northwind Components GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Industriestrasse 22, 60311 Frankfurt",
+    "city": "Frankfurt",
+    "postal_code": "60311",
+    "tax_id": "DE136695976",
+    "contact_name": "Jonas Weber",
+    "contact_email": "finance@gmail.com",
+    "bank_name": "Deutsche Bank",
+    "account_holder": "Northwind Components GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE89370400440532013000",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G043/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G043/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "multipage",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Northwind Components GmbH",
+      "tax_id": "DE136695976",
+      "address": "Industriestrasse 22, 60311 Frankfurt, 60311 Frankfurt",
+      "issue_date": "02.05.2025"
+     },
+     "issued_iso": "2025-05-02"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "stamped",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Deutsche Bank",
+      "iban": "DE89370400440532013000",
+      "account_holder": "Northwind Components GmbH",
+      "issue_date": "09.09.2026"
+     },
+     "issued_iso": "2026-09-09"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G044",
+   "scenario": "approved",
+   "group": "negative",
+   "title": "[contact_change/negative] Northwind Components GmbH resubmits unchanged",
+   "story": "Northwind Components GmbH resubmits unchanged",
+   "why": "contact_change",
+   "difficulty": "negative",
+   "country": "DE",
+   "form": {
+    "legal_name": "Northwind Components GmbH",
+    "trade_name": "",
+    "entity_type": "gmbh",
+    "country": "DE",
+    "address": "Industriestrasse 22, 60311 Frankfurt",
+    "city": "Frankfurt",
+    "postal_code": "60311",
+    "tax_id": "DE136695976",
+    "contact_name": "Jonas Weber",
+    "contact_email": "buchhaltung@northwindcomponentsg.de",
+    "bank_name": "Deutsche Bank",
+    "account_holder": "Northwind Components GmbH",
+    "currency": "EUR",
+    "account_number": "",
+    "ifsc": "",
+    "iban": "DE89370400440532013000",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G044/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G044/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "stamped",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Northwind Components GmbH",
+      "tax_id": "DE136695976",
+      "address": "Industriestrasse 22, 60311 Frankfurt, 60311 Frankfurt",
+      "issue_date": "01.06.2026"
+     },
+     "issued_iso": "2026-06-01"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "prose",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Deutsche Bank",
+      "iban": "DE89370400440532013000",
+      "account_holder": "Northwind Components GmbH",
+      "issue_date": "12 October 2026"
+     },
+     "issued_iso": "2026-10-12"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G045",
+   "scenario": "awaiting_reviewer",
+   "group": "positive",
+   "title": "[contact_change/positive] Brightpath Consulting Ltd resubmits with a new email domain",
+   "story": "Brightpath Consulting Ltd resubmits with a new email domain",
+   "why": "contact_change",
+   "difficulty": "positive",
+   "country": "GB",
+   "form": {
+    "legal_name": "Brightpath Consulting Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "12 Quay Street, Bristol",
+    "city": "Bristol",
+    "postal_code": "BS1 4ST",
+    "tax_id": "GB123456782",
+    "contact_name": "Hannah Cole",
+    "contact_email": "finance@proton.me",
+    "bank_name": "Barclays Bank",
+    "account_holder": "Brightpath Consulting Ltd",
+    "currency": "GBP",
+    "account_number": "55779911",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "20-00-00",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G045/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G045/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Brightpath Consulting Ltd",
+      "tax_id": "GB123456782",
+      "address": "12 Quay Street, Bristol, Bristol BS1 4ST",
+      "issue_date": "28 September 2025"
+     },
+     "issued_iso": "2025-09-28"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Barclays Bank",
+      "account_number": "55779911",
+      "sort_code": "20-00-00",
+      "account_holder": "Brightpath Consulting Ltd",
+      "issue_date": "20 October 2026"
+     },
+     "issued_iso": "2026-10-20"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G046",
+   "scenario": "approved",
+   "group": "negative",
+   "title": "[contact_change/negative] Brightpath Consulting Ltd resubmits unchanged",
+   "story": "Brightpath Consulting Ltd resubmits unchanged",
+   "why": "contact_change",
+   "difficulty": "negative",
+   "country": "GB",
+   "form": {
+    "legal_name": "Brightpath Consulting Ltd",
+    "trade_name": "",
+    "entity_type": "ltd",
+    "country": "GB",
+    "address": "12 Quay Street, Bristol",
+    "city": "Bristol",
+    "postal_code": "BS1 4ST",
+    "tax_id": "GB123456782",
+    "contact_name": "Hannah Cole",
+    "contact_email": "finance@brightpathconsulting.co.uk",
+    "bank_name": "Barclays Bank",
+    "account_holder": "Brightpath Consulting Ltd",
+    "currency": "GBP",
+    "account_number": "55779911",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "20-00-00",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G046/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G046/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "vat_certificate",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Brightpath Consulting Ltd",
+      "tax_id": "GB123456782",
+      "address": "12 Quay Street, Bristol, Bristol BS1 4ST",
+      "issue_date": "23/11/2025"
+     },
+     "issued_iso": "2025-11-23"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "Barclays Bank",
+      "account_number": "55779911",
+      "sort_code": "20-00-00",
+      "account_holder": "Brightpath Consulting Ltd",
+      "issue_date": "25 October 2026"
+     },
+     "issued_iso": "2026-10-25"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G047",
+   "scenario": "awaiting_reviewer",
+   "group": "positive",
+   "title": "[contact_change/positive] Summit Office Supplies LLC resubmits with a new email domain",
+   "story": "Summit Office Supplies LLC resubmits with a new email domain",
+   "why": "contact_change",
+   "difficulty": "positive",
+   "country": "US",
+   "form": {
+    "legal_name": "Summit Office Supplies LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "900 Main St, Omaha, NE",
+    "city": "Omaha",
+    "postal_code": "68102",
+    "tax_id": "12-3456789",
+    "contact_name": "Marcus Hill",
+    "contact_email": "finance@proton.me",
+    "bank_name": "JPMorgan Chase",
+    "account_holder": "Summit Office Supplies LLC",
+    "currency": "USD",
+    "account_number": "123456789012",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "021000021",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G047/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G047/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "w9",
+     "layout": "prose",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Summit Office Supplies LLC",
+      "tax_id": "12-3456789",
+      "address": "900 Main St, Omaha, NE, Omaha 68102",
+      "issue_date": "06/30/2025"
+     },
+     "issued_iso": "2025-06-30"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "JPMorgan Chase",
+      "account_number": "123456789012",
+      "routing_number": "021000021",
+      "account_holder": "Summit Office Supplies LLC",
+      "issue_date": "November 05, 2026"
+     },
+     "issued_iso": "2026-11-05"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G048",
+   "scenario": "approved",
+   "group": "negative",
+   "title": "[contact_change/negative] Summit Office Supplies LLC resubmits unchanged",
+   "story": "Summit Office Supplies LLC resubmits unchanged",
+   "why": "contact_change",
+   "difficulty": "negative",
+   "country": "US",
+   "form": {
+    "legal_name": "Summit Office Supplies LLC",
+    "trade_name": "",
+    "entity_type": "llc",
+    "country": "US",
+    "address": "900 Main St, Omaha, NE",
+    "city": "Omaha",
+    "postal_code": "68102",
+    "tax_id": "12-3456789",
+    "contact_name": "Marcus Hill",
+    "contact_email": "ap@summitofficesupplies.com",
+    "bank_name": "JPMorgan Chase",
+    "account_holder": "Summit Office Supplies LLC",
+    "currency": "USD",
+    "account_number": "123456789012",
+    "ifsc": "",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "021000021",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G048/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G048/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "w9",
+     "layout": "table",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Summit Office Supplies LLC",
+      "tax_id": "12-3456789",
+      "address": "900 Main St, Omaha, NE, Omaha 68102",
+      "issue_date": "December 22, 2025"
+     },
+     "issued_iso": "2025-12-22"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "JPMorgan Chase",
+      "account_number": "123456789012",
+      "routing_number": "021000021",
+      "account_holder": "Summit Office Supplies LLC",
+      "issue_date": "10/04/2026"
+     },
+     "issued_iso": "2026-10-04"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  },
+  {
+   "id": "G049",
+   "scenario": "awaiting_reviewer",
+   "group": "positive",
+   "title": "[contact_change/positive] Acme Technologies Private Limited resubmits with a new email domain",
+   "story": "Acme Technologies Private Limited resubmits with a new email domain",
+   "why": "contact_change",
+   "difficulty": "positive",
+   "country": "IN",
+   "form": {
+    "legal_name": "Acme Technologies Private Limited",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Plot 14, MIDC Industrial Area, Mumbai",
+    "city": "Mumbai",
+    "postal_code": "400001",
+    "tax_id": "29AABCA7788M1ZV",
+    "contact_name": "Priya Nair",
+    "contact_email": "finance@acme-pay.com",
+    "bank_name": "ICICI Bank",
+    "account_holder": "Acme Technologies Private Limited",
+    "currency": "INR",
+    "account_number": "60200011223344",
+    "ifsc": "ICIC0000456",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G049/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G049/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "gst_certificate",
+     "layout": "multipage",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Acme Technologies Private Limited",
+      "tax_id": "29AABCA7788M1ZV",
+      "address": "Plot 14, MIDC Industrial Area, Mumbai, Mumbai 400001",
+      "issue_date": "16/10/2025"
+     },
+     "issued_iso": "2025-10-16"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "kv",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "ICICI Bank",
+      "account_number": "60200011223344",
+      "ifsc": "ICIC0000456",
+      "account_holder": "Acme Technologies Private Limited",
+      "issue_date": "26.10.2026"
+     },
+     "issued_iso": "2026-10-26"
+    }
+   },
+   "expect": {
+    "status": "pending",
+    "substatus": "awaiting_reviewer"
+   }
+  },
+  {
+   "id": "G050",
+   "scenario": "approved",
+   "group": "negative",
+   "title": "[contact_change/negative] Acme Technologies Private Limited resubmits unchanged",
+   "story": "Acme Technologies Private Limited resubmits unchanged",
+   "why": "contact_change",
+   "difficulty": "negative",
+   "country": "IN",
+   "form": {
+    "legal_name": "Acme Technologies Private Limited",
+    "trade_name": "",
+    "entity_type": "pvt_ltd",
+    "country": "IN",
+    "address": "Plot 14, MIDC Industrial Area, Mumbai",
+    "city": "Mumbai",
+    "postal_code": "400001",
+    "tax_id": "29AABCA7788M1ZV",
+    "contact_name": "Priya Nair",
+    "contact_email": "accounts@acmetechnologiespriv.in",
+    "bank_name": "ICICI Bank",
+    "account_holder": "Acme Technologies Private Limited",
+    "currency": "INR",
+    "account_number": "60200011223344",
+    "ifsc": "ICIC0000456",
+    "iban": "",
+    "sort_code": "",
+    "routing_number": "",
+    "swift": ""
+   },
+   "docs": {
+    "tax_cert": "bench/generalization/docs/G050/tax_cert.pdf",
+    "bank_proof": "bench/generalization/docs/G050/bank_proof.pdf"
+   },
+   "doc_truth": {
+    "tax_cert": {
+     "doc_type": "tax_cert",
+     "kind": "gst_certificate",
+     "layout": "stamped",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "legal_name": "Acme Technologies Private Limited",
+      "tax_id": "29AABCA7788M1ZV",
+      "address": "Plot 14, MIDC Industrial Area, Mumbai, Mumbai 400001",
+      "issue_date": "04-Apr-2026"
+     },
+     "issued_iso": "2026-04-04"
+    },
+    "bank_proof": {
+     "doc_type": "bank_proof",
+     "kind": "bank_letter",
+     "layout": "twocol",
+     "language": "en",
+     "legible": true,
+     "printed": {
+      "bank_name": "ICICI Bank",
+      "account_number": "60200011223344",
+      "ifsc": "ICIC0000456",
+      "account_holder": "Acme Technologies Private Limited",
+      "issue_date": "25.08.2026"
+     },
+     "issued_iso": "2026-08-25"
+    }
+   },
+   "expect": {
+    "status": "approved",
+    "substatus": "approved"
+   }
+  }
+ ]
+}

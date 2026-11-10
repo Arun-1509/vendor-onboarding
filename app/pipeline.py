@@ -124,6 +124,33 @@ def s_intake(ctx: Ctx):
 _STATEMENT_MARKERS = ("statement of account", "account statement", "kontoauszug", "opening balance", "closing balance")
 
 
+def _integrity(ctx, dtype, label, path, d=None):
+    """Tamper check on the raw file. Runs on every uploaded file, also one we then refuse as the wrong
+    kind of document: an edited bank statement is a fraud signal, not just 'please send a letter'."""
+    # integrity: read the raw file, not the AI's reading of the page
+    integ = docintegrity.analyze(path)
+    d["integrity"] = integ
+    if integ["conflicts"]:
+        parts = "; ".join(f"{k.replace('_', ' ')}: " + " vs ".join(screening.mask(x) if k in ("account_number", "iban") or (k == "overlaid_value" and sum(ch.isdigit() for ch in x) >= 6) else x for x in v)
+                          for k, v in integ["conflicts"].items())
+        ctx.add(finding("DOC_CONFLICTING_VALUES",
+                        f"The {label} contains two different values for the same field ({parts}). One is hidden under the visible page"
+                        + (f"; the file was edited {integ['incremental_updates']} time(s) after it was created." if integ["incremental_updates"] else "."),
+                        field=dtype, evidence={k: [screening.mask(x) if k in ("account_number", "iban") or (k == "overlaid_value" and sum(ch.isdigit() for ch in x) >= 6) else x for x in v]
+                                               for k, v in integ["conflicts"].items()} | {"incremental_updates": integ["incremental_updates"]}))
+    elif integ["incremental_updates"]:
+        ctx.add(finding("DOC_EDITED", f"The {label} was saved with {integ['incremental_updates']} later edit(s).", field=dtype,
+                        evidence={"incremental_updates": integ["incremental_updates"], "producer": integ["producer"]}))
+
+
+_POSTCODE = re.compile(r"\b[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b|\b\d{5,6}\b|\b[A-Z]{2}\s+\d{5}\b", re.I)
+
+
+def _street_numbers(addr: str) -> list[str]:
+    """House / plot / unit numbers in an address, postcodes removed ('Kanalweg 19, 04109 Leipzig' -> ['19'])."""
+    return re.findall(r"\b\d{1,4}[a-z]?\b", _POSTCODE.sub(" ", addr or "").lower())
+
+
 def _norm_read(v) -> str:
     return "".join(ch for ch in str(v or "").upper() if ch.isalnum())
 
@@ -197,6 +224,7 @@ def s_read_documents(ctx: Ctx):
             ctx.add(finding("DOC_NOT_ACCEPTED", "A bank statement was uploaded as proof of the bank account.", field=dtype,
                             ask="You uploaded a bank statement. Please send a letter from your bank confirming the account (or a cancelled cheque), issued in the last 90 days."))
             summaries[dtype] = "bank statement (not accepted)"
+            _integrity(ctx, dtype, label, path, d)
             continue
         if d["detected"] != dtype:
             seen = {"tax_cert": "a tax certificate", "bank_proof": "a bank letter", "incorporation": "an incorporation certificate", "bank_statement": "a bank statement",
@@ -204,6 +232,7 @@ def s_read_documents(ctx: Ctx):
             ctx.add(finding("WRONG_DOCUMENT", f"File uploaded as {label} looks like {seen}.", field=dtype,
                             ask=f"The file uploaded as your {label} looks like {seen}. Please upload your {label}."))
             summaries[dtype] = f"wrong type ({d['detected']})"
+            _integrity(ctx, dtype, label, path, d)
             continue
         text = pdf_text(path)
         d["grounding"] = "verified against text layer" if text.strip() else "n/a (scanned image: relying on model confidence)"
@@ -236,20 +265,7 @@ def s_read_documents(ctx: Ctx):
         d["usable"] = True
         d["ungrounded"] = bad
         d["scanned"] = not text.strip()
-        # integrity: read the raw file, not the AI's reading of the page
-        integ = docintegrity.analyze(path)
-        d["integrity"] = integ
-        if integ["conflicts"]:
-            parts = "; ".join(f"{k.replace('_', ' ')}: " + " vs ".join(screening.mask(x) if k in ("account_number", "iban") or (k == "overlaid_value" and sum(ch.isdigit() for ch in x) >= 6) else x for x in v)
-                              for k, v in integ["conflicts"].items())
-            ctx.add(finding("DOC_CONFLICTING_VALUES",
-                            f"The {label} contains two different values for the same field ({parts}). One is hidden under the visible page"
-                            + (f"; the file was edited {integ['incremental_updates']} time(s) after it was created." if integ["incremental_updates"] else "."),
-                            field=dtype, evidence={k: [screening.mask(x) if k in ("account_number", "iban") or (k == "overlaid_value" and sum(ch.isdigit() for ch in x) >= 6) else x for x in v]
-                                                   for k, v in integ["conflicts"].items()} | {"incremental_updates": integ["incremental_updates"]}))
-        elif integ["incremental_updates"]:
-            ctx.add(finding("DOC_EDITED", f"The {label} was saved with {integ['incremental_updates']} later edit(s).", field=dtype,
-                            evidence={"incremental_updates": integ["incremental_updates"], "producer": integ["producer"]}))
+        _integrity(ctx, dtype, label, path, d)
         summaries[dtype] = f"{len(d['values'])} fields read" + (" (scan)" if d["scanned"] else "")
     n = len(ctx.docs)
     return {"headline": f"Read {n} document(s): " + ", ".join(f"{k}: {v}" for k, v in summaries.items()) if n else "No documents to read.",
@@ -552,6 +568,17 @@ def s_cross_check(ctx: Ctx):
             # a clearly different company or a private person: payments would leave the vendor
             ctx.add(finding("THIRD_PARTY_PAYEE", f"Account holder '{holder}' is not the vendor '{authority}': {vs_legal['why']}.",
                             field="account_holder", evidence={"holder": holder, "legal_name": authority, **vs_legal}))
+    # ---- 5b. street number: form vs the tax certificate (text-layer documents only) ------
+    cert_addr = ctx.doc_val("tax_cert", "address") if ctx.usable("tax_cert") and not ctx.docs["tax_cert"].get("scanned") else None
+    form_no, cert_nos = _street_numbers(f.get("address", "")), _street_numbers(cert_addr or "")
+    squash = lambda s: re.sub(r"[^a-z0-9]", "", (s or "").lower())  # noqa: E731
+    same_place = bool(cert_addr) and any(x and squash(x) in squash(cert_addr) for x in (f.get("postal_code"), f.get("city")))
+    # same postcode/city but another street number = a slip to confirm; a different city is a different
+    # site (e.g. a branch registration), which other rules handle
+    if same_place and form_no and cert_nos and form_no[0] not in cert_nos:
+        ctx.add(finding("ADDRESS_MISMATCH_DOC", f"Form address '{f.get('address')}' has street number {form_no[0]}; the tax certificate says '{cert_addr}'.",
+                        field="address", evidence={"form": f.get("address"), "certificate": cert_addr},
+                        ask=f"The address on your form ('{f.get('address')}') differs from your tax certificate ('{cert_addr}'). Please confirm your registered address."))
     # ---- 6. contact email -----------------------------------------------------------
     dom = (f.get("contact_email", "").split("@")[-1] or "").lower()
     if dom in config.FREE_EMAIL_DOMAINS and f.get("entity_type") not in ("sole_prop", ""):
@@ -616,6 +643,17 @@ def s_screening(ctx: Ctx):
     if old_key and ctx.account_key and old_key != ctx.account_key:
         ctx.add(finding("BANK_CHANGE_REQUEST", f"Approved vendor {vid} is submitting different bank details than the ones we have approved.",
                         field="bank", evidence={"approved_account": screening.mask(old_key.split(':')[-1]), "submitted_account": screening.mask(ctx.account_key.split(':')[-1])}))
+    # ---- contact channel: who receives payment notices and bank-change confirmations ----
+    email = (f.get("contact_email") or "").strip().lower()
+    if email:
+        prev = screening.previous_contact(ctx.conn, vid, ctx.sub.get("submission_id"))
+        approved_before = bool((ctx.vendor.get("data") or {}).get("approved_account_key"))
+        if approved_before and prev and prev.split("@")[-1] != email.split("@")[-1]:
+            ctx.add(finding("CONTACT_CHANGE", f"Approved vendor {vid} is changing its contact email from the {prev.split('@')[-1]} domain to {email.split('@')[-1]}.",
+                            field="contact_email", evidence={"on_file_domain": prev.split("@")[-1], "submitted_domain": email.split("@")[-1]}))
+        for v in screening.find_shared_contact(ctx.conn, vid, email):
+            ctx.add(finding("CONTACT_SHARED", f"Contact email {email} is already used by {v['legal_name']} ({v['vendor_id']}, {v['status']}).",
+                            field="contact_email", evidence=v))
     for v in screening.other_vendors(ctx.conn, vid):
         if v["status"] == "rejected" and v["substatus"] == "rejected_compliance" and (
                 (v["tax_id"] and v["tax_id"] == tax_norm) or (v["account_key"] and v["account_key"] == ctx.account_key)):
@@ -641,7 +679,7 @@ def _next_step(codes):
     if codes & {"DOC_CONFLICTING_VALUES"}:
         return ("treat the document as edited: confirm the account directly with the bank, using contact details from the bank's "
                 "own website (never from this submission), before any approval")
-    if codes & {"BANK_CHANGE_REQUEST", "BANK_ACCOUNT_SHARED", "LOOKALIKE_VENDOR", "TAXID_DUPLICATE_OTHER_NAME"}:
+    if codes & {"BANK_CHANGE_REQUEST", "BANK_ACCOUNT_SHARED", "LOOKALIKE_VENDOR", "TAXID_DUPLICATE_OTHER_NAME", "CONTACT_CHANGE", "CONTACT_SHARED"}:
         return ("phone the number ALREADY ON FILE for the existing vendor (not the number in this submission) "
                 "and confirm the details before any approval")
     return "contact the vendor through the registered channel to clarify, and do not approve until reconciled"

@@ -17,7 +17,7 @@ REVIEW_SLA_HOURS = 48
 # Approving any of these needs two different people (classic payment-fraud / compliance routes).
 FOUR_EYES = {"BANK_CHANGE_REQUEST", "BANK_ACCOUNT_SHARED", "LOOKALIKE_VENDOR", "DOC_CONFLICTING_VALUES",
              "THIRD_PARTY_PAYEE", "BANK_ACCOUNT_DIFFERENT_DOC", "TAXCERT_OTHER_ENTITY",
-             "TAXID_DUPLICATE_OTHER_NAME", "SANCTIONS_NEAR", "PRIOR_REJECTED", "PAN_NAME_MISMATCH", "GSTIN_STATE_MISMATCH"}
+             "TAXID_DUPLICATE_OTHER_NAME", "CONTACT_CHANGE", "CONTACT_SHARED", "SANCTIONS_NEAR", "PRIOR_REJECTED", "PAN_NAME_MISMATCH", "GSTIN_STATE_MISMATCH"}
 COMPLIANCE = {"SANCTIONS_NEAR", "SANCTIONS_HIT", "PRIOR_REJECTED"}
 
 # What a reviewer must actually verify before approving. Plain verbs, out-of-band where it matters.
@@ -30,6 +30,10 @@ PLAYBOOK = {
                          "Verify the new company in the official company register"],
     "DOC_CONFLICTING_VALUES": ["Open the original file: a value was pasted over another one",
                                "Ask the bank directly (contact details from the bank's website) to confirm the account"],
+    "CONTACT_CHANGE": ["Phone the vendor on the number ALREADY ON FILE and confirm the new contact address is theirs",
+                       "Until confirmed, send nothing (no bank details, no links) to the new address"],
+    "CONTACT_SHARED": ["Ask the EXISTING vendor (number on file) whether this mailbox and this company are theirs",
+                       "Verify the new company in the official company register"],
     "TAXID_DUPLICATE_OTHER_NAME": ["Check which company the tax ID really belongs to (government portal)"],
     "THIRD_PARTY_PAYEE": ["Ask the vendor (registered channel) why payments should go to this account holder",
                           "Require an assignment / factoring agreement signed by both parties, or an account in the vendor's own name",

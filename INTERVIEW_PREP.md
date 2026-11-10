@@ -24,6 +24,7 @@
 **Did you test it on anything you didn't write?**
 - Yes, two harder sets:
   - **A blind answer key** written by an independent author who never saw my code. It scored 62.5% on first look.
+  - **Unseen test by another AI company:** ChatGPT wrote 37 cases from a process description only. First look **78%**, every sanctions case rejected, 3 unsafe approvals (an account-takeover via a changed contact mailbox, a shared mailbox, a street-number slip). Fixed with general rules, then checked on 50 fresh probe vendors (49/50) so they are not memorised; the 78% stays the number I quote.
   - **Live Gemini on those harder tests:** 113/115 answered vendors decided correctly (55/56 blind, 58/59 messy documents), 99.0% of 882 printed fields read exactly, zero unsafe approvals. Misses: a statement read as a bank letter (now double-checked in code) and an unreadable photo the AI guessed at instead of refusing (went to a reviewer: safe direction, deliberately not patched). Whenever the free quota ran out, every affected vendor went to a reviewer and none was approved.
   - **A messy-documents set**: tables, German letters, phone photos, stamps. It scored 81.7% on first look.
 - They found real gaps, all invisible to my 1,900-vendor set:

@@ -1,0 +1,149 @@
+{
+ "set": "holdout",
+ "reader": "truth",
+ "n": 37,
+ "metrics": {
+  "n": 37,
+  "decision_accuracy": 0.9459,
+  "strict_accuracy": 0.9459,
+  "macro_f1": 0.9533,
+  "unsafe_approval_rate": 0.0,
+  "straight_through_rate": 0.9167,
+  "errors": {
+   "unsafe_approvals": 0,
+   "missed_rejects": 0,
+   "disclosure_leaks": 1,
+   "over_escalations": 0,
+   "false_holds": 1,
+   "other": 0
+  },
+  "weighted_cost": 11,
+  "confusion": {
+   "approved": {
+    "approved": 11,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 1,
+    "rejected": 0
+   },
+   "awaiting_vendor": {
+    "approved": 0,
+    "awaiting_vendor": 11,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_reviewer": {
+    "approved": 0,
+    "awaiting_vendor": 1,
+    "awaiting_reviewer": 9,
+    "rejected": 0
+   },
+   "rejected": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 4
+   }
+  },
+  "per_class": {
+   "approved": {
+    "precision": 1.0,
+    "recall": 0.9167,
+    "f1": 0.9565,
+    "support": 12
+   },
+   "awaiting_vendor": {
+    "precision": 0.9167,
+    "recall": 1.0,
+    "f1": 0.9565,
+    "support": 11
+   },
+   "awaiting_reviewer": {
+    "precision": 0.9,
+    "recall": 0.9,
+    "f1": 0.9,
+    "support": 10
+   },
+   "rejected": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 4
+   }
+  },
+  "per_scenario": {
+   "approved": {
+    "n": 12,
+    "decision_ok": 11,
+    "strict_ok": 11,
+    "failed_ids": [
+     "H05"
+    ]
+   },
+   "awaiting_reviewer": {
+    "n": 10,
+    "decision_ok": 9,
+    "strict_ok": 9,
+    "failed_ids": [
+     "H33"
+    ]
+   },
+   "awaiting_vendor": {
+    "n": 11,
+    "decision_ok": 11,
+    "strict_ok": 11,
+    "failed_ids": []
+   },
+   "rejected": {
+    "n": 4,
+    "decision_ok": 4,
+    "strict_ok": 4,
+    "failed_ids": []
+   }
+  },
+  "median_ms": 71
+ },
+ "failures": [
+  {
+   "id": "H05",
+   "scenario": "approved",
+   "country": "GB",
+   "title": "Unrelated name resemblance",
+   "expected": "approved",
+   "got": "awaiting_reviewer",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_reviewer != expected approved"
+   ],
+   "risk": 40,
+   "ms": 61,
+   "difficulty": "hard",
+   "codes": [
+    "SANCTIONS_NEAR"
+   ],
+   "why_expected": "A shared phrase with a sanctions-listed name is not a match when the legal identity is distinct and the evidence is consistent."
+  },
+  {
+   "id": "H33",
+   "scenario": "awaiting_reviewer",
+   "country": "US",
+   "title": "High-risk bank change after review",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 25,
+   "ms": 75,
+   "difficulty": "hard",
+   "codes": [
+    "BANK_ACCOUNT_MISMATCH_DOC",
+    "FREE_EMAIL_DOMAIN"
+   ],
+   "why_expected": "An unsolicited payment-detail change through a new contact channel is a business email compromise pattern that merits human verification before any vendor request."
+  }
+ ]
+}

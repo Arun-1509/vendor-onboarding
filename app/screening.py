@@ -78,6 +78,29 @@ def find_shared_account(conn, vendor_id: str, account_key: str) -> list[dict]:
             for v in other_vendors(conn, vendor_id) if v["account_key"] == account_key]
 
 
+def _latest_form(conn, vendor_id: str, exclude_submission: str | None = None) -> dict:
+    import json
+    r = conn.execute("SELECT form FROM submissions WHERE vendor_id=? AND submission_id != ? ORDER BY version DESC, created_at DESC LIMIT 1",
+                     (vendor_id, exclude_submission or "")).fetchone()
+    f = (r["form"] if r else None) or {}
+    return json.loads(f) if isinstance(f, str) else f
+
+
+def previous_contact(conn, vendor_id: str, exclude_submission: str | None) -> str:
+    """Contact email of this vendor's previous submission (what is on file)."""
+    return (_latest_form(conn, vendor_id, exclude_submission).get("contact_email") or "").strip().lower()
+
+
+def find_shared_contact(conn, vendor_id: str, email: str) -> list[dict]:
+    """Other vendors whose latest submission uses exactly this mailbox."""
+    email = (email or "").strip().lower()
+    if not email:
+        return []
+    return [{"vendor_id": v["vendor_id"], "legal_name": v["legal_name"], "status": v["status"]}
+            for v in other_vendors(conn, vendor_id)
+            if (_latest_form(conn, v["vendor_id"]).get("contact_email") or "").strip().lower() == email]
+
+
 def find_same_taxid(conn, vendor_id: str, country: str, tax_id: str) -> list[dict]:
     if not tax_id:
         return []

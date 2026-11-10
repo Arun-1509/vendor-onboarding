@@ -44,6 +44,8 @@ _R = [
     # --- consistency (needs two sources to see) ------------------------------------
     ("TAXID_MISMATCH_DOC", "consistency", "warn", "vendor", 15, "Tax ID on form differs from certificate", "One of the two is wrong or the wrong certificate was sent."),
     ("NAME_MISMATCH_TAXCERT", "consistency", "warn", "vendor", 20, "Company name differs from tax certificate", "The tax certificate is the authority on the legal name."),
+    ("ADDRESS_MISMATCH_DOC", "consistency", "warn", "vendor", 5, "Street address on the form differs from the tax certificate",
+     "The registered address is part of the identity we verify; usually a typo the vendor can confirm."),
     ("ACCOUNT_HOLDER_MISMATCH", "consistency", "warn", "vendor", 25, "Bank account is not in the vendor's name", "Paying a different name is a classic fraud pattern."),
     ("BANK_ACCOUNT_MISMATCH_DOC", "consistency", "warn", "vendor", 20, "Account on form differs from bank letter", "Either a typo or a tampered document."),
     ("BANK_CODE_MISMATCH", "consistency", "warn", "reviewer", 20, "Bank name does not match the bank code", "The IFSC / IBAN bank code / sort code belongs to a different bank from the one stated."),
@@ -80,6 +82,10 @@ _R = [
     ("BANK_ACCOUNT_SHARED", "fraud", "block", "reviewer", 50, "Bank account already belongs to another vendor", "Two unrelated vendors rarely share one account."),
     ("BANK_CHANGE_REQUEST", "fraud", "block", "reviewer", 50, "Existing vendor is asking to change bank details", "The most common payment-fraud route; verify by phone."),
     ("TAXID_DUPLICATE_OTHER_NAME", "fraud", "block", "reviewer", 40, "Tax ID already registered under a different name", "Same registration, different company name."),
+    ("CONTACT_CHANGE", "fraud", "block", "reviewer", 45, "Existing vendor's contact email is changing to a different domain",
+     "Payment notices and bank-change confirmations go to this address; taking it over is how account-takeover fraud starts."),
+    ("CONTACT_SHARED", "fraud", "block", "reviewer", 40, "Contact email already belongs to a different vendor",
+     "Two unrelated companies rarely share one mailbox; it can be someone onboarding in another company's name."),
     ("PRIOR_REJECTED", "fraud", "block", "reviewer", 40, "Matches a previously rejected vendor", "Do not let a rejected vendor back in quietly."),
     # --- lifecycle ---------------------------------------------------------------
     ("STALE_NO_RESPONSE", "lifecycle", "block", "reject", 0, "Vendor did not respond in time", "Requests cannot stay open forever."),

@@ -19,6 +19,14 @@ from app import bench  # noqa: E402
 
 REP = ROOT / "reports"
 FINDINGS = [
+    {"set": "holdout", "found": "A lookalike of an existing vendor reused its tax ID and bank account but switched the contact to a ProtonMail address, and was approved.",
+     "fix": "An existing vendor whose contact email moves to another domain goes to a reviewer (account takeover starts with the mailbox)."},
+    {"set": "holdout", "found": "A new company used an existing vendor's exact contact email and was approved.",
+     "fix": "One mailbox used by two different companies goes to a reviewer, like a shared bank account."},
+    {"set": "holdout", "found": "An edited bank STATEMENT was only refused as the wrong document; the edit was never flagged.",
+     "fix": "The tamper check runs on every uploaded file, including ones then refused as the wrong kind."},
+    {"set": "holdout", "found": "'O'Connell' vs 'OConnell' and 'Brand, a trade name of Company LLC' were treated as different payees; a street number differing from the certificate (same city) was approved.",
+     "fix": "Apostrophes join words; 'a trade/trading/business name of X' resolves to X; same postcode/city but another street number asks the vendor to confirm."},
     {"set": "diverse", "found": "Bank-letter dates printed as 10/07/2026 or 9 November 2026 were not matched to the ISO date the reader returns, so the 90-day check silently skipped them.",
      "fix": "Dates are compared as dates (all common styles); a bank letter without a verifiable date now asks the vendor (DOC_UNDATED)."},
     {"set": "diverse", "found": "A fraudster pasting over only the account NUMBER (not the whole 'IBAN: ...' line) was not detected.",
@@ -60,7 +68,8 @@ def summarize():
         out["sets"][name] = {
             "n": data["n"], "description": {
                 "blind": "Written by an independent author who never saw the code or rules: 56 scenarios with expected outcomes from business judgment.",
-                "diverse": "60 vendors whose documents come in many shapes: tables, prose letters, multi-page, stamps, German, country date formats, phone photos, value-only edits."}[name],
+                "diverse": "60 vendors whose documents come in many shapes: tables, prose letters, multi-page, stamps, German, country date formats, phone photos, value-only edits.",
+                "holdout": "37 vendors written by ChatGPT (a different AI company) from a description of the process only: no code, no rules. Scored once before any change."}[name],
             "document_styles": layouts,
             "first_look": first["metrics"], "first_look_failures": [{k: f[k] for k in ("id", "title", "expected", "got")} for f in first["failures"]],
             "after_fixes": now["metrics"]}
