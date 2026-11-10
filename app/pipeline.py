@@ -124,6 +124,10 @@ def s_intake(ctx: Ctx):
 _STATEMENT_MARKERS = ("statement of account", "account statement", "kontoauszug", "opening balance", "closing balance")
 
 
+def _norm_read(v) -> str:
+    return "".join(ch for ch in str(v or "").upper() if ch.isalnum())
+
+
 def _looks_like_statement(path: str) -> bool:
     """A bank statement (transaction list) is not proof of the account. Checked in code because the
     live model sometimes labels a statement as a bank letter."""
@@ -151,11 +155,36 @@ def s_read_documents(ctx: Ctx):
         todo = [(t, ctx.paths[t]) for t, _ in todo]
         ctx.add(finding("DOC_SLOTS_SWAPPED", "The tax certificate and the bank letter were uploaded into each other's slots; each was read as what it is.",
                         field="documents"))
+    # Photos/scans have no text layer to check the AI against, and a model asked to read a blurry photo
+    # tends to GUESS with high confidence. So scanned documents are read a second time, independently:
+    # a critical value the two reads disagree on was not really legible. Nothing is tuned to a test set;
+    # this is plain self-consistency and works the same for any document, language or layout.
+    scans = [(t, p) for t, p in todo if read[t].get("legible", True) and not pdf_text(p).strip()]
+    if scans:
+        with ThreadPoolExecutor(max_workers=len(scans)) as ex:
+            again = {t: ex.submit(ctx.llm.extract_document, t, p) for t, p in scans}
+        for t, fut in again.items():
+            try:
+                second = fut.result()
+            except Exception:                              # second read failed: keep the first, note it
+                read[t]["second_read"] = "failed"
+                continue
+            disagree = []
+            for k, v in (read[t].get("fields") or {}).items():
+                a = _norm_read((v or {}).get("value"))
+                b = _norm_read(((second.get("fields") or {}).get(k) or {}).get("value"))
+                if k in CRITICAL and a and a != b:
+                    disagree.append(k)
+                    v["confidence"] = 0.0                  # -> DOC_UNREADABLE for that field below
+            read[t]["second_read"] = {"disagreed_on": disagree}
+            if not second.get("legible", True):
+                read[t]["legible"] = False                 # either read saying 'unreadable' wins
     for dtype, path in todo:
         label = DOC_LABEL[dtype]
         res = read[dtype]
         d = {"path": path, "detected": res.get("doc_type_detected"), "legible": res.get("legible", True),
-             "raw": res.get("fields", {}), "values": {}, "usable": False, "grounding": "n/a"}
+             "raw": res.get("fields", {}), "values": {}, "usable": False, "grounding": "n/a",
+             "second_read": res.get("second_read")}
         ctx.docs[dtype] = d
         if not d["legible"]:
             ctx.add(finding("DOC_UNREADABLE", f"The {label} could not be read reliably.", field=dtype,

@@ -62,3 +62,27 @@ def test_statement_is_caught_in_code_even_if_the_ai_calls_it_a_letter():
     assert _looks_like_statement(bench._abs(c["docs"]["bank_proof"]))
     ok = next(x for x in json.load(open("bench/blind/cases.json"))["cases"] if x["id"] == "B01")
     assert not _looks_like_statement(bench._abs(ok["docs"]["bank_proof"]))
+
+
+def test_a_guessed_photo_reading_asks_for_a_clearer_copy_not_a_reviewer(tmp_path):
+    """Two independent reads of a photo that disagree on the account number = it was not legible."""
+    data = bench.load("diverse")
+    case = next(c for c in data["cases"] if c["id"].startswith("D041"))
+    case = {**case, "expect": {"substatus": "awaiting_vendor"}}
+
+    class Guessy(bench.TruthLLM):
+        calls = 0
+
+        def extract_document(self, doc_type, path):
+            out = super().extract_document(doc_type, path)
+            if doc_type == "bank_proof":
+                out = {**out, "legible": True}                       # the model claims it could read it
+                Guessy.calls += 1
+                f = dict(out.get("fields", {}))
+                f["account_number"] = {"value": "6767928%d" % Guessy.calls, "evidence": "", "confidence": 0.95}
+                out["fields"] = f
+            return out
+    llm = Guessy(); llm.register(case)
+    mf = tmp_path / "m.json"; mf.write_text(__import__("json").dumps({"vendors": data["master"]}))
+    r = bench.run_case(case, mf, llm, data["generated_for"])
+    assert "DOC_UNREADABLE" in r["codes"] and r["got"] != "approved", r

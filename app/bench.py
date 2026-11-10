@@ -80,7 +80,7 @@ class RecordingLLM:
 
     def extract_document(self, doc_type, path):
         out = self.inner.extract_document(doc_type, path)
-        self.seen[_key(path)] = out
+        self.seen.setdefault(_key(path), out)          # score the first read
         return out
 
     def __getattr__(self, name):
