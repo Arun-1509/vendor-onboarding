@@ -72,7 +72,7 @@ python scripts/summarize_quality.py          # -> reports/summary.json, shown on
 ```
 In the app, **Model quality → Spot-check 12 fresh vendors now** generates brand-new vendors with a random seed and scores them live.
 
-## Harder tests: a blind answer key and messy documents (2026-11-09)
+## Harder tests: a blind answer key and messy documents (2026-11-09, quota-hit vendors rerun 2026-11-10)
 The 1,900 synthetic vendors share two weaknesses: I wrote both the generator and the rules, and every document has the same look. So I added two sets that don't (`bench/`, `python scripts/bench.py`):
 
 | Set | What it is | First look | After fixes |
@@ -144,11 +144,13 @@ Run on the deployed site (free Gemini tier, ~3 model calls per vendor). Raw resu
 | Set | Vendors answered | Live decisions correct | Dangerous errors |
 |---|---|---|---|
 | Blind answer key | 56 / 56 | **55 / 56 (98.2%)** | 1 (fixed, below) |
-| Messy documents | 26 / 60 | **26 / 26 (100%)** | 0 |
+| Messy documents | 59 / 60 | **58 / 59 (98.3%)** | 0 |
+| **Both** | **115 / 116** | **113 / 115 (98.3%)** | **0** |
 
-- **Free-tier quota:** 34 messy-document vendors ran out of the free daily Gemini quota mid-run. Every one became STAGE_ERROR and was held for a reviewer. None was approved, so the fail-safe worked; they are left out of the accuracy rather than counted as passes.
+- **Free-tier quota:** 34 messy-document vendors ran out of the free daily Gemini quota mid-run. Every one became STAGE_ERROR and was held for a reviewer. None was approved, so the fail-safe worked. A second full run the next day hit the quota even harder (65 vendors held, 0 approved; raw: `reports/bench_live_run1_raw.json`). The 34 were then rerun on their own, paced at one vendor every 30 s; 33 got an answer and 1 (D019) still hit the quota and is left out of the accuracy rather than counted as a pass. The benchmark now stops itself after 3 unanswered vendors in a row instead of retrying for hours.
+- **The one miss in the rerun (D041):** the bank letter was a deliberately unreadable phone photo; the expected outcome was asking the vendor for a clearer copy. Gemini guessed values from the blur instead of saying it could not read them; the guesses did not match the form, so the vendor went to a reviewer. Wrong queue, but the safe direction. Not patched: treating "photo + several mismatches" as "just ask for a clearer copy" would hand fraudsters an easy bypass (upload a blurry letter).
 - **The one live miss (B27):** the model called a bank *statement* a bank letter, so it was accepted as bank proof. The perfect reader never made this mistake. **Fix:** code now double-checks the AI. A bank-proof file whose text says "statement of account", "opening/closing balance" or "Kontoauszug" is treated as a statement and the vendor is asked for a letter. On all 300+ benchmark and sample PDFs this matched only B27.
-- **Reading accuracy:** 607 / 612 printed fields read exactly (99.2%). The 5 misses are an address digit dropped in a table, and phone-photo misreads (a postcode letter, an address, a GSTIN with a stray prefix). The GSTIN one is caught by the checksum, so no bad ID gets through. The first scoring counted dates read exactly as printed (e.g. `09.12.2024`) as wrong because it wanted ISO form; that was a scoring bug, fixed in `app/bench.py`.
+- **Reading accuracy:** 873 / 882 printed fields read exactly (99.0%). The 9 misses are four phone-photo address misreads in the rerun (a dropped or changed postcode digit, one garbled street) plus, in the first run, an address digit dropped in a table, and phone-photo misreads (a postcode letter, an address, a GSTIN with a stray prefix). The GSTIN one is caught by the checksum, so no bad ID gets through. The first scoring counted dates read exactly as printed (e.g. `09.12.2024`) as wrong because it wanted ISO form; that was a scoring bug, fixed in `app/bench.py`.
 
 ## Limits (say these before you're asked)
 - **I wrote both the generator and the rules.** The stress set and the first-look numbers are how I guard against fooling myself, but synthetic data is cleaner than real inboxes. The real test is a pilot on a few hundred historic submissions with known outcomes.

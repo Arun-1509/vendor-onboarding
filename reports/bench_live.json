@@ -371,88 +371,6 @@
    },
    "failures": [
     {
-     "id": "D014-blurry_photo",
-     "scenario": "blurry_photo",
-     "country": "IN",
-     "title": "blurry photo: tax doc kv/en, bank doc bank_letter photo/en",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 0,
-     "ms": 92845,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D016-clean",
-     "scenario": "clean",
-     "country": "GB",
-     "title": "clean: tax doc photo/en, bank doc bank_letter prose/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122511,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D017-clean",
-     "scenario": "clean",
-     "country": "IN",
-     "title": "clean: tax doc multipage/en, bank doc bank_letter multipage/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122164,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D018-wrong_doc",
-     "scenario": "wrong_doc",
-     "country": "GB",
-     "title": "wrong doc: tax doc prose/en, bank doc bank_letter prose/en (utility_bill as tax certificate)",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 0,
-     "ms": 122002,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
      "id": "D019-clean",
      "scenario": "clean",
      "country": "GB",
@@ -466,275 +384,7 @@
       "substatus awaiting_reviewer != expected approved"
      ],
      "risk": 0,
-     "ms": 62481,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D020-wrong_doc",
-     "scenario": "wrong_doc",
-     "country": "GB",
-     "title": "wrong doc: tax doc kv/en, bank doc invoice kv/en (invoice as bank proof)",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 0,
-     "ms": 122016,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D021-clean",
-     "scenario": "clean",
-     "country": "US",
-     "title": "clean: tax doc stamped/en, bank doc bank_letter multipage/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122145,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D022-account_vs_letter",
-     "scenario": "account_vs_letter",
-     "country": "GB",
-     "title": "account vs letter: tax doc table/en, bank doc bank_letter photo/en (form account_number 17991835)",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 15,
-     "ms": 122531,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR",
-      "IBAN_PARTS_MISMATCH"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D023-clean",
-     "scenario": "clean",
-     "country": "IN",
-     "title": "clean: tax doc twocol/en, bank doc bank_letter prose/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122095,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D024-blurry_photo",
-     "scenario": "blurry_photo",
-     "country": "IN",
-     "title": "blurry photo: tax doc photo/en, bank doc bank_letter photo/en",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 0,
-     "ms": 122575,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D026-clean",
-     "scenario": "clean",
-     "country": "US",
-     "title": "clean: tax doc photo/en, bank doc bank_letter twocol/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122812,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D032-account_vs_letter",
-     "scenario": "account_vs_letter",
-     "country": "GB",
-     "title": "account vs letter: tax doc photo/en, bank doc bank_letter table/en (form account_number 12893304)",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 15,
-     "ms": 122940,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR",
-      "IBAN_PARTS_MISMATCH"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D033-clean",
-     "scenario": "clean",
-     "country": "IN",
-     "title": "clean: tax doc table/en, bank doc bank_letter multipage/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122323,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D035-clean",
-     "scenario": "clean",
-     "country": "IN",
-     "title": "clean: tax doc prose/en, bank doc bank_letter twocol/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122226,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D036-undated_bank_letter",
-     "scenario": "undated_bank_letter",
-     "country": "GB",
-     "title": "undated bank letter: tax doc kv/en, bank doc bank_letter prose/en",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 0,
-     "ms": 122254,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D037-clean",
-     "scenario": "clean",
-     "country": "IN",
-     "title": "clean: tax doc table/en, bank doc cancelled_cheque prose/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122315,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D038-undated_bank_letter",
-     "scenario": "undated_bank_letter",
-     "country": "IN",
-     "title": "undated bank letter: tax doc table/en, bank doc cancelled_cheque stamped/en",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 0,
-     "ms": 152131,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D040-account_vs_letter",
-     "scenario": "account_vs_letter",
-     "country": "US",
-     "title": "account vs letter: tax doc table/en, bank doc bank_letter photo/en (form account_number 671663068276)",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 0,
-     "ms": 122646,
+     "ms": 170441,
      "difficulty": "",
      "codes": [
       "STAGE_ERROR"
@@ -753,369 +403,62 @@
      "fails": [
       "substatus awaiting_reviewer != expected awaiting_vendor"
      ],
-     "risk": 0,
-     "ms": 122574,
+     "risk": 70,
+     "ms": 10321,
      "difficulty": "",
      "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D042-stale_bank_letter",
-     "scenario": "stale_bank_letter",
-     "country": "DE",
-     "title": "stale bank letter: tax doc photo/de, bank doc bank_letter photo/de (392 days old)",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 0,
-     "ms": 122907,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D043-clean",
-     "scenario": "clean",
-     "country": "US",
-     "title": "clean: tax doc kv/en, bank doc bank_letter kv/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122082,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D044-stale_bank_letter",
-     "scenario": "stale_bank_letter",
-     "country": "IN",
-     "title": "stale bank letter: tax doc photo/en, bank doc cancelled_cheque stamped/en (132 days old)",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 0,
-     "ms": 152748,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D047-clean",
-     "scenario": "clean",
-     "country": "US",
-     "title": "clean: tax doc multipage/en, bank doc bank_letter twocol/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122191,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D048-clean",
-     "scenario": "clean",
-     "country": "US",
-     "title": "clean: tax doc multipage/en, bank doc bank_letter table/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122337,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D049-clean",
-     "scenario": "clean",
-     "country": "IN",
-     "title": "clean: tax doc photo/en, bank doc bank_letter prose/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122762,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D050-clean",
-     "scenario": "clean",
-     "country": "IN",
-     "title": "clean: tax doc table/en, bank doc bank_letter photo/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122907,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D051-wrong_doc",
-     "scenario": "wrong_doc",
-     "country": "US",
-     "title": "wrong doc: tax doc twocol/en, bank doc bank_letter photo/en (utility_bill as tax certificate)",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 0,
-     "ms": 152296,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D052-clean",
-     "scenario": "clean",
-     "country": "IN",
-     "title": "clean: tax doc prose/en, bank doc cancelled_cheque photo/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122403,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D053-clean",
-     "scenario": "clean",
-     "country": "IN",
-     "title": "clean: tax doc prose/en, bank doc bank_letter table/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 121966,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D054-stale_bank_letter",
-     "scenario": "stale_bank_letter",
-     "country": "IN",
-     "title": "stale bank letter: tax doc photo/en, bank doc bank_letter stamped/en (177 days old)",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 0,
-     "ms": 122712,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D055-clean",
-     "scenario": "clean",
-     "country": "US",
-     "title": "clean: tax doc photo/en, bank doc bank_letter photo/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122924,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D056-clean",
-     "scenario": "clean",
-     "country": "GB",
-     "title": "clean: tax doc photo/en, bank doc bank_letter photo/en",
-     "expected": "approved",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "status pending != expected approved",
-      "substatus awaiting_reviewer != expected approved"
-     ],
-     "risk": 0,
-     "ms": 122671,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D057-undated_bank_letter",
-     "scenario": "undated_bank_letter",
-     "country": "DE",
-     "title": "undated bank letter: tax doc kv/en, bank doc bank_letter twocol/en",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 0,
-     "ms": 122384,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
-     ],
-     "why_expected": ""
-    },
-    {
-     "id": "D060-account_vs_letter",
-     "scenario": "account_vs_letter",
-     "country": "IN",
-     "title": "account vs letter: tax doc multipage/en, bank doc bank_letter photo/en (form account_number 126594566840959)",
-     "expected": "awaiting_vendor",
-     "got": "awaiting_reviewer",
-     "decision_ok": false,
-     "strict_ok": false,
-     "fails": [
-      "substatus awaiting_reviewer != expected awaiting_vendor"
-     ],
-     "risk": 0,
-     "ms": 122807,
-     "difficulty": "",
-     "codes": [
-      "STAGE_ERROR"
+      "DOC_STALE",
+      "BANK_ACCOUNT_DIFFERENT_DOC",
+      "ACCOUNT_HOLDER_MISMATCH"
      ],
      "why_expected": ""
     }
    ],
    "provider": "Gemini",
    "reading": {
-    "fields_checked": 154,
-    "fields_correct": 150,
-    "accuracy": 0.974,
+    "fields_checked": 424,
+    "fields_correct": 416,
+    "accuracy": 0.9811,
     "by_layout": {
      "kv/en": {
-      "correct": 14,
-      "n": 17
+      "correct": 39,
+      "n": 42
      },
      "multipage/en": {
-      "correct": 12,
-      "n": 14
+      "correct": 43,
+      "n": 45
      },
      "photo/de": {
-      "correct": 4,
-      "n": 4
+      "correct": 12,
+      "n": 12
      },
      "photo/en": {
-      "correct": 22,
-      "n": 32
+      "correct": 95,
+      "n": 109
      },
      "prose/en": {
-      "correct": 8,
-      "n": 9
+      "correct": 53,
+      "n": 54
      },
      "stamped/de": {
       "correct": 8,
       "n": 8
      },
      "stamped/en": {
-      "correct": 26,
-      "n": 28
+      "correct": 44,
+      "n": 46
      },
      "table/de": {
       "correct": 4,
       "n": 4
      },
      "table/en": {
-      "correct": 18,
-      "n": 19
+      "correct": 62,
+      "n": 63
      },
      "twocol/en": {
-      "correct": 19,
-      "n": 19
+      "correct": 41,
+      "n": 41
      }
     },
     "errors": [
@@ -1150,13 +493,160 @@
       "field": "address",
       "printed": "Survey No 41, Phase II Industrial Estate, Lucknow 226001",
       "read": "Survey No 41, Phase II Industrial Estate, Lucknow 22"
+     },
+     {
+      "case": "D024-blurry_photo",
+      "doc": "tax_cert",
+      "layout": "photo/en",
+      "field": "address",
+      "printed": "Survey No 41, Phase II Industrial Estate, Chennai 600002",
+      "read": "Survey No 41, Phase II Industrial Estate, Chennai 600058"
+     },
+     {
+      "case": "D032-account_vs_letter",
+      "doc": "tax_cert",
+      "layout": "photo/en",
+      "field": "address",
+      "printed": "21 Mill Lane, Edinburgh EH1 1YZ",
+      "read": "2 of Biiisinaess Edinburgh EH1 1YZ"
+     },
+     {
+      "case": "D054-stale_bank_letter",
+      "doc": "tax_cert",
+      "layout": "photo/en",
+      "field": "address",
+      "printed": "3rd Floor, Prestige Towers, MG Road, Chennai 600002",
+      "read": "3rd Floor, Prestige Towers, MG Road, Chennai 6000"
+     },
+     {
+      "case": "D056-clean",
+      "doc": "tax_cert",
+      "layout": "photo/en",
+      "field": "address",
+      "printed": "9 Station Approach, London EC1A 1BB",
+      "read": "9 Station Approach, London EC1A 1"
      }
-    ],
-    "note": "Dates read exactly as printed (e.g. 09.12.2024) are counted correct; the first scoring wrongly required ISO form."
+    ]
    },
-   "quota_held": 34,
-   "answered": 26,
-   "answered_accuracy": 1.0
+   "quota_held": 1,
+   "answered": 59,
+   "answered_accuracy": 0.9831,
+   "rerun": {
+    "when": "2026-11-09 16:05 UTC",
+    "note": "34 vendors the free AI quota left unanswered were rerun on 2026-11-10; results merged",
+    "rerun_metrics": {
+     "n": 34,
+     "decision_accuracy": 0.9412,
+     "strict_accuracy": 0.9412,
+     "macro_f1": 0.7348,
+     "unsafe_approval_rate": 0.0,
+     "straight_through_rate": 0.9444,
+     "errors": {
+      "unsafe_approvals": 0,
+      "missed_rejects": 0,
+      "disclosure_leaks": 0,
+      "over_escalations": 1,
+      "false_holds": 1,
+      "other": 0
+     },
+     "weighted_cost": 3,
+     "confusion": {
+      "approved": {
+       "approved": 17,
+       "awaiting_vendor": 0,
+       "awaiting_reviewer": 1,
+       "rejected": 0
+      },
+      "awaiting_vendor": {
+       "approved": 0,
+       "awaiting_vendor": 15,
+       "awaiting_reviewer": 1,
+       "rejected": 0
+      },
+      "awaiting_reviewer": {
+       "approved": 0,
+       "awaiting_vendor": 0,
+       "awaiting_reviewer": 0,
+       "rejected": 0
+      },
+      "rejected": {
+       "approved": 0,
+       "awaiting_vendor": 0,
+       "awaiting_reviewer": 0,
+       "rejected": 0
+      }
+     },
+     "per_class": {
+      "approved": {
+       "precision": 1.0,
+       "recall": 0.9444,
+       "f1": 0.9714,
+       "support": 18
+      },
+      "awaiting_vendor": {
+       "precision": 1.0,
+       "recall": 0.9375,
+       "f1": 0.9677,
+       "support": 16
+      },
+      "awaiting_reviewer": {
+       "precision": 0.0,
+       "recall": 1.0,
+       "f1": 0.0,
+       "support": 0
+      },
+      "rejected": {
+       "precision": 1.0,
+       "recall": 1.0,
+       "f1": 1.0,
+       "support": 0
+      }
+     },
+     "per_scenario": {
+      "account_vs_letter": {
+       "n": 4,
+       "decision_ok": 4,
+       "strict_ok": 4,
+       "failed_ids": []
+      },
+      "blurry_photo": {
+       "n": 3,
+       "decision_ok": 2,
+       "strict_ok": 2,
+       "failed_ids": [
+        "D041-blurry_photo"
+       ]
+      },
+      "clean": {
+       "n": 18,
+       "decision_ok": 17,
+       "strict_ok": 17,
+       "failed_ids": [
+        "D019-clean"
+       ]
+      },
+      "stale_bank_letter": {
+       "n": 3,
+       "decision_ok": 3,
+       "strict_ok": 3,
+       "failed_ids": []
+      },
+      "undated_bank_letter": {
+       "n": 3,
+       "decision_ok": 3,
+       "strict_ok": 3,
+       "failed_ids": []
+      },
+      "wrong_doc": {
+       "n": 3,
+       "decision_ok": 3,
+       "strict_ok": 3,
+       "failed_ids": []
+      }
+     },
+     "median_ms": 10099
+    }
+   }
   }
  }
 }
