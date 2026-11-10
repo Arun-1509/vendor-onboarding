@@ -41,3 +41,11 @@ Railway and Fly.io work the same way (one container, `PORT` env var respected). 
 docker build -t vendor .
 docker run -p 8000:8000 vendor
 ```
+
+## Demo safety: a spare Gemini key (free, 5 minutes)
+The free tier has a daily quota per Google Cloud project. A second key from a **different project**
+has its own quota, and the app switches to it instantly when the first key is rate-limited.
+1. aistudio.google.com -> Get API key -> **Create API key in new project**.
+2. Render -> your service -> Environment -> add `GEMINI_API_KEY_2` = that key -> Save (it redeploys).
+3. Check `/api/health`: `models.keys` should be 2. Calls made on the spare show `(key 2)` in `recent_calls`.
+For full certainty on interview day, enable billing on one project (pay-as-you-go; a demo costs cents).

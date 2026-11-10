@@ -115,7 +115,7 @@ def _gemini_models():
     from .llm import GeminiLLM
     g = GeminiLLM()
     return {"extract": g.models_for(config.GEMINI_MODEL), "judge": g.models_for(config.GEMINI_JUDGE_MODEL),
-            "available": len(g.available_models()), "recent_calls": GeminiLLM.trace}
+            "available": len(g.available_models()), "keys": len(config.GEMINI_KEYS), "recent_calls": GeminiLLM.trace}
 
 
 @app.get("/api/health")

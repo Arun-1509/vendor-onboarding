@@ -267,6 +267,17 @@ class GeminiLLM(AnthropicLLM):
     _cool: dict = {}                                            # model -> time until which it is rate-limited
     _retry_after: float = 5.0                                   # seconds Google last asked us to wait
     trace: list = []                                            # last calls: model, status, seconds (no content)
+    _key_cool: dict = {}                                        # key index -> time until which it is rate-limited
+
+    @classmethod
+    def _key(cls) -> tuple[int, str]:
+        """The first key that is not rate-limited (or the one that frees up soonest)."""
+        import time
+        keys = config.GEMINI_KEYS or [config.GEMINI_API_KEY]
+        now = time.time()
+        i = next((i for i in range(len(keys)) if cls._key_cool.get(i, 0) <= now),
+                 min(range(len(keys)), key=lambda i: cls._key_cool.get(i, 0)))
+        return i, keys[i]
 
     @classmethod
     def _thinking(cls, m: str):
@@ -286,7 +297,7 @@ class GeminiLLM(AnthropicLLM):
         if GeminiLLM._available is None:
             try:
                 r = self.http.get("https://generativelanguage.googleapis.com/v1beta/models",
-                                  params={"key": config.GEMINI_API_KEY, "pageSize": 1000})
+                                  params={"key": self._key()[1], "pageSize": 1000})
                 ms = r.json().get("models", []) if r.status_code == 200 else []
                 GeminiLLM._available = [m["name"].split("/")[-1] for m in ms
                                         if "generateContent" in m.get("supportedGenerationMethods", [])]
@@ -350,17 +361,22 @@ class GeminiLLM(AnthropicLLM):
                     break                                       # real errors: don't loop
                 time.sleep(min(max(GeminiLLM._retry_after, 2.0), 30.0))   # Google says how long; cap it
             think = self._thinking(m)
-            for attempt in range(2):                            # one retry for rate limits / blips
+            for attempt in range(2 + len(config.GEMINI_KEYS)):  # one retry for blips, + one per spare key
                 b = body if think is None else {**body, "generationConfig": {**body["generationConfig"], "thinkingConfig": think}}
                 t0 = time.time()
                 try:
-                    r = self.http.post(self.URL.format(model=m), params={"key": config.GEMINI_API_KEY}, json=b)
+                    ki, key = self._key()
+                    r = self.http.post(self.URL.format(model=m), params={"key": key}, json=b)
                 except Exception as e:
                     self._trace(m, type(e).__name__, t0, think)
                     GeminiLLM._cool[m] = time.time() + 60       # hung: try the next model now, this one later
                     last = e
                     break
-                self._trace(m, r.status_code, t0, think)
+                self._trace(m, r.status_code if ki == 0 else f"{r.status_code} (key {ki + 1})", t0, think)
+                if r.status_code == 429 and len(config.GEMINI_KEYS) > 1:
+                    GeminiLLM._key_cool[ki] = time.time() + 60
+                    if self._key()[0] != ki:                    # another key has quota: switch now, same model
+                        continue
                 if r.status_code == 400 and think is not None and "thinking" in r.text.lower():
                     GeminiLLM._no_think.add(m)                  # this model rejects the setting: send it plain
                     think = None

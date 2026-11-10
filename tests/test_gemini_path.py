@@ -12,6 +12,8 @@ from app.llm import GeminiLLM, LLMError, _gemini_schema
 @pytest.fixture(autouse=True)
 def _cfg(monkeypatch):
     monkeypatch.setattr(config, "GEMINI_API_KEY", "test-key-not-real")
+    monkeypatch.setattr(config, "GEMINI_KEYS", ["test-key-not-real"])
+    monkeypatch.setattr(GeminiLLM, "_key_cool", {})
     monkeypatch.setattr(config, "GEMINI_MODEL", "m-main")
     monkeypatch.setattr(config, "GEMINI_JUDGE_MODEL", "m-judge")
     monkeypatch.setattr(config, "GEMINI_FALLBACK", "m-fallback")
@@ -34,6 +36,7 @@ class FakeHttp:
 
     def post(self, url, params=None, json=None):
         self.calls.append((url.split("/models/")[1].split(":")[0], json))
+        self.keys = getattr(self, "keys", []) + [(params or {}).get("key")]
         r = self.script.pop(0)
         if isinstance(r, Exception):
             raise r
@@ -113,3 +116,15 @@ def test_waits_out_a_busy_minute_instead_of_holding():
     out = {"subject": "s", "body": "b"}
     llm = make([status(429)] * 4 + [ok(out)])                # both models busy twice, then free
     assert llm.draft_email("vendor", "request", {"asks": []}) == out
+
+
+def test_a_rate_limited_key_switches_to_the_spare_key_at_once(monkeypatch):
+    monkeypatch.setattr(config, "GEMINI_KEYS", ["key-a", "key-b"])
+    out = {"same_entity": "no", "confidence": 0.8, "variant_type": "different_entity", "reasoning": "x"}
+    llm = make([status(429), ok(out)])
+    assert llm.judge_names("A", "B", {}) == out
+    assert llm.http.keys == ["key-a", "key-b"]
+    assert [m for m, _ in llm.http.calls] == ["m-judge", "m-judge"]       # same model, no waiting
+    llm.http.script.append(ok(out))
+    llm.judge_names("A", "B", {})
+    assert llm.http.keys[-1] == "key-b"                                    # stays on the key with quota

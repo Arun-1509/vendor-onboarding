@@ -15,6 +15,10 @@ BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")   # used in links insi
 # ---------------------------------------------------------------- LLM ----
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")          # free key: aistudio.google.com
+# Extra keys (each from a DIFFERENT Google Cloud project has its own free quota). When one key is
+# rate-limited the client switches to the next at once, so a live demo does not stall on quota.
+GEMINI_KEYS = list(dict.fromkeys(k.strip() for k in [GEMINI_API_KEY, os.getenv("GEMINI_API_KEY_2", ""), os.getenv("GEMINI_API_KEY_3", "")]
+                                 + os.getenv("GEMINI_API_KEYS", "").split(",") if k.strip()))
 # Which real model provider to use: anthropic | gemini | auto (anthropic if its key exists, else gemini)
 _prov = os.getenv("LLM_PROVIDER", "auto").lower()
 PROVIDER = _prov if _prov in ("anthropic", "gemini") else ("anthropic" if ANTHROPIC_API_KEY else "gemini" if GEMINI_API_KEY else "none")
