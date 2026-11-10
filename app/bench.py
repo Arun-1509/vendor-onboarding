@@ -141,9 +141,12 @@ def field_accuracy(cases: list[dict], seen: dict) -> dict:
             "by_layout": {k: {"correct": a, "n": b} for k, (a, b) in sorted(by_layout.items())}, "errors": errors}
 
 
-def run_set(name: str, llm, *, pace_s: float = 0.0, progress=None, limit: int | None = None) -> dict:
+def run_set(name: str, llm, *, pace_s: float = 0.0, progress=None, limit: int | None = None,
+            ids: set | None = None, should_stop=None) -> dict:
+    """`ids` reruns only those cases; `should_stop()` ends the run early (e.g. the daily AI quota ran out)."""
     data = load(name)
-    cases = data["cases"][:limit] if limit else data["cases"]
+    cases = [c for c in data["cases"] if not ids or c["id"] in ids]
+    cases = cases[:limit] if limit else cases
     import tempfile
     rec = RecordingLLM(llm) if llm.mode == "live" else llm
     if isinstance(llm, TruthLLM):
@@ -158,8 +161,11 @@ def run_set(name: str, llm, *, pace_s: float = 0.0, progress=None, limit: int | 
             rows.append(run_case(c, mf, rec, data["generated_for"]))
             if progress:
                 progress(i + 1, len(cases), rows[-1])
+            if should_stop and should_stop():
+                break
             if pace_s and i + 1 < len(cases):
                 time.sleep(max(0.0, pace_s - (time.time() - t0)))
+    cases = cases[:len(rows)]
     out = {"set": name, "reader": llm.mode, "n": len(rows), "metrics": quality.score(rows),
            "failures": [r for r in rows if not r["decision_ok"]], "rows": rows}
     if llm.mode == "live":

@@ -625,9 +625,17 @@ async function benchCard(host) {
     e.currentTarget.disabled = true;
     for (let i = 0; i < 2000; i++) { await sleep(5000); const x = await api('/benchmark'); drawJob(x.job); if (x.job.state !== 'running') break; }
     e.currentTarget.disabled = false; } }, 'Run live benchmark');
+  const held = Object.entries(live).flatMap(([k, v]) => (v.failures || []).filter(f => (f.codes || []).includes('STAGE_ERROR')).map(f => [k, f.id]));
+  const retryBtn = held.length ? h('button', { class: 'btn', style: 'margin-left:8px', onclick: async e => {
+    const k = prompt(`Admin key. Reruns only the ${held.length} vendors the AI did not answer last time, one every 30 s (~${Math.ceil(held.length / 2)} min). Stops by itself if the AI quota is used up.`); if (!k) return;
+    const q = `?sets=${[...new Set(held.map(x => x[0]))].join(',')}&ids=${held.map(x => x[1]).join(',')}&pace=30`;
+    try { await api('/admin/benchmark' + q, { method: 'POST', headers: { 'X-Admin-Key': k } }); toast('Rerun started'); } catch (err) { toast(err.message, true); return; }
+    const btn = e.currentTarget; btn.disabled = true;
+    for (let i = 0; i < 2000; i++) { await sleep(5000); const x = await api('/benchmark'); drawJob(x.job); if (x.job.state !== 'running') break; }
+    btn.disabled = false; } }, `Rerun ${held.length} unanswered`) : null;
   drawJob(b.job);
   host.replaceChildren(h('div', { class: 'card' },
-    h('div', { class: 'card-h' }, h('h2', {}, 'Harder tests: a blind answer key and messy documents'), runBtn),
+    h('div', { class: 'card-h' }, h('h2', {}, 'Harder tests: a blind answer key and messy documents'), h('div', {}, runBtn, retryBtn)),
     h('p', { class: 'sm muted', style: 'margin:0 0 10px' }, 'The 1,900 vendors above were written by the same person as the rules. These two sets were not: one answer key was written by an independent author who never saw the code, and one set draws every document differently. First look = before any fix.'),
     h('div', { class: 'tablewrap', style: 'border:0' }, h('table', { class: 'cmp' }, h('thead', {}, h('tr', {}, ['Set', 'Vendors', 'First look', 'After fixes', 'Live AI', 'Dangerous errors'].map((x, i) => h('th', { class: i ? 'num' : '' }, x)))), h('tbody', {}, rows))),
     h('ul', { class: 'xs muted', style: 'margin:6px 0 0;padding-left:16px' }, Object.entries(sets).map(([k, v]) => h('li', {}, h('b', {}, (NAME[k] || k) + ': '), v.description))),

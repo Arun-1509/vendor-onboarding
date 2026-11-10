@@ -397,7 +397,7 @@ def benchmark_summary():
 
 
 @app.post("/api/admin/benchmark")
-def benchmark_run(sets: str = "blind,diverse", pace: float = 12.0, x_admin_key: str | None = Header(None)):
+def benchmark_run(sets: str = "blind,diverse", pace: float = 12.0, ids: str = "", x_admin_key: str | None = Header(None)):
     """Run the benchmarks through the LIVE model, paced under the free-tier rate limit. Admin only:
     it uses API quota (~3 model calls per vendor)."""
     if config.ADMIN_KEY and x_admin_key != config.ADMIN_KEY:
@@ -408,7 +408,9 @@ def benchmark_run(sets: str = "blind,diverse", pace: float = 12.0, x_admin_key: 
         return {"started": False, "reason": "already running"}
     from . import bench
     names = [s for s in sets.split(",") if s in bench.SETS]
-    _bench.update(state="running", set="", done=0, total=sum(bench.load(n)["n"] for n in names), recent=[], results={},
+    only = {x.strip() for x in ids.split(",") if x.strip()} or None
+    total = sum(len([c for c in bench.load(n)["cases"] if not only or c["id"] in only]) for n in names)
+    _bench.update(state="running", set="", done=0, total=total, recent=[], results={}, ai_errors_in_a_row=0,
                   error="", started=time.time())
 
     def work():
@@ -421,12 +423,21 @@ def benchmark_run(sets: str = "blind,diverse", pace: float = 12.0, x_admin_key: 
                     _bench["done"] += 1
                     _bench["recent"] = (_bench["recent"] + [{"set": n, "id": row["id"], "ok": row["decision_ok"],
                                                              "expected": row["expected"], "got": row["got"]}])[-400:]
-                r = bench.run_set(n, llm, pace_s=max(0.0, pace), progress=prog)
+                    _bench["ai_errors_in_a_row"] = _bench.get("ai_errors_in_a_row", 0) + 1 if "STAGE_ERROR" in row.get("codes", []) else 0
+
+                def quota_gone():                      # 3 vendors in a row with no AI answer: stop, don't burn hours
+                    return _bench.get("ai_errors_in_a_row", 0) >= 3
+                if only and not any(c["id"] in only for c in bench.load(n)["cases"]):
+                    continue
+                r = bench.run_set(n, llm, pace_s=max(0.0, pace), progress=prog, ids=only, should_stop=quota_gone)
                 r.pop("rows", None)
                 _bench["results"][n] = r
                 _bench_live_file().parent.mkdir(parents=True, exist_ok=True)
                 _bench_live_file().write_text(json.dumps({"provider": config.PROVIDER_LABEL, "finished": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
                                                           "sets": _bench["results"]}, indent=1), encoding="utf-8")
+                if quota_gone():
+                    _bench.update(state="error", error="Stopped: the AI stopped answering 3 vendors in a row (daily free quota used up). Results so far are saved; try again after the quota resets.")
+                    return
             _bench["state"] = "done"
         except Exception as e:                                  # report, never crash the server
             _bench.update(state="error", error=str(e)[:300])
