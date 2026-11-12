@@ -6,15 +6,21 @@
 3. Check the chip at the bottom left (Offline AI or Live AI) and be ready to say which one it is.
 
 ## The 5-minute video (Deliverable 2)
+Everything is on **New submission → Start here**: five numbered steps, each with a **Next** button in the purple strip at the top.
+
 | Time | Screen | What to say (in your own words) |
 |---|---|---|
-| 0:00 | **How it works** | "Before a company pays a vendor, someone checks the form, the tax certificate and the bank letter, then chases the vendor. I automated that end to end. The rule I built around: the AI reads and explains, code decides, people handle what's genuinely ambiguous." |
-| 0:30 | **New submission → Happy path → Clean German vendor → Run** | "Nine stages, live. The AI reads the documents and has to quote what it read; code checks the quote is in the file. Then check digits, cross-references, screening." Point at the document panel: "Green boxes are values verified on the page." Decision: approved, risk 0, a welcome email drafted. |
-| 1:20 | **Documents that lie → Bank letter looks perfect… → Run** | "This one looks perfect. But code reads the raw PDF: the account-number line exists twice. Someone pasted a new number over the genuine one." Point at the **red box**. "So it's held for a reviewer, the vendor is told nothing, and the checklist says to call the bank using its own website's number." |
-| 2:20 | **Review queue → that vendor** | "The reviewer gets the evidence and a checklist. Approving a case like this needs two different people." Approve as Asha → "Needs 2nd approval". Try Asha again → blocked. Approve as Ben → approved. "Both decisions are in a hash-chained audit trail." Click **Verify chain**. |
-| 3:20 | **Wait and resume → Run**, then **↩ Simulate the vendor replying** | "Something fixable, so the vendor gets exactly one request and a private link. The reply becomes version 2, the system shows what was resolved, and the vendor is approved." |
-| 4:00 | **Model quality** | "How do I know it works? 1,900 labelled synthetic vendors. On the held-out set it goes from 86% to 99.9% on the first look, and from 48 approvals that should never have happened to zero." Click **Spot-check 12 fresh vendors**: "these companies didn't exist a second ago." |
-| 4:45 | **Rulebook** | "Every decision traces to a line here that a procurement lead can read and change. The AI can't." |
+| 0:00 | **Overview** | "Before a company pays a vendor, someone checks the form, the tax certificate and the bank letter, then chases the vendor. I automated that end to end. My rule: the AI reads and explains, code decides, people handle what is genuinely ambiguous." Click **Start the tour**. |
+| 0:25 | **Step 1: Happy path** | "Nine stages, live. The AI reads both documents and has to quote what it read; code checks the quote is really in the file. Then check digits, cross-references, screening." Point at the document: "Green boxes are values verified on the page." Approved, risk 0, welcome email drafted. Click **Next**. |
+| 1:10 | **Step 2: Payment-fraud attempt** | "An approved vendor 'updates' its bank account. Every field is valid on its own; only comparing with what is on file catches it. It is held for two reviewers, and the vendor is told nothing, so a fraudster learns nothing." Click **Next**. |
+| 1:50 | **Step 3: A document that lies** | "This bank letter looks perfect. But code reads the raw PDF: a new account number was pasted over the original." Point at the **red box**. "Held for a reviewer, with a checklist: call the bank on the number from its own website." Click **Next**. |
+| 2:35 | **Step 4: Missing document, then the reply** | "A brand-new company forgot its bank letter. It gets one precise request and a private link." Click **Simulate the vendor replying**. "The reply is version 2; only the failed check is re-run, and it is approved." Click **Next**. |
+| 3:20 | **Step 5: Looks wrong, is fine** | "'Fab' on one document, 'Fabrication' on another. The AI judge explains why it is the same company and the rulebook accepts it. No false alarm." Click **Finish: see the dashboard**. |
+| 3:45 | **Overview** | "The dashboard: every run, its status, what is waiting on a vendor and what needs a person." |
+| 4:00 | **Model quality** | "How do I know it works? On my own test data it scores 99.9%, but I wrote that data, so I did not trust it. I had independent authors write cases without seeing my code. The first tries scored 62, 78 and 70 percent. Here is what they found and what I fixed." Open **What each test found**. Optional: click **Spot-check 4 fresh vendors**: "these companies did not exist a second ago." |
+| 4:40 | **Rulebook** | "Every decision traces to a line here that a procurement lead can read and change. The AI cannot." |
+
+If a step is slow, keep talking: the free AI tier is sometimes busy, and the answer is still correct. An amber "AI model unavailable" notice means the built-in reader took over for that document; say so.
 
 Keep talking while the stages stream; the live run is the most convincing part.
 

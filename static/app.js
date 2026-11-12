@@ -735,13 +735,13 @@ async function qualityView(view) {
   const spotOut = h('div');
   const spotBtn = h('button', { class: 'btn primary', onclick: async e => {
     e.currentTarget.disabled = true; spotOut.replaceChildren(h('div', { class: 'skeleton', style: 'height:60px' }));
-    try { const r = await api('/quality/spotcheck?n=12', { method: 'POST' });
+    try { const r = await api('/quality/spotcheck?n=4', { method: 'POST' });
       spotOut.replaceChildren(h('div', { class: 'note ' + (r.correct === r.n ? 'ok' : 'warn'), style: 'margin:10px 0' }, `${r.correct} of ${r.n} fresh vendors decided as labelled (seed ${r.seed}).`),
         h('div', { class: 'tablewrap' }, h('table', {}, h('thead', {}, h('tr', {}, ['', 'Scenario', 'Expected', 'Decided', 'Findings'].map(x => h('th', {}, x)))),
           h('tbody', {}, r.rows.map(x => h('tr', {}, h('td', { class: x.decision_ok ? 'ok-t' : 'bad-t' }, x.decision_ok ? '✓' : '✕'), h('td', { style: 'max-width:360px' }, x.title, h('div', { class: 'id' }, x.country)),
             h('td', {}, pill(x.expected === 'rejected' ? 'rejected_compliance' : x.expected)), h('td', {}, pill(x.got === 'rejected' ? 'rejected_compliance' : x.got)), h('td', { class: 'xs muted' }, x.codes.join(', ') || '—')))))));
     } catch (err) { spotOut.replaceChildren(errorBox(err)); } e.currentTarget.disabled = false;
-  } }, 'Spot-check 12 fresh vendors now');
+  } }, 'Spot-check 4 fresh vendors now');
 
   view.replaceChildren(
     h('div', { class: 'head' }, h('div', {}, h('h1', {}, 'Model quality'), h('p', { class: 'sub' }, 'Measured, not claimed. The top row is my own test data (the easy number). The table below it is the hard one: cases written by independent authors, scored before any fix.'))),

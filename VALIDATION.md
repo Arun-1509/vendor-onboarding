@@ -70,7 +70,7 @@ python scripts/synth.py --split stress --n 300 --seed 47
 python scripts/validate.py test --tag v2 --show 10
 python scripts/summarize_quality.py          # -> reports/summary.json, shown on the Model quality page
 ```
-In the app, **Model quality → Spot-check 12 fresh vendors now** generates brand-new vendors with a random seed and scores them live.
+In the app, **Model quality → Spot-check 4 fresh vendors now** generates brand-new vendors with a random seed and scores them live.
 
 ## Harder tests: a blind answer key and messy documents (2026-11-09, quota-hit vendors rerun 2026-11-10)
 The 1,900 synthetic vendors share two weaknesses: I wrote both the generator and the rules, and every document has the same look. So I added two sets that don't (`bench/`, `python scripts/bench.py`):
