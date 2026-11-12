@@ -355,7 +355,8 @@ class GeminiLLM(AnthropicLLM):
         # overloaded: it gets a short timeout and a total time budget, then the caller's plan B takes over.
         has_file = any("inline_data" in p for p in body["contents"][0]["parts"])
         timeout = config.LLM_TIMEOUT_S if has_file else min(config.LLM_TIMEOUT_S, 6.0)
-        deadline = time.time() + (35.0 if has_file else 10.0)
+        deadline = time.time() + (20.0 if has_file else 10.0)
+        saw_429 = False
         for m in models + models[:2] * 2:                       # up to 2 more passes, only if all were busy
             if m in GeminiLLM._dead:
                 continue
@@ -367,7 +368,7 @@ class GeminiLLM(AnthropicLLM):
             if m is models[0] and last is not None:
                 if "429" not in str(last) and "Timeout" not in type(last).__name__:
                     break                                       # real errors: don't loop
-                time.sleep(min(max(GeminiLLM._retry_after, 2.0), 30.0))   # Google says how long; cap it
+                time.sleep(min(max(GeminiLLM._retry_after, 2.0), 8.0, max(0.0, deadline - time.time())))   # Google says how long; cap it
             think = self._thinking(m)
             for attempt in range(2 + len(config.GEMINI_KEYS)):  # one retry for blips, + one per spare key
                 b = body if think is None else {**body, "generationConfig": {**body["generationConfig"], "thinkingConfig": think}}
@@ -390,6 +391,7 @@ class GeminiLLM(AnthropicLLM):
                     think = None
                     continue
                 if r.status_code == 429:                        # free-tier quota: move on, don't wait
+                    saw_429 = True
                     GeminiLLM._cool[m] = time.time() + 60
                     import re
                     hint = re.search(r'"retryDelay":\s*"(\d+(?:\.\d+)?)s"', r.text or "")
@@ -419,7 +421,8 @@ class GeminiLLM(AnthropicLLM):
                 except Exception as e:                          # safety block, empty, or malformed JSON
                     last = LLMError(f"{m} gave an unusable answer: {e}")
                 break
-        raise LLMError(f"LLM call failed: {first or last}" + (f" (fallback: {last})" if first and first is not last else ""))
+        raise LLMError(f"LLM call failed: {first or last}" + (f" (fallback: {last})" if first and first is not last else "")
+                       + (" [429 quota]" if saw_429 else ""))
 
 
 # ============================================================ templates ====
