@@ -355,7 +355,7 @@ class GeminiLLM(AnthropicLLM):
         # overloaded: it gets a short timeout and a total time budget, then the caller's plan B takes over.
         has_file = any("inline_data" in p for p in body["contents"][0]["parts"])
         timeout = config.LLM_TIMEOUT_S if has_file else min(config.LLM_TIMEOUT_S, 6.0)
-        deadline = time.time() + (90.0 if has_file else 10.0)
+        deadline = time.time() + (35.0 if has_file else 10.0)
         for m in models + models[:2] * 2:                       # up to 2 more passes, only if all were busy
             if m in GeminiLLM._dead:
                 continue
@@ -377,7 +377,7 @@ class GeminiLLM(AnthropicLLM):
                     r = self.http.post(self.URL.format(model=m), params={"key": key}, json=b, timeout=timeout)
                 except Exception as e:
                     self._trace(m, type(e).__name__, t0, think)
-                    GeminiLLM._cool[m] = time.time() + 60       # hung: try the next model now, this one later
+                    GeminiLLM._cool[m] = time.time() + 300      # hung: try the next model now, this one much later
                     last = e
                     break
                 self._trace(m, r.status_code if ki == 0 else f"{r.status_code} (key {ki + 1})", t0, think)

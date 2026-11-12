@@ -37,7 +37,7 @@ MODEL_FALLBACK = os.getenv("MODEL_FALLBACK", "claude-sonnet-5-5")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-lite-latest")           # reads documents, writes emails
 GEMINI_JUDGE_MODEL = os.getenv("GEMINI_JUDGE_MODEL", "gemini-flash-latest")
 GEMINI_FALLBACK = os.getenv("GEMINI_FALLBACK", "gemini-flash-latest")
-LLM_TIMEOUT_S = float(os.getenv("LLM_TIMEOUT_S", "30"))
+LLM_TIMEOUT_S = float(os.getenv("LLM_TIMEOUT_S", "15"))   # the fast model answers in 1-4 s; a hung one is abandoned
 
 # --------------------------------------------------------------- rules ----
 AUTO_APPROVE_MAX_RISK = 20        # risk score must be BELOW this to auto-approve
