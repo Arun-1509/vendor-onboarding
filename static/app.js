@@ -734,9 +734,9 @@ async function qualityView(view) {
   } }, 'Spot-check 12 fresh vendors now');
 
   view.replaceChildren(
-    h('div', { class: 'head' }, h('div', {}, h('h1', {}, 'Model quality'), h('p', { class: 'sub' }, 'Measured, not claimed: 1,900 labelled synthetic vendors run through the real pipeline, original engine vs v2.'))),
+    h('div', { class: 'head' }, h('div', {}, h('h1', {}, 'Model quality'), h('p', { class: 'sub' }, 'Measured, not claimed. The top row is my own test data (the easy number). The table below it is the hard one: cases written by independent authors, scored before any fix.'))),
     h('div', { class: 'kpis' },
-      big('Held-out accuracy', tv.decision_accuracy, tb.decision_accuracy, x => pct(x), ''),
+      big('Accuracy on my own held-out test data', tv.decision_accuracy, tb.decision_accuracy, x => pct(x), ''),
       big('Unsafe approvals (held-out)', tv.errors.unsafe_approvals, tb.errors.unsafe_approvals, x => String(x), ''),
       big('Fraud cases emailed to vendor', tv.errors.disclosure_leaks, tb.errors.disclosure_leaks, x => String(x), ''),
       big('Stress-set accuracy (unseen variations)', (stress.first_look || stress.v2).decision_accuracy, stress.baseline.decision_accuracy, x => pct(x), '')),
