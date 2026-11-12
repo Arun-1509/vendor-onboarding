@@ -29,6 +29,9 @@ A model never approves, rejects or holds a vendor. A rule table does, and a proc
  8 Decision ───────── rules.decide(): reject > hold for reviewer > ask vendor > risk limit > approve
  9 Communicate ────── vendor email (only fixable items, scanned for internal terms) or reviewer note
      (AI drafts)      (evidence + checklist + safe next step); everything goes into the hash-chained audit
+ Then ─────────────── approved: a vendor master record for the ERP, built only from verified values ·
+                      waiting on vendor: reminders, then closure; a reply is re-checked as a new version ·
+                      needs review: checklist, 48 h SLA, two reviewers for bank changes and similar
 ```
 
 ## Outcomes and who sees what

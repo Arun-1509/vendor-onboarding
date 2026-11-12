@@ -93,3 +93,18 @@ def test_tour_missing_document_story_is_repeatable_for_every_visitor():
             r2 = client.get(f"/api/submissions/{b['submission_id']}/run").json()["run"]["result"]
             assert r2["status"] == "approved" and r2["resolved_since_last_run"]
         assert client.post("/api/tour/missing-doc/reply?vendor_id=V-0001").status_code == 404
+
+
+def test_vendor_master_record_exists_only_after_approval():
+    with TestClient(app) as client:
+        client.post("/api/admin/reset")
+        ok = client.post("/api/samples/H1_happy_india/submit").json()
+        _wait_done(client, ok["submission_id"])
+        rec = client.get(f"/api/vendors/{ok['vendor_id']}/erp-record").json()
+        assert rec["status"] == "active" and rec["tax_id"] and rec["payment"]["account_holder"]
+        assert rec["approval"]["how"].startswith("automatic") and rec["approval"]["audit_hash"]
+        csv_ = client.get(f"/api/vendors/{ok['vendor_id']}/erp-record?fmt=csv")
+        assert csv_.status_code == 200 and "legal_name" in csv_.text.splitlines()[0]
+        held = client.post("/api/samples/E1b_bank_change_request/submit").json()
+        _wait_done(client, held["submission_id"])
+        assert client.get(f"/api/vendors/{held['vendor_id']}/erp-record").status_code == 409

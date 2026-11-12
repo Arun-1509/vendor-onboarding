@@ -266,6 +266,57 @@ def vendor_detail(vendor_id: str):
     return out
 
 
+def _erp_record(c, vendor_id: str) -> dict:
+    """The vendor master record handed to the ERP. Built from the approved submission only: every value in it
+    was read from the vendor's documents and cross-checked, and it names the run and people that approved it."""
+    v = db.row(c.execute("SELECT * FROM vendors WHERE vendor_id=?", (vendor_id,)).fetchone())
+    if not v:
+        raise HTTPException(404, "vendor not found")
+    if v["status"] != "approved":
+        raise HTTPException(409, "No vendor record yet: a record is created only when the vendor is approved.")
+    run = db.row(c.execute("SELECT run_id, submission_id, finished_at, llm_mode FROM runs WHERE run_id=?", (v["latest_run_id"],)).fetchone()) if v["latest_run_id"] else None
+    sub = db.row(c.execute("SELECT form, version FROM submissions WHERE submission_id=?", (run["submission_id"],)).fetchone()) if run else None
+    if not sub:                                                    # loaded from the existing vendor master
+        sub = db.row(c.execute("SELECT form, version FROM submissions WHERE vendor_id=? ORDER BY version DESC LIMIT 1", (vendor_id,)).fetchone())
+    f = sub["form"] if sub else {}
+    people = [dict(o) for o in c.execute("SELECT actor, reason, at FROM overrides WHERE vendor_id=? AND new_status='approved' ORDER BY id", (vendor_id,))]
+    decided = c.execute("SELECT hash, at FROM audit WHERE vendor_id=? AND event IN ('decision','reviewer_override','review_action') ORDER BY seq DESC LIMIT 1", (vendor_id,)).fetchone()
+    bank = {k: f.get(k, "") for k in ("bank_name", "account_holder", "account_number", "iban", "ifsc", "sort_code", "routing_number", "swift") if f.get(k)}
+    return {"record_type": "vendor_master", "vendor_id": v["vendor_id"], "status": "active",
+            "legal_name": v["legal_name"], "trade_name": f.get("trade_name", ""), "entity_type": f.get("entity_type", ""),
+            "country": v["country"], "tax_id": v["tax_id"],
+            "address": {"street": f.get("address", ""), "city": f.get("city", ""), "postal_code": f.get("postal_code", ""), "country": v["country"]},
+            "contact": {"name": f.get("contact_name", ""), "email": f.get("contact_email", "")},
+            "payment": {"currency": f.get("currency", ""), **bank},
+            "approval": {"how": "two reviewers" if len(people) >= 2 else "reviewer" if people else ("automatic (no blocking findings)" if run else "existing vendor"),
+                         "run_id": run["run_id"] if run else None, "submission_version": sub["version"] if sub else None,
+                         "approved_at": (people[-1]["at"] if people else (run["finished_at"] if run else v["updated_at"])),
+                         "reviewers": [p["actor"] for p in people], "audit_hash": decided["hash"] if decided else None}}
+
+
+@app.get("/api/vendors/{vendor_id}/erp-record")
+def erp_record(vendor_id: str, fmt: str = "json"):
+    c = _conn()
+    try:
+        r = _erp_record(c, vendor_id)
+    finally:
+        c.close()
+    if fmt == "csv":
+        import csv
+        import io
+        flat = {"vendor_id": r["vendor_id"], "legal_name": r["legal_name"], "trade_name": r["trade_name"], "entity_type": r["entity_type"],
+                "country": r["country"], "tax_id": r["tax_id"], **{f"address_{k}": v for k, v in r["address"].items() if k != "country"},
+                **{f"contact_{k}": v for k, v in r["contact"].items()}, **{f"pay_{k}": v for k, v in r["payment"].items()},
+                "approved_how": r["approval"]["how"], "approved_at": r["approval"]["approved_at"], "approval_run": r["approval"]["run_id"]}
+        buf = io.StringIO()
+        w = csv.DictWriter(buf, fieldnames=list(flat))
+        w.writeheader()
+        w.writerow(flat)
+        return PlainTextResponse(buf.getvalue(), media_type="text/csv",
+                                 headers={"Content-Disposition": f'attachment; filename="{vendor_id}_vendor_master.csv"'})
+    return r
+
+
 @app.get("/api/runs")
 def recent_runs(limit: int = 15):
     c = _conn()
@@ -770,7 +821,7 @@ def sample_doc(case_id: str, doc_type: str):
 
 @app.get("/api/docs/{name}")
 def doc(name: str):
-    allowed = {"assumptions": "ASSUMPTIONS.md", "design": "DESIGN.md", "demo": "DEMO_SCRIPT.md", "interview": "INTERVIEW_PREP.md"}
+    allowed = {"assumptions": "ASSUMPTIONS.md", "design": "DESIGN.md", "validation": "VALIDATION.md"}
     if name not in allowed or not (config.ROOT / allowed[name]).exists():
         raise HTTPException(404, "unknown document")
     return PlainTextResponse((config.ROOT / allowed[name]).read_text())

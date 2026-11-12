@@ -294,9 +294,26 @@ function actionsEl(list) {
   return h('ul', { class: 'actionlist' }, (list || []).map(a => h('li', {}, h('span', { class: 'who ' + a.who }, a.who), h('span', {}, a.action))));
 }
 
+// ======================================================== vendor master record ===
+async function erpCard(id) {
+  let r; try { r = await api(`/vendors/${id}/erp-record`); } catch (_) { return null; }
+  const kv = (k, v) => [h('dt', {}, k), h('dd', { class: k.startsWith('Account') || k === 'IBAN' ? 'mono' : '' }, v || '—')];
+  const p = r.payment || {};
+  return h('div', { class: 'card', style: 'border-color:var(--ok-line)' },
+    h('div', { class: 'card-h' }, h('h2', {}, 'Vendor master record (ready for the ERP)'),
+      h('div', { class: 'row' }, h('a', { class: 'btn sm', href: `/api/vendors/${id}/erp-record` , target: '_blank' }, 'JSON'), h('a', { class: 'btn sm', href: `/api/vendors/${id}/erp-record?fmt=csv` }, 'CSV'))),
+    h('p', { class: 'sm muted', style: 'margin:-6px 0 10px' }, 'The last step of onboarding: one record, built only from values that were read from the documents and cross-checked, and stamped with who approved it.'),
+    h('dl', { class: 'kv' }, kv('Legal name', r.legal_name), kv('Tax ID', r.tax_id), kv('Address', [r.address.street, ...[r.address.postal_code, r.address.city].filter(x => x && !String(r.address.street).includes(x))].filter(Boolean).join(', ')),
+      kv('Contact', [r.contact.name, r.contact.email].filter(Boolean).join(' · ')), kv('Bank', [p.bank_name, p.currency].filter(Boolean).join(' · ')),
+      kv('Account holder', p.account_holder), p.iban ? kv('IBAN', mask(p.iban)) : kv('Account', mask(p.account_number)),
+      kv('Approved', `${r.approval.how}${r.approval.reviewers.length ? ' (' + r.approval.reviewers.join(', ') + ')' : ''} · ${fmt(r.approval.approved_at)}`),
+      kv('Evidence', `${r.approval.run_id || 'vendor master'}${r.approval.audit_hash ? ' · audit ' + r.approval.audit_hash.slice(0, 10) : ''}`)));
+}
+
 // ================================================================ vendor 360 ===
 async function vendorView(view, id) {
   const [d, queue, rb] = await Promise.all([api('/vendors/' + id), api('/review/queue'), rulebook()]);
+  const erp = d.vendor.status === 'approved' ? await erpCard(id) : null;
   const v = d.vendor, qi = queue.find(x => x.vendor_id === id);
   const lastRun = [...d.runs].reverse().find(r => r.result);
   const res = lastRun ? lastRun.result : null;
@@ -370,7 +387,7 @@ async function vendorView(view, id) {
         latest ? h('a', { class: 'btn sm', href: '#/run/' + latest.submission_id }, 'Replay latest run') : null)),
     h('div', { class: 'split' },
       h('div', {},
-        panel,
+        panel, erp,
         res ? h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, 'Latest automated decision'), h('span', { class: 'xs faint' }, `${lastRun.run_id} · ${res.llm_mode} AI · ${res.seconds}s`)), humanNote,
           h('div', { class: 'gauge', style: 'margin-bottom:10px' }, gauge(res.risk_score, res.risk_limit), h('div', {}, h('p', { style: 'margin:0' }, res.explanation), h('p', { class: 'xs faint', style: 'margin:6px 0 0' }, res.rule_trace.join(' · ')))),
           h('h3', {}, 'Path to approval'), actionsEl(res.next_actions),
@@ -608,7 +625,7 @@ async function runView(view, sid) {
       res.resolved_since_last_run && res.resolved_since_last_run.length ? h('div', { class: 'note ok', style: 'margin-top:10px' }, 'Resolved since the last version: ' + res.resolved_since_last_run.join(', ')) : null,
       h('h3', { style: 'margin-top:14px' }, 'Path to approval'), actionsEl(res.next_actions),
       emails.length ? [h('h3', { style: 'margin-top:14px' }, 'Drafted message'), emails.map(mailEl)] : null,
-      h('div', { class: 'row', style: 'margin-top:14px' }, follow, h('a', { class: 'btn', href: '#/vendor/' + r.run.vendor_id }, 'Open vendor'), h('a', { class: 'btn quiet', href: '#/new' }, 'Run another'))));
+      h('div', { class: 'row', style: 'margin-top:14px' }, follow, h('a', { class: 'btn', href: '#/vendor/' + r.run.vendor_id }, res.status === 'approved' ? 'Open vendor record' : 'Open vendor'), h('a', { class: 'btn quiet', href: '#/new' }, 'Run another'))));
     updateRail();
   }
   view.replaceChildren(
@@ -789,7 +806,8 @@ async function rulesView(view) {
 // ============================================================== how it works ===
 function processView(view) {
   view.replaceChildren(h('div', { class: 'head' }, h('div', {}, h('h1', {}, 'How it works'), h('p', { class: 'sub' }, 'AI reads and explains. Code decides. People handle what is genuinely ambiguous.'))),
-    h('div', { class: 'card' }, h('h2', {}, 'The nine stages (highlighted = uses the AI)'), h('div', { class: 'flow' }, STAGES.map(k => h('div', { class: STAGE_INFO[k][2] ? 'ai' : '' }, h('b', {}, STAGE_INFO[k][0]), STAGE_INFO[k][1])))),
+    h('div', { class: 'card' }, h('h2', {}, 'The nine stages (highlighted = uses the AI)'), h('div', { class: 'flow' }, STAGES.map(k => h('div', { class: STAGE_INFO[k][2] ? 'ai' : '' }, h('b', {}, STAGE_INFO[k][0]), STAGE_INFO[k][1]))),
+      h('p', { class: 'sm muted', style: 'margin:12px 0 0' }, 'Then, depending on the decision: approved → a vendor master record is created for the ERP; waiting on vendor → reminders, and the reply is re-checked as a new version; needs review → a reviewer works through a checklist (two reviewers for bank changes and similar); rejected → compliance is told, the vendor is not.')),
     h('div', { class: 'grid2' },
       h('div', { class: 'card' }, h('h2', {}, 'Which outcome wins'), [['bad', 'Rejected', 'Exact sanctions-list match, or no reply after two reminders. The vendor is never told about screening.'],
         ['hold', 'Needs review', 'Fraud-shaped, not proven: lookalike, shared or changed bank account, a document edited after issue, IDs that belong to someone else. Bank changes and similar need two reviewers.'],

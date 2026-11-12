@@ -67,7 +67,8 @@ PLAYBOOK = {
 def next_actions(findings: list[dict], status: str, substatus: str) -> list[dict]:
     """The path to approval, in plain words. Same findings -> same actions (no AI)."""
     if status == "approved":
-        return [{"who": "system", "action": "Vendor is active; payments can be set up on the approved account."}]
+        return [{"who": "system", "action": "Vendor master record created from the verified data, ready to load into the ERP."},
+                {"who": "system", "action": "Payments can be set up on the verified bank account."}]
     if substatus == "rejected_compliance":
         return [{"who": "compliance", "action": "Confirm the sanctions match and file the case. Do not contact the vendor about it."}]
     out, seen = [], set()

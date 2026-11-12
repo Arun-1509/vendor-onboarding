@@ -10,7 +10,7 @@ The guide says to treat ambiguity as part of the exercise: make an assumption, w
 ## What is real vs mocked
 | Piece | Status |
 |---|---|
-| Document reading (PDF/image) | **Real** with Claude when `ANTHROPIC_API_KEY` is set. Offline **mock** mode reads our generated sample PDFs; every run is labelled `mock` or `live`. |
+| Document reading (PDF/image) | **Real** with Gemini on the live site (Claude also supported). Offline **mock** mode reads our generated sample PDFs; every run is labelled `mock` or `live`. If the AI is unavailable, text PDFs are read by a built-in reader only when every critical field is found, and the run says so. |
 | Tax-ID and bank checks | **Real format + checksum** (GSTIN, PAN, German USt-IdNr, UK VAT, EIN prefix, IBAN mod-97, ABA, IFSC, SWIFT). **No registry lookup**, so a passing ID is *plausible*, not *verified with the government*. |
 | Bank-code directories | **Demo subsets**: a few IFSC prefixes, German BLZ codes and UK sort-code ranges. Production uses the full RBI IFSC master, the Bundesbank BLZ file and the UK EISCD. An unknown code is simply not checked (never a false alarm). |
 | PIN → GST state map | Two-digit PIN prefixes mapped to every state they touch, because postal circles don't follow state lines exactly. That makes it conservative: it can miss some mismatches, but it won't invent one. |
@@ -18,6 +18,7 @@ The guide says to treat ambiguity as part of the exercise: make an assumption, w
 | Sanctions screening | **Mock list of three FICTIONAL entities.** Real deployment = a maintained feed (OFAC / UN / EU / UK). Fuzzy matching logic is real. |
 | Existing vendors | Seeded demo vendor master. |
 | Bank-account ownership | Checked against the bank letter's printed holder name. **No bank API** (penny-drop / account verification) is called. |
+| ERP | The approved vendor becomes a **vendor master record** (JSON / CSV download). No live ERP connection; loading it is an import, not a rebuild. |
 | Email | Drafted and stored in an outbox; **not sent to real addresses** from the public demo. Sending to a verified test inbox is a switch, not a rebuild. |
 
 ## Policy decisions (opinions I'd defend)
@@ -37,7 +38,7 @@ The guide says to treat ambiguity as part of the exercise: make an assumption, w
 
 ## Known limitations (honest list)
 - Only checks what is on the page; a skilled forger with a valid-looking GSTIN/IBAN would pass format checks, which is exactly why bank changes and lookalikes go to a human call-back.
-- GST state-code vs address matching, director/UBO checks, adverse-media, credit checks: out of scope.
+- Director/UBO checks, adverse media, credit checks and insurance certificates: out of scope.
 - The mock AI is deliberately conservative and simple, and the live model will behave differently. `scripts/live_check.py` measures live extraction (field agreement with the file text) and live decisions on a held-out sample.
 - Validation data is synthetic, and I wrote both the generator and the rules. See VALIDATION.md for how the held-out and stress sets limit that, and for the first-look numbers.
 - One reviewer role, no authentication on the demo. A real deployment needs SSO and roles.
