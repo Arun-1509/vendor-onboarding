@@ -688,16 +688,16 @@ async function benchCard(host) {
     btn.disabled = false; } }, `Rerun ${held.length} unanswered`) : null;
   drawJob(b.job);
   host.replaceChildren(h('div', { class: 'card' },
-    h('div', { class: 'card-h' }, h('h2', {}, 'Harder tests: a blind answer key and messy documents'), h('div', {}, runBtn, retryBtn)),
-    h('p', { class: 'sm muted', style: 'margin:0 0 10px' }, 'The 1,900 vendors above were written by the same person as the rules. These two sets were not: one answer key was written by an independent author who never saw the code, and one set draws every document differently. First look = before any fix.'),
+    h('div', { class: 'card-h' }, h('h2', {}, 'Harder tests: cases the rules were never written for'), h('div', {}, runBtn, retryBtn)),
+    h('p', { class: 'sm muted', style: 'margin:0 0 10px' }, 'The 1,900 vendors above were written by the same person as the rules, so they cannot show their own blind spots. These sets can: three were written by independent authors who never saw the code, and one draws every document differently. "First look" is the score before any fix, and it is the honest number.'),
     h('div', { class: 'tablewrap', style: 'border:0' }, h('table', { class: 'cmp' }, h('thead', {}, h('tr', {}, ['Set', 'Vendors', 'First look', 'After fixes', 'Live AI', 'Dangerous errors'].map((x, i) => h('th', { class: i ? 'num' : '' }, x)))), h('tbody', {}, rows))),
     h('ul', { class: 'xs muted', style: 'margin:6px 0 0;padding-left:16px' }, Object.entries(sets).map(([k, v]) => h('li', {}, h('b', {}, (NAME[k] || k) + ': '), v.description))),
     h('p', { class: 'xs muted', style: 'margin:6px 0 0' }, 'Dangerous errors = unsafe approvals + missed sanctions rejects. "First look" and "after fixes" use a perfect reader (exactly what is printed) to isolate the rules. "Live AI" reads the real files with the deployed model; vendors that ran out of free Gemini quota were held for a reviewer (never approved) and are left out of its accuracy.' +
       (rd ? ` Live reading accuracy: ${rd.c}/${rd.n} printed fields read exactly (${pct(rd.c / rd.n)}).` : '') + (b.live ? ` Last live run: ${b.live.finished} (${b.live.provider}).` : '')),
     status,
-    h('h3', { style: 'margin-top:14px' }, 'What the first look found, and the fix'),
-    h('table', { class: 'mini' }, h('tbody', {}, (b.findings || []).map(f => h('tr', {}, h('td', { class: 'xs muted', style: 'white-space:nowrap;vertical-align:top' }, NAME[f.set] || f.set),
-      h('td', { class: 'sm' }, f.found, h('div', { class: 'xs', style: 'color:var(--ok, #10b981);margin-top:2px' }, '→ ' + f.fix))))))));
+    h('details', { style: 'margin-top:14px' }, h('summary', { style: 'cursor:pointer;font-weight:650;font-size:13px;color:var(--accent)' }, `What the first looks found, and the fix for each (${(b.findings || []).length})`),
+      h('table', { class: 'mini', style: 'margin-top:8px' }, h('tbody', {}, (b.findings || []).map(f => h('tr', {}, h('td', { class: 'xs muted', style: 'white-space:nowrap;vertical-align:top' }, NAME[f.set] || f.set),
+        h('td', { class: 'sm' }, f.found, h('div', { class: 'xs', style: 'color:var(--ok, #10b981);margin-top:2px' }, '→ ' + f.fix)))))))));
 }
 
 // ============================================================ model quality ===
@@ -747,9 +747,10 @@ async function qualityView(view) {
       h('div', { class: 'card' }, h('h2', {}, 'How the errors are weighted'), h('table', { class: 'mini' }, h('tbody', {},
         [['Unsafe approval', '50', 'Fraud or compliance loss'], ['Missed sanctions reject', '50', 'Legal exposure'], ['Disclosure leak', '10', 'Tells a fraudster which detail to forge'], ['Over-escalation', '2', 'Reviewer time'], ['False hold', '1', 'Vendor friction']].map(r => h('tr', {}, h('td', {}, h('b', {}, r[0])), h('td', { class: 'num mono' }, '×' + r[1]), h('td', { class: 'muted' }, r[2]))))),
         h('p', { class: 'sm muted', style: 'margin-top:10px' }, `Weighted error cost on the held-out set: ${tb.weighted_cost} → ${tv.weighted_cost}.`))),
+    h('details', { class: 'card' }, h('summary', { style: 'cursor:pointer;font-weight:650' }, 'Full tables: every metric and every scenario for the 1,900 vendors'), h('div', { style: 'margin-top:14px' },
     cmp('Held-out test set', test), cmp('Stress set', stress), cmp('Tuning set', S.dev),
-    h('div', { class: 'grid2' }, h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, 'Stress set by scenario'), h('div', { class: 'legend' }, h('span', {}, h('i', { style: 'background:var(--faint)' }), 'original'), h('span', {}, h('i', { style: 'background:var(--accent)' }), 'v2'))), bars(stress)),
-      h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, 'Held-out set by scenario'), h('div', { class: 'legend' }, h('span', {}, h('i', { style: 'background:var(--faint)' }), 'original'), h('span', {}, h('i', { style: 'background:var(--accent)' }), 'v2'))), bars(test))),
+    h('div', { class: 'grid2', style: 'margin-top:16px' }, h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, 'Stress set by scenario'), h('div', { class: 'legend' }, h('span', {}, h('i', { style: 'background:var(--faint)' }), 'original'), h('span', {}, h('i', { style: 'background:var(--accent)' }), 'v2'))), bars(stress)),
+      h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, 'Held-out set by scenario'), h('div', { class: 'legend' }, h('span', {}, h('i', { style: 'background:var(--faint)' }), 'original'), h('span', {}, h('i', { style: 'background:var(--accent)' }), 'v2'))), bars(test))))),
     h('div', { class: 'card' }, h('h2', {}, 'How to read this honestly'), h('ul', { style: 'margin:0;padding-left:18px' }, q.notes.concat([
       'The same person wrote the generator and the rules, so the stress set was written before measuring, to probe what the rules were not designed for. Its first-look score is reported, not just the final one.',
       'Real-world inputs will be messier than synthetic ones. The next step is a pilot on a few hundred historic submissions with known outcomes.']).map(n => h('li', { class: 'sm', style: 'margin:4px 0' }, n)))));
