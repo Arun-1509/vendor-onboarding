@@ -354,8 +354,8 @@ class GeminiLLM(AnthropicLLM):
         # A short text question (name judgment, email) must not hold a live run for a minute when Google is
         # overloaded: it gets a short timeout and a total time budget, then the caller's plan B takes over.
         has_file = any("inline_data" in p for p in body["contents"][0]["parts"])
-        timeout = config.LLM_TIMEOUT_S if has_file else min(config.LLM_TIMEOUT_S, 10.0)
-        deadline = time.time() + (90.0 if has_file else 20.0)
+        timeout = config.LLM_TIMEOUT_S if has_file else min(config.LLM_TIMEOUT_S, 6.0)
+        deadline = time.time() + (90.0 if has_file else 10.0)
         for m in models + models[:2] * 2:                       # up to 2 more passes, only if all were busy
             if m in GeminiLLM._dead:
                 continue
