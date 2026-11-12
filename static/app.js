@@ -661,8 +661,8 @@ async function benchCard(host) {
   let b; try { b = await api('/benchmark'); } catch (e) { host.replaceChildren(); return; }
   const sets = b.sets || {}; const live = (b.live && b.live.sets) || {};
   const NAME = { blind: 'Blind test 1', diverse: 'Messy documents', holdout: 'Blind test 2 (ChatGPT)', fresh: 'Blind test 3' };
-  const WHO = { blind: 'Cases and answers by an independent author who never saw the code', diverse: 'Tables, letters, stamps, German, phone photos, pasted-over values',
-    holdout: 'Written by ChatGPT from a description of the process only', fresh: 'A new author, told to avoid everything already tested' };
+  const WHO = { blind: 'Cases and answers by a separate AI agent that never saw the code', diverse: 'Tables, letters, stamps, German, phone photos, pasted-over values',
+    holdout: 'Written by ChatGPT from a description of the process only', fresh: 'A new AI agent, told to avoid everything already tested' };
   const acc = m => m ? pct(m.decision_accuracy) : '–', uns = m => m ? String(m.errors.unsafe_approvals + m.errors.missed_rejects) : '–';
   const liveCell = k => live[k] ? (live[k].answered_accuracy != null ? pct(live[k].answered_accuracy) : acc(live[k].metrics)) : 'not run';
   const rows = Object.entries(sets).map(([k, v]) => h('tr', {}, h('td', {}, h('b', {}, NAME[k] || k), h('div', { class: 'xs muted', style: 'font-weight:400' }, WHO[k] || '')),
@@ -694,7 +694,7 @@ async function benchCard(host) {
   const sum = t => h('summary', { style: 'cursor:pointer;font-weight:650;font-size:13px;color:var(--accent)' }, t);
   host.replaceChildren(h('div', { class: 'card' },
     h('div', { class: 'card-h' }, h('h2', {}, 'The hard tests: cases the rules were never written for')),
-    h('p', { class: 'sm muted', style: 'margin:0 0 10px' }, 'I wrote both the rules and the 1,900 test vendors above, so that test cannot show my blind spots. These can. "First try" is the score before I changed anything, and it is the number I quote.'),
+    h('p', { class: 'sm muted', style: 'margin:0 0 10px' }, 'I wrote both the rules and the 1,900 test vendors above, so that test cannot show my blind spots. These can: the blind tests were written by other AI models that were never shown the code or the rules. "First try" is the score before I changed anything, and it is the number I quote.'),
     h('div', { class: 'tablewrap', style: 'border:0' }, h('table', { class: 'cmp' }, h('thead', {}, h('tr', {}, ['Test', 'Cases', 'First try', 'After fixes', 'With live Gemini', 'Wrongly approved: first try → now'].map((x, i) => h('th', { class: i ? 'num' : '' }, x)))), h('tbody', {}, rows))),
     status,
     h('details', { style: 'margin-top:12px' }, sum('How to read this table'),
@@ -744,7 +744,7 @@ async function qualityView(view) {
   } }, 'Spot-check 4 fresh vendors now');
 
   view.replaceChildren(
-    h('div', { class: 'head' }, h('div', {}, h('h1', {}, 'Model quality'), h('p', { class: 'sub' }, 'Measured, not claimed. The top row is my own test data (the easy number). The table below it is the hard one: cases written by independent authors, scored before any fix.'))),
+    h('div', { class: 'head' }, h('div', {}, h('h1', {}, 'Model quality'), h('p', { class: 'sub' }, 'Measured, not claimed. The top row is my own test data (the easy number). The table below it is the hard one: cases written by other AI models that never saw the code, scored before any fix.'))),
     h('div', { class: 'kpis' },
       big('Accuracy on my own held-out test data', tv.decision_accuracy, tb.decision_accuracy, x => pct(x), ''),
       big('Wrongly approved (same data)', tv.errors.unsafe_approvals, tb.errors.unsafe_approvals, x => String(x), ''),

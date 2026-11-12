@@ -75,9 +75,9 @@ def summarize():
                 layouts[k] = layouts.get(k, 0) + 1
         out["sets"][name] = {
             "n": data["n"], "description": {
-                "blind": "Written by an independent author who never saw the code or rules: 56 scenarios with expected outcomes from business judgment.",
+                "blind": "Written by a separate AI agent that never saw the code or rules: 56 scenarios with expected outcomes from business judgment.",
                 "diverse": "60 vendors whose documents come in many shapes: tables, prose letters, multi-page, stamps, German, country date formats, phone photos, value-only edits.",
-                "fresh": "44 vendors by a second independent author (2026-11-12) told to avoid every pattern already covered: boundary dates, sister companies, German spellings, look-alike email domains, offshore payment. Scored once before any change.",
+                "fresh": "44 vendors by a second separate AI agent (2026-11-12) told to avoid every pattern already covered: boundary dates, sister companies, German spellings, look-alike email domains, offshore payment. Scored once before any change.",
                 "holdout": "37 vendors written by ChatGPT (a different AI company) from a description of the process only: no code, no rules. Scored once before any change."}[name],
             "document_styles": layouts,
             "first_look": first["metrics"], "first_look_failures": [{k: f[k] for k in ("id", "title", "expected", "got")} for f in first["failures"]],

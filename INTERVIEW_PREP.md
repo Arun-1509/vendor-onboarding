@@ -23,7 +23,7 @@
 
 **Did you test it on anything you didn't write?**
 - Yes, two harder sets:
-  - **A blind answer key** written by an independent author who never saw my code. It scored 62.5% on first look.
+  - **A blind answer key** written by a separate AI agent (a different session, not shown my code or rules). It scored 62.5% on first look.
   - **Unseen test by another AI company:** ChatGPT wrote 37 cases from a process description only. First look **78%**, every sanctions case rejected, 3 unsafe approvals (an account-takeover via a changed contact mailbox, a shared mailbox, a street-number slip). Fixed with general rules, then checked on 50 fresh probe vendors (49/50) so they are not memorised; the 78% stays the number I quote.
   - **A second unseen test by a new author (2026-11-12):** 44 cases written to avoid everything already covered. First look **70.5%** (31/44), all 6 sanctions cases rejected, 4 wrong approvals (three were form slips: 'LLC' ticked for an 'Inc.', an empty tax-number box, an email with a comma; one was a look-alike email domain, 'carro11ton'). Fixed with general rules and checked on 133 fresh probe vendors (132/133). Across three unseen sets the first looks were 62.5%, 78%, 70.5%: every new author finds something, the dangerous kind keeps shrinking, and that is why doubtful cases go to a person.
   - **If the AI is down or out of quota:** text PDFs are read by a built-in reader only when it finds every critical field, and the run says so; photos and scans wait for a person. Nothing is approved that would not have been.
@@ -93,7 +93,7 @@
 ## Numbers to remember
 - **Held-out set:** 86.3% → **99.9%** (first look), unsafe approvals **48 → 0**, disclosure leaks **23 → 0**.
 - **Stress set:** 65.0% → **91.7%** (first look).
-- **Blind answer key (56, independent author):** **62.5%** first look → 100% after fixes. **Messy documents (60):** **81.7%** → 100%.
+- **Blind answer key (56, written by a separate AI agent):** **62.5%** first look → 100% after fixes. **Messy documents (60):** **81.7%** → 100%.
 - **Live Gemini:** 29/29 demo cases right, 4–8 s each.
 - **Volume:** 1,900 synthetic vendors, 37 + 9 scenarios, 4 countries; 29 hand-made demo cases; 91 tests.
 - **Policy settings:** auto-approve only below risk 20; bank letters expire after 90 days; review SLA 48 h; two reminders, then closed.

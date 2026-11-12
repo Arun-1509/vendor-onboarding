@@ -2,7 +2,7 @@
  "sets": {
   "blind": {
    "n": 56,
-   "description": "Written by an independent author who never saw the code or rules: 56 scenarios with expected outcomes from business judgment.",
+   "description": "Written by a separate AI agent that never saw the code or rules: 56 scenarios with expected outcomes from business judgment.",
    "document_styles": {
     "table": 13,
     "kv/de": 6,
@@ -1013,7 +1013,7 @@
   },
   "fresh": {
    "n": 44,
-   "description": "44 vendors by a second independent author (2026-11-12) told to avoid every pattern already covered: boundary dates, sister companies, German spellings, look-alike email domains, offshore payment. Scored once before any change.",
+   "description": "44 vendors by a second separate AI agent (2026-11-12) told to avoid every pattern already covered: boundary dates, sister companies, German spellings, look-alike email domains, offshore payment. Scored once before any change.",
    "document_styles": {
     "table": 14,
     "photo": 5,
