@@ -660,11 +660,15 @@ async function outboxView(view) {
 async function benchCard(host) {
   let b; try { b = await api('/benchmark'); } catch (e) { host.replaceChildren(); return; }
   const sets = b.sets || {}; const live = (b.live && b.live.sets) || {};
-  const NAME = { blind: 'Blind answer key', diverse: 'Messy documents', holdout: 'ChatGPT holdout (unseen)', fresh: 'Second unseen set (new author)' };
+  const NAME = { blind: 'Blind test 1', diverse: 'Messy documents', holdout: 'Blind test 2 (ChatGPT)', fresh: 'Blind test 3' };
+  const WHO = { blind: 'Cases and answers by an independent author who never saw the code', diverse: 'Tables, letters, stamps, German, phone photos, pasted-over values',
+    holdout: 'Written by ChatGPT from a description of the process only', fresh: 'A new author, told to avoid everything already tested' };
   const acc = m => m ? pct(m.decision_accuracy) : '–', uns = m => m ? String(m.errors.unsafe_approvals + m.errors.missed_rejects) : '–';
-  const rows = Object.entries(sets).map(([k, v]) => h('tr', {}, h('td', {}, h('b', {}, NAME[k] || k)),
-    h('td', { class: 'num' }, v.n), h('td', { class: 'num b' }, acc(v.first_look)), h('td', { class: 'num v' }, acc(v.after_fixes)), h('td', { class: 'num v', title: live[k] && live[k].quota_held ? `${live[k].quota_held} vendors hit the free Gemini quota and were safely held for a reviewer; accuracy is over the ${live[k].answered} the model answered` : '' }, live[k] ? (live[k].answered_accuracy != null ? pct(live[k].answered_accuracy) : acc(live[k].metrics)) + (live[k].quota_held ? ` (${live[k].answered} answered)` : '') : '–'),
-    h('td', { class: 'num mono' }, `${uns(v.first_look)} → ${uns(v.after_fixes)}` + (live[k] ? ` → ${uns(live[k].metrics)}` : ''))));
+  const liveCell = k => live[k] ? (live[k].answered_accuracy != null ? pct(live[k].answered_accuracy) : acc(live[k].metrics)) : 'not run';
+  const rows = Object.entries(sets).map(([k, v]) => h('tr', {}, h('td', {}, h('b', {}, NAME[k] || k), h('div', { class: 'xs muted', style: 'font-weight:400' }, WHO[k] || '')),
+    h('td', { class: 'num' }, v.n), h('td', { class: 'num', style: 'font-weight:700' }, acc(v.first_look)), h('td', { class: 'num' }, acc(v.after_fixes)),
+    h('td', { class: 'num' + (live[k] ? '' : ' faint') }, liveCell(k)),
+    h('td', { class: 'num' }, h('span', { class: +uns(v.first_look) ? 'bad-t' : '' }, uns(v.first_look)), ' → ', h('span', { class: 'ok-t' }, uns(v.after_fixes)))));
   const reading = Object.values(live).map(x => x.reading).filter(Boolean);
   const rd = reading.length ? reading.reduce((a, r) => ({ c: a.c + r.fields_correct, n: a.n + r.fields_checked }), { c: 0, n: 0 }) : null;
   const status = h('div', { class: 'sm muted', style: 'margin-top:8px' });
@@ -672,14 +676,14 @@ async function benchCard(host) {
     const ok = (j.recent || []).filter(r => r.ok).length;
     status.replaceChildren(h('div', { class: 'note ' + (j.state === 'error' ? 'warn' : 'ok') }, j.state === 'running' ? `Live benchmark running: ${j.set}, ${j.done}/${j.total} vendors (${ok} correct so far, ${Math.round(j.seconds / 60)} min)` :
       j.state === 'done' ? `Live benchmark finished: ${ok}/${j.done} correct. Reload to see the table.` : `Live benchmark stopped: ${j.error}`)); };
-  const runBtn = h('button', { class: 'btn', onclick: async e => {
+  const runBtn = h('button', { class: 'btn sm', onclick: async e => {
     const k = prompt('Admin key (the live run uses about 3 model calls per vendor, ~25 minutes)'); if (!k) return;
     try { await api('/admin/benchmark', { method: 'POST', headers: { 'X-Admin-Key': k } }); toast('Live benchmark started'); } catch (err) { toast(err.message, true); return; }
     e.currentTarget.disabled = true;
     for (let i = 0; i < 2000; i++) { await sleep(5000); const x = await api('/benchmark'); drawJob(x.job); if (x.job.state !== 'running') break; }
     e.currentTarget.disabled = false; } }, 'Run live benchmark');
   const held = Object.entries(live).flatMap(([k, v]) => (v.failures || []).filter(f => (f.codes || []).includes('STAGE_ERROR')).map(f => [k, f.id]));
-  const retryBtn = held.length ? h('button', { class: 'btn', style: 'margin-left:8px', onclick: async e => {
+  const retryBtn = held.length ? h('button', { class: 'btn sm', onclick: async e => {
     const k = prompt(`Admin key. Reruns only the ${held.length} vendors the AI did not answer last time, one every 30 s (~${Math.ceil(held.length / 2)} min). Stops by itself if the AI quota is used up.`); if (!k) return;
     const q = `?sets=${[...new Set(held.map(x => x[0]))].join(',')}&ids=${held.map(x => x[1]).join(',')}&pace=30`;
     try { await api('/admin/benchmark' + q, { method: 'POST', headers: { 'X-Admin-Key': k } }); toast('Rerun started'); } catch (err) { toast(err.message, true); return; }
@@ -687,15 +691,21 @@ async function benchCard(host) {
     for (let i = 0; i < 2000; i++) { await sleep(5000); const x = await api('/benchmark'); drawJob(x.job); if (x.job.state !== 'running') break; }
     btn.disabled = false; } }, `Rerun ${held.length} unanswered`) : null;
   drawJob(b.job);
+  const sum = t => h('summary', { style: 'cursor:pointer;font-weight:650;font-size:13px;color:var(--accent)' }, t);
   host.replaceChildren(h('div', { class: 'card' },
-    h('div', { class: 'card-h' }, h('h2', {}, 'Harder tests: cases the rules were never written for'), h('div', {}, runBtn, retryBtn)),
-    h('p', { class: 'sm muted', style: 'margin:0 0 10px' }, 'The 1,900 vendors above were written by the same person as the rules, so they cannot show their own blind spots. These sets can: three were written by independent authors who never saw the code, and one draws every document differently. "First look" is the score before any fix, and it is the honest number.'),
-    h('div', { class: 'tablewrap', style: 'border:0' }, h('table', { class: 'cmp' }, h('thead', {}, h('tr', {}, ['Set', 'Vendors', 'First look', 'After fixes', 'Live AI', 'Dangerous errors'].map((x, i) => h('th', { class: i ? 'num' : '' }, x)))), h('tbody', {}, rows))),
-    h('ul', { class: 'xs muted', style: 'margin:6px 0 0;padding-left:16px' }, Object.entries(sets).map(([k, v]) => h('li', {}, h('b', {}, (NAME[k] || k) + ': '), v.description))),
-    h('p', { class: 'xs muted', style: 'margin:6px 0 0' }, 'Dangerous errors = unsafe approvals + missed sanctions rejects. "First look" and "after fixes" use a perfect reader (exactly what is printed) to isolate the rules. "Live AI" reads the real files with the deployed model; vendors that ran out of free Gemini quota were held for a reviewer (never approved) and are left out of its accuracy.' +
-      (rd ? ` Live reading accuracy: ${rd.c}/${rd.n} printed fields read exactly (${pct(rd.c / rd.n)}).` : '') + (b.live ? ` Last live run: ${b.live.finished} (${b.live.provider}).` : '')),
+    h('div', { class: 'card-h' }, h('h2', {}, 'The hard tests: cases the rules were never written for')),
+    h('p', { class: 'sm muted', style: 'margin:0 0 10px' }, 'I wrote both the rules and the 1,900 test vendors above, so that test cannot show my blind spots. These can. "First try" is the score before I changed anything, and it is the number I quote.'),
+    h('div', { class: 'tablewrap', style: 'border:0' }, h('table', { class: 'cmp' }, h('thead', {}, h('tr', {}, ['Test', 'Cases', 'First try', 'After fixes', 'With live Gemini', 'Wrongly approved: first try → now'].map((x, i) => h('th', { class: i ? 'num' : '' }, x)))), h('tbody', {}, rows))),
     status,
-    h('details', { style: 'margin-top:14px' }, h('summary', { style: 'cursor:pointer;font-weight:650;font-size:13px;color:var(--accent)' }, `What the first looks found, and the fix for each (${(b.findings || []).length})`),
+    h('details', { style: 'margin-top:12px' }, sum('How to read this table'),
+      h('ul', { class: 'sm muted', style: 'margin:8px 0 0;padding-left:18px' },
+        h('li', {}, '"First try" and "After fixes" give the rules a perfect reading of each document, so they measure the rules alone.'),
+        h('li', {}, '"With live Gemini" runs the real files through the deployed AI.' + (rd ? ` It read ${rd.c} of ${rd.n} printed fields exactly (${pct(rd.c / rd.n)}).` : '') + ' One vendor ran out of free AI quota and was held for a person, so it is left out. The run found one more wrong approval (a bank statement accepted as a bank letter), which is now double-checked in code.'),
+        h('li', {}, '"Wrongly approved" counts vendors approved that should not have been, plus sanctioned parties not rejected.'),
+        h('li', {}, 'Where "After fixes" is below 100%, the remaining cases are policy differences with the author, sent to a person here (the safe direction).'),
+        h('li', {}, 'After every round of fixes the rules are probed on freshly generated vendors (132 of 133) to check they were not fitted to the test cases.')),
+      h('div', { class: 'row', style: 'margin-top:10px' }, h('span', { class: 'xs muted' }, 'Admin:'), runBtn, retryBtn)),
+    h('details', { style: 'margin-top:8px' }, h('summary', { style: 'cursor:pointer;font-weight:650;font-size:13px;color:var(--accent)' }, `What each test found, and how it was fixed (${(b.findings || []).length})`),
       h('table', { class: 'mini', style: 'margin-top:8px' }, h('tbody', {}, (b.findings || []).map(f => h('tr', {}, h('td', { class: 'xs muted', style: 'white-space:nowrap;vertical-align:top' }, NAME[f.set] || f.set),
         h('td', { class: 'sm' }, f.found, h('div', { class: 'xs', style: 'color:var(--ok, #10b981);margin-top:2px' }, '→ ' + f.fix)))))))));
 }
@@ -707,7 +717,7 @@ async function qualityView(view) {
   const S = q.splits, test = S.test, stress = S.stress;
   const tv = test.first_look || test.v2, tb = test.baseline;
   const big = (label, v, b, fmtf, good) => h('div', { class: 'kpi' }, h('div', { class: 'l', style: 'margin:0 0 6px' }, label), h('div', { class: 'bigstat' }, fmtf(v)),
-    h('div', { class: 's' }, 'original engine: ', h('b', {}, fmtf(b)), ' ', h('span', { class: 'delta up' }, good)));
+    h('div', { class: 's' }, 'my first version: ', h('b', {}, fmtf(b)), ' ', h('span', { class: 'delta up' }, good)));
   const metricRows = [['Decision accuracy', m => pct(m.decision_accuracy)], ['Right decision for the right reason', m => pct(m.strict_accuracy)], ['Macro F1 (4 outcomes)', m => m.macro_f1.toFixed(3)],
     ['Unsafe approvals (should not have been approved)', m => m.errors.unsafe_approvals], ['Disclosure leaks (fraud case emailed to vendor)', m => m.errors.disclosure_leaks],
     ['Missed sanctions rejects', m => m.errors.missed_rejects], ['False holds (clean vendor not approved)', m => m.errors.false_holds], ['Straight-through rate (clean vendors)', m => pct(m.straight_through_rate)]];
@@ -737,9 +747,9 @@ async function qualityView(view) {
     h('div', { class: 'head' }, h('div', {}, h('h1', {}, 'Model quality'), h('p', { class: 'sub' }, 'Measured, not claimed. The top row is my own test data (the easy number). The table below it is the hard one: cases written by independent authors, scored before any fix.'))),
     h('div', { class: 'kpis' },
       big('Accuracy on my own held-out test data', tv.decision_accuracy, tb.decision_accuracy, x => pct(x), ''),
-      big('Unsafe approvals (held-out)', tv.errors.unsafe_approvals, tb.errors.unsafe_approvals, x => String(x), ''),
-      big('Fraud cases emailed to vendor', tv.errors.disclosure_leaks, tb.errors.disclosure_leaks, x => String(x), ''),
-      big('Stress-set accuracy (unseen variations)', (stress.first_look || stress.v2).decision_accuracy, stress.baseline.decision_accuracy, x => pct(x), '')),
+      big('Wrongly approved (same data)', tv.errors.unsafe_approvals, tb.errors.unsafe_approvals, x => String(x), ''),
+      big('Fraud cases that tipped off the vendor', tv.errors.disclosure_leaks, tb.errors.disclosure_leaks, x => String(x), ''),
+      big('Accuracy on variations I had not planned for', (stress.first_look || stress.v2).decision_accuracy, stress.baseline.decision_accuracy, x => pct(x), '')),
     benchHost,
     h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, 'Validate on vendors generated right now'), spotBtn),
       h('p', { class: 'muted sm', style: 'margin:0' }, 'Each click generates fresh companies (random names, valid IDs, newly rendered PDFs and scans) across 25 scenarios, runs them, and scores them against their labels.'), spotOut),
