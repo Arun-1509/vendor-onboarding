@@ -34,7 +34,7 @@ class FakeHttp:
     def __init__(self, script):
         self.script, self.calls = list(script), []
 
-    def post(self, url, params=None, json=None):
+    def post(self, url, params=None, json=None, **kw):
         self.calls.append((url.split("/models/")[1].split(":")[0], json))
         self.keys = getattr(self, "keys", []) + [(params or {}).get("key")]
         r = self.script.pop(0)
@@ -128,3 +128,37 @@ def test_a_rate_limited_key_switches_to_the_spare_key_at_once(monkeypatch):
     llm.http.script.append(ok(out))
     llm.judge_names("A", "B", {})
     assert llm.http.keys[-1] == "key-b"                                    # stays on the key with quota
+
+
+def test_an_overloaded_model_is_left_after_one_retry_and_a_text_call_has_a_time_budget(monkeypatch):
+    """Seen live on 2026-11-12: four 503s then two 30 s timeouts held one name check for 82 s."""
+    import time as _t
+    from app import llm as L
+    monkeypatch.setattr(L.config, "GEMINI_KEYS", ["k1"])
+    monkeypatch.setattr(_t, "sleep", lambda s: None)
+    calls = []
+
+    class Http:
+        def get(self, *a, **k):
+            class R:
+                status_code = 200
+                def json(self): return {"models": [{"name": "models/gemini-flash-latest", "supportedGenerationMethods": ["generateContent"]},
+                                                   {"name": "models/gemini-3.6-flash", "supportedGenerationMethods": ["generateContent"]}]}
+            return R()
+
+        def post(self, url, params=None, json=None, timeout=None):
+            calls.append((url.split("/models/")[1].split(":")[0], timeout))
+            class R:
+                status_code = 503
+                text = "overloaded"
+            return R()
+
+    g = L.GeminiLLM(client=Http())
+    try:
+        g.judge_names("A Fab Ltd", "A Fabrication Ltd", {})
+        assert False, "should have raised"
+    except L.LLMError:
+        pass
+    per_model = {m: sum(1 for c in calls if c[0] == m) for m, _ in calls}
+    assert max(per_model.values()) <= 2, per_model                 # one retry, then move on
+    assert all(t <= 10 for _, t in calls)                          # short timeout for a text-only question

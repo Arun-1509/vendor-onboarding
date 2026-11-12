@@ -351,9 +351,17 @@ class GeminiLLM(AnthropicLLM):
         last, first = None, None
         import time
         models = self.models_for(primary)
+        # A short text question (name judgment, email) must not hold a live run for a minute when Google is
+        # overloaded: it gets a short timeout and a total time budget, then the caller's plan B takes over.
+        has_file = any("inline_data" in p for p in body["contents"][0]["parts"])
+        timeout = config.LLM_TIMEOUT_S if has_file else min(config.LLM_TIMEOUT_S, 10.0)
+        deadline = time.time() + (90.0 if has_file else 20.0)
         for m in models + models[:2] * 2:                       # up to 2 more passes, only if all were busy
             if m in GeminiLLM._dead:
                 continue
+            if time.time() > deadline:
+                last = last or LLMError("the AI model did not answer in time")
+                break
             if last is not None and first is None:
                 first = last
             if m is models[0] and last is not None:
@@ -366,7 +374,7 @@ class GeminiLLM(AnthropicLLM):
                 t0 = time.time()
                 try:
                     ki, key = self._key()
-                    r = self.http.post(self.URL.format(model=m), params={"key": key}, json=b)
+                    r = self.http.post(self.URL.format(model=m), params={"key": key}, json=b, timeout=timeout)
                 except Exception as e:
                     self._trace(m, type(e).__name__, t0, think)
                     GeminiLLM._cool[m] = time.time() + 60       # hung: try the next model now, this one later
@@ -388,10 +396,13 @@ class GeminiLLM(AnthropicLLM):
                     GeminiLLM._retry_after = float(hint.group(1)) if hint else 5.0
                     last = LLMError(f"{m} returned 429 (rate limit)")
                     break
-                if r.status_code in (500, 502, 503, 504):
+                if r.status_code in (500, 502, 503, 504):       # overloaded: one quick retry, then the next model
                     last = LLMError(f"{m} returned {r.status_code}")
-                    time.sleep(1.0)
-                    continue
+                    if attempt == 0:
+                        time.sleep(1.0)
+                        continue
+                    GeminiLLM._cool[m] = time.time() + 60
+                    break
                 if r.status_code != 200:
                     if r.status_code == 404:
                         GeminiLLM._dead.add(m)
