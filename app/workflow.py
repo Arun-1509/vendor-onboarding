@@ -16,7 +16,8 @@ from .llm import _template_email, vendor_mail_is_safe
 REVIEW_SLA_HOURS = 48
 # Approving any of these needs two different people (classic payment-fraud / compliance routes).
 FOUR_EYES = {"BANK_CHANGE_REQUEST", "BANK_ACCOUNT_SHARED", "LOOKALIKE_VENDOR", "DOC_CONFLICTING_VALUES",
-             "THIRD_PARTY_PAYEE", "BANK_ACCOUNT_DIFFERENT_DOC", "TAXCERT_OTHER_ENTITY",
+             "THIRD_PARTY_PAYEE", "BANK_ACCOUNT_DIFFERENT_DOC", "TAXCERT_OTHER_ENTITY", "TAXID_DIFFERENT_DOC",
+             "DOC_FUTURE_DATED", "OFFSHORE_PAYMENT", "EMAIL_LOOKALIKE_DOMAIN",
              "TAXID_DUPLICATE_OTHER_NAME", "CONTACT_CHANGE", "CONTACT_SHARED", "SANCTIONS_NEAR", "PRIOR_REJECTED", "PAN_NAME_MISMATCH", "GSTIN_STATE_MISMATCH"}
 COMPLIANCE = {"SANCTIONS_NEAR", "SANCTIONS_HIT", "PRIOR_REJECTED"}
 
@@ -42,6 +43,14 @@ PLAYBOOK = {
                                    "Ask the bank directly (contact details from its website) which account belongs to the vendor"],
     "TAXCERT_OTHER_ENTITY": ["Look up the tax ID on the government portal: who is it registered to?",
                              "Ask the vendor for its OWN registration certificate; do not approve on another company's"],
+    "TAXID_DIFFERENT_DOC": ["Look up BOTH tax IDs on the government portal: which one is registered to this company?",
+                            "Do not ask the vendor which is right before you know; one of them may be another company's"],
+    "DOC_FUTURE_DATED": ["Ask the bank directly (contact details from its website) whether it issued this letter",
+                         "Do not accept a re-dated copy from the vendor as proof"],
+    "OFFSHORE_PAYMENT": ["Ask the vendor (registered channel) for the business reason for being paid abroad",
+                         "Check with tax / treasury whether paying this supplier offshore is permitted"],
+    "EMAIL_LOOKALIKE_DOMAIN": ["Find the company's real website and phone number independently and confirm who registered",
+                               "Send nothing to the look-alike address until the company confirms it"],
     "ENTITY_TYPE_MISMATCH_PAN": ["Check the PAN on the income-tax portal: individual or company?"],
     "PAN_NAME_MISMATCH": ["Look up the GSTIN on the GST portal and confirm the registered name matches the vendor"],
     "GSTIN_STATE_MISMATCH": ["Look up the GSTIN on the GST portal and compare the registered address with the certificate"],

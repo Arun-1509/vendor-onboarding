@@ -355,7 +355,7 @@
       "failed_ids": []
      }
     },
-    "median_ms": 45
+    "median_ms": 46
    }
   },
   "diverse": {
@@ -731,7 +731,7 @@
       "failed_ids": []
      }
     },
-    "median_ms": 41
+    "median_ms": 38
    }
   },
   "holdout": {
@@ -1008,7 +1008,314 @@
       "failed_ids": []
      }
     },
-    "median_ms": 71
+    "median_ms": 49
+   }
+  },
+  "fresh": {
+   "n": 44,
+   "description": "44 vendors by a second independent author (2026-11-12) told to avoid every pattern already covered: boundary dates, sister companies, German spellings, look-alike email domains, offshore payment. Scored once before any change.",
+   "document_styles": {
+    "table": 14,
+    "photo": 5,
+    "table/de": 5,
+    "stamped/de": 4,
+    "stamped": 9,
+    "multipage": 11,
+    "prose": 11,
+    "prose/de": 2,
+    "kv": 10,
+    "twocol": 9,
+    "kv/de": 5,
+    "multipage/de": 2
+   },
+   "first_look": {
+    "n": 44,
+    "decision_accuracy": 0.7045,
+    "strict_accuracy": 0.7045,
+    "macro_f1": 0.7468,
+    "unsafe_approval_rate": 0.125,
+    "straight_through_rate": 0.75,
+    "errors": {
+     "unsafe_approvals": 4,
+     "missed_rejects": 0,
+     "disclosure_leaks": 5,
+     "over_escalations": 1,
+     "false_holds": 3,
+     "other": 0
+    },
+    "weighted_cost": 255,
+    "confusion": {
+     "approved": {
+      "approved": 9,
+      "awaiting_vendor": 3,
+      "awaiting_reviewer": 0,
+      "rejected": 0
+     },
+     "awaiting_vendor": {
+      "approved": 3,
+      "awaiting_vendor": 8,
+      "awaiting_reviewer": 1,
+      "rejected": 0
+     },
+     "awaiting_reviewer": {
+      "approved": 1,
+      "awaiting_vendor": 5,
+      "awaiting_reviewer": 8,
+      "rejected": 0
+     },
+     "rejected": {
+      "approved": 0,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 0,
+      "rejected": 6
+     }
+    },
+    "per_class": {
+     "approved": {
+      "precision": 0.6923,
+      "recall": 0.75,
+      "f1": 0.72,
+      "support": 12
+     },
+     "awaiting_vendor": {
+      "precision": 0.5,
+      "recall": 0.6667,
+      "f1": 0.5714,
+      "support": 12
+     },
+     "awaiting_reviewer": {
+      "precision": 0.8889,
+      "recall": 0.5714,
+      "f1": 0.6957,
+      "support": 14
+     },
+     "rejected": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 6
+     }
+    },
+    "per_scenario": {
+     "approved": {
+      "n": 12,
+      "decision_ok": 9,
+      "strict_ok": 9,
+      "failed_ids": [
+       "N02",
+       "N09",
+       "N11"
+      ]
+     },
+     "awaiting_reviewer": {
+      "n": 14,
+      "decision_ok": 8,
+      "strict_ok": 8,
+      "failed_ids": [
+       "N25",
+       "N26",
+       "N30",
+       "N36",
+       "N37"
+      ]
+     },
+     "awaiting_vendor": {
+      "n": 12,
+      "decision_ok": 8,
+      "strict_ok": 8,
+      "failed_ids": [
+       "N16",
+       "N21",
+       "N22",
+       "N23"
+      ]
+     },
+     "rejected": {
+      "n": 6,
+      "decision_ok": 6,
+      "strict_ok": 6,
+      "failed_ids": []
+     }
+    },
+    "median_ms": 118
+   },
+   "first_look_failures": [
+    {
+     "id": "N02",
+     "title": "German umlauts typed as ue/oe, '&' typed as 'und'",
+     "expected": "approved",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "N09",
+     "title": "Name starting with a number, spaced differently",
+     "expected": "approved",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "N11",
+     "title": "Very old German tax certificate, bank letter 89 days old",
+     "expected": "approved",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "N16",
+     "title": "Wrong entity type picked in the dropdown",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    },
+    {
+     "id": "N21",
+     "title": "W-9 with the tax number box left empty",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    },
+    {
+     "id": "N22",
+     "title": "German company with 'United Kingdom' selected as country",
+     "expected": "awaiting_vendor",
+     "got": "awaiting_reviewer"
+    },
+    {
+     "id": "N23",
+     "title": "Contact email typed with a comma",
+     "expected": "awaiting_vendor",
+     "got": "approved"
+    },
+    {
+     "id": "N25",
+     "title": "Bank account belongs to a sister company",
+     "expected": "awaiting_reviewer",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "N26",
+     "title": "Franchisee using the franchisor's VAT registration",
+     "expected": "awaiting_reviewer",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "N30",
+     "title": "Bank letter dated in the future",
+     "expected": "awaiting_reviewer",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "N36",
+     "title": "Tax number on the form is a completely different valid number from the certificate",
+     "expected": "awaiting_reviewer",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "N37",
+     "title": "Indian domestic company wants payment to a US bank account in dollars",
+     "expected": "awaiting_reviewer",
+     "got": "awaiting_vendor"
+    },
+    {
+     "id": "N38",
+     "title": "Contact email domain swaps letters for digits",
+     "expected": "awaiting_reviewer",
+     "got": "approved"
+    }
+   ],
+   "after_fixes": {
+    "n": 44,
+    "decision_accuracy": 0.9773,
+    "strict_accuracy": 0.9773,
+    "macro_f1": 0.9805,
+    "unsafe_approval_rate": 0.0,
+    "straight_through_rate": 1.0,
+    "errors": {
+     "unsafe_approvals": 0,
+     "missed_rejects": 0,
+     "disclosure_leaks": 0,
+     "over_escalations": 1,
+     "false_holds": 0,
+     "other": 0
+    },
+    "weighted_cost": 2,
+    "confusion": {
+     "approved": {
+      "approved": 12,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 0,
+      "rejected": 0
+     },
+     "awaiting_vendor": {
+      "approved": 0,
+      "awaiting_vendor": 11,
+      "awaiting_reviewer": 1,
+      "rejected": 0
+     },
+     "awaiting_reviewer": {
+      "approved": 0,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 14,
+      "rejected": 0
+     },
+     "rejected": {
+      "approved": 0,
+      "awaiting_vendor": 0,
+      "awaiting_reviewer": 0,
+      "rejected": 6
+     }
+    },
+    "per_class": {
+     "approved": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 12
+     },
+     "awaiting_vendor": {
+      "precision": 1.0,
+      "recall": 0.9167,
+      "f1": 0.9565,
+      "support": 12
+     },
+     "awaiting_reviewer": {
+      "precision": 0.9333,
+      "recall": 1.0,
+      "f1": 0.9655,
+      "support": 14
+     },
+     "rejected": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 6
+     }
+    },
+    "per_scenario": {
+     "approved": {
+      "n": 12,
+      "decision_ok": 12,
+      "strict_ok": 12,
+      "failed_ids": []
+     },
+     "awaiting_reviewer": {
+      "n": 14,
+      "decision_ok": 14,
+      "strict_ok": 14,
+      "failed_ids": []
+     },
+     "awaiting_vendor": {
+      "n": 12,
+      "decision_ok": 11,
+      "strict_ok": 11,
+      "failed_ids": [
+       "N22"
+      ]
+     },
+     "rejected": {
+      "n": 6,
+      "decision_ok": 6,
+      "strict_ok": 6,
+      "failed_ids": []
+     }
+    },
+    "median_ms": 37
    }
   }
  },
@@ -1072,6 +1379,26 @@
    "set": "blind",
    "found": "A bank statement was accepted as bank proof; a US domestic account in EUR was accepted.",
    "fix": "Statements are recognised and the vendor is asked for a bank letter; a foreign currency on a domestic-only account asks the vendor to confirm."
+  },
+  {
+   "set": "fresh",
+   "found": "Three vendors were approved with something plainly wrong on the form: 'LLC' selected for a company named '... Inc.', a W-9 with the tax-number box empty, and a contact email with a comma in it.",
+   "fix": "The dropdown is checked against the legal form in the company's own name; a document must actually show the number it is meant to prove; email addresses are validated properly."
+  },
+  {
+   "set": "fresh",
+   "found": "A contact domain spelling the company's name with digits ('carro11ton' for Carrollton) was approved.",
+   "fix": "A domain that turns into a word of the company name once digits are read as letters goes to a reviewer."
+  },
+  {
+   "set": "fresh",
+   "found": "Fraud-shaped cases were sent back to the vendor: a future-dated bank letter, two different VALID tax IDs for one company, a cheque in a sister company's name, a franchisor's tax certificate, an Indian supplier asking for dollars into a US account.",
+   "fix": "Future dates, different valid tax IDs (a slip fails the check digit), a holder name with a whole word swapped, another entity's registration from another town, and offshore payment in a foreign currency all go to a reviewer."
+  },
+  {
+   "set": "fresh",
+   "found": "Honest German and Indian spellings were held: 'Mueller und Soehne' vs 'M\u00fcller & S\u00f6hne', 'AG' vs 'Aktiengesellschaft', '3S' vs '3 S'.",
+   "fix": "Umlauts typed out, 'und' / '&', legal forms written in full and moved spaces are recognised as the same name."
   }
  ],
  "live": {

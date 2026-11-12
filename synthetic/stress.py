@@ -81,6 +81,7 @@ class StressGenerator(Generator):
         ascii_ = word.replace("ü", "ue").replace("ö", "oe").replace("ä", "ae")
         idn["core"] = f"{word} {idn['core'].split()[-1]}"
         idn["legal_name"] = f"{idn['core']} GmbH"
+        idn["entity_type"] = "gmbh"                 # (was left as whatever identity() drew, e.g. 'ag': found by the name-vs-dropdown rule)
         idn["account_holder"] = idn["legal_name"].replace(word, ascii_)
         f = self.form(idn)
         f["legal_name"] = idn["legal_name"].replace(word, ascii_)

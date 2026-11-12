@@ -332,15 +332,15 @@ def main():
     cid = "V3_account_in_other_name"
     g = gstin("08", "AAMCC1122W")
     f = form_in("Crestline Hardware Private Limited", g, "22334455667788", "SBIN0001234", "State Bank of India", holder="Rajesh Kumar Enterprises", city="Jaipur", pin="302001")
-    case(cid, "fixable", "Bank account is in a different party's name", f,
+    case(cid, "edge1", "Bank account is in a different party's name", f,
          {"tax_cert": tax_cert(cid, "IN", f["legal_name"], g, f["address"]),
           "bank_proof": bank_letter(cid, "State Bank of India", "Rajesh Kumar Enterprises", ident_in("22334455667788", "SBIN0001234"))},
-         {"status": "pending", "substatus": "awaiting_vendor", "must_have": ["ACCOUNT_HOLDER_MISMATCH"]})
+         {"status": "pending", "substatus": "awaiting_reviewer", "must_have": ["THIRD_PARTY_PAYEE"]})
 
     cid = "V4_taxid_form_vs_certificate"
-    g1, g2 = gstin("10", "AANCB5566X"), gstin("10", "AANCB5577Y")
+    g1, g2 = gstin("10", "AANCB5566X"), gstin("20", "AANCB5566X")     # same company (same PAN), its registration in another state
     f = form_in("Bihar Brothers Traders Private Limited", g1, "33445566778899", "PUNB0123400", "Punjab National Bank", city="Patna", pin="800001")
-    case(cid, "fixable", "Tax ID typed on the form differs from the one on the certificate", f,
+    case(cid, "fixable", "Certificate is for the company's registration in another state (tax ID differs from the form)", f,
          {"tax_cert": tax_cert(cid, "IN", f["legal_name"], g2, f["address"]),
           "bank_proof": bank_letter(cid, "Punjab National Bank", f["legal_name"], ident_in("33445566778899", "PUNB0123400"))},
          {"status": "pending", "substatus": "awaiting_vendor", "must_have": ["TAXID_MISMATCH_DOC"]})
@@ -372,10 +372,10 @@ def main():
     cid = "V8_certificate_for_other_company"
     g = gstin("27", "AASCZ9090D")
     f = form_in("Mosaic Healthcare Private Limited", g, "21436587092143", "HDFC0003344", city="Nagpur", pin="440001")
-    case(cid, "fixable", "Tax certificate belongs to a different company", f,
+    case(cid, "edge1", "Tax certificate belongs to a different company", f,
          {"tax_cert": tax_cert(cid, "IN", "Zenith Retail Ventures LLP", g, f["address"]),
           "bank_proof": bank_letter(cid, "HDFC Bank", f["legal_name"], ident_in("21436587092143", "HDFC0003344"))},
-         {"status": "pending", "substatus": "awaiting_vendor", "must_have": ["NAME_MISMATCH_TAXCERT"]})
+         {"status": "pending", "substatus": "awaiting_reviewer", "must_have": ["TAXCERT_OTHER_ENTITY"]})
 
     # ================= EDGE CASE 5: documents that lie ==============================
     from synthetic.docs import tamper_overlay

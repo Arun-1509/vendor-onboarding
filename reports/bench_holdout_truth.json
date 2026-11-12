@@ -100,7 +100,7 @@
     "failed_ids": []
    }
   },
-  "median_ms": 71
+  "median_ms": 49
  },
  "failures": [
   {
@@ -117,7 +117,7 @@
     "substatus awaiting_reviewer != expected approved"
    ],
    "risk": 40,
-   "ms": 61,
+   "ms": 58,
    "difficulty": "hard",
    "codes": [
     "SANCTIONS_NEAR"
@@ -137,7 +137,7 @@
     "substatus awaiting_vendor != expected awaiting_reviewer"
    ],
    "risk": 25,
-   "ms": 75,
+   "ms": 76,
    "difficulty": "hard",
    "codes": [
     "BANK_ACCOUNT_MISMATCH_DOC",

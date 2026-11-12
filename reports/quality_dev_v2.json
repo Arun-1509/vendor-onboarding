@@ -27,14 +27,14 @@
    },
    "awaiting_vendor": {
     "approved": 0,
-    "awaiting_vendor": 225,
+    "awaiting_vendor": 211,
     "awaiting_reviewer": 0,
     "rejected": 0
    },
    "awaiting_reviewer": {
     "approved": 0,
     "awaiting_vendor": 0,
-    "awaiting_reviewer": 238,
+    "awaiting_reviewer": 252,
     "rejected": 0
    },
    "rejected": {
@@ -55,13 +55,13 @@
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0,
-    "support": 225
+    "support": 211
    },
    "awaiting_reviewer": {
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0,
-    "support": 238
+    "support": 252
    },
    "rejected": {
     "precision": 1.0,
@@ -294,7 +294,7 @@
     "failed_ids": []
    }
   },
-  "median_ms": 37
+  "median_ms": 52
  },
  "failures": []
 }

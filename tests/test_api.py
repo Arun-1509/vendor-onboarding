@@ -5,7 +5,7 @@ import time
 from pathlib import Path
 
 _tmp = tempfile.mkdtemp()
-os.environ.update(MOCK_LLM="1", VAR_DIR=_tmp, DB_PATH=str(Path(_tmp) / "api.db"), UPLOAD_DIR=str(Path(_tmp) / "up"))
+os.environ.update(MOCK_LLM="1", VAR_DIR=_tmp, DB_PATH=str(Path(_tmp) / "api.db"), UPLOAD_DIR=str(Path(_tmp) / "up"), EXAMPLE_HISTORY="0")
 
 from fastapi.testclient import TestClient  # noqa: E402
 
@@ -78,3 +78,18 @@ def test_sample_endpoint_runs_end_to_end():
         events = _wait_done(client, r["submission_id"])
         fin = next(d for e, d in events if e == "run_finished")
         assert fin["status"] == "approved"
+
+
+def test_tour_missing_document_story_is_repeatable_for_every_visitor():
+    with TestClient(app) as client:
+        for _ in range(2):                                             # the second visitor gets the same story
+            a = client.post("/api/tour/missing-doc").json()
+            _wait_done(client, a["submission_id"])
+            r1 = client.get(f"/api/submissions/{a['submission_id']}/run").json()["run"]["result"]
+            assert r1["substatus"] == "awaiting_vendor" and [f["code"] for f in r1["findings"] if f["action"] != "none"] == ["MISSING_DOC"]
+            b = client.post(f"/api/tour/missing-doc/reply?vendor_id={a['vendor_id']}").json()
+            assert b["vendor_id"] == a["vendor_id"]
+            _wait_done(client, b["submission_id"])
+            r2 = client.get(f"/api/submissions/{b['submission_id']}/run").json()["run"]["result"]
+            assert r2["status"] == "approved" and r2["resolved_since_last_run"]
+        assert client.post("/api/tour/missing-doc/reply?vendor_id=V-0001").status_code == 404

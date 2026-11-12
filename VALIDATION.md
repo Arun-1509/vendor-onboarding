@@ -177,6 +177,80 @@ its `{{TAX_ID}}`-style placeholders were replaced with checksum-valid numbers (`
 
 **Did the fixes memorise the 37 cases?** `scripts/generalization_check.py` builds 50 fresh vendors sharing nothing with the holdout (new names, all 4 countries, other phrasings), each rule with positives and near-miss negatives: **49/50**. The one miss is a seed-data quirk the system rightly flags (existing vendor Acme has a Karnataka GSTIN but a Mumbai address). Dev, test, stress, blind, messy-documents and the 29 demo cases all stay at 100%.
 
+## Second unseen test, by a new independent author (2026-11-12)
+
+A third author (a separate AI agent) was given only the process description (`bench/fresh/BRIEF.md`): no code, no rules,
+no earlier test sets. It was told the obvious patterns were already covered and asked for 44 cases a previous author was
+unlikely to have written. Its answer is kept verbatim (`bench/fresh/author_raw.json`); placeholders were filled with
+checksum-valid numbers as before.
+
+| | Decisions correct | Approved but should not have been | Fraud-shaped cases sent to the vendor | Honest vendors held |
+|---|---|---|---|---|
+| **First look (the number to quote)** | **31 / 44 (70.5%)** | 4 | 5 | 3 |
+| After the general fixes below | 43 / 44 | 0 | 0 | 0 |
+
+Sanctions: 6 / 6 rejected on the first look. Three of the four wrong approvals were form slips the vendor should have been
+asked to fix (not fraud); one was a look-alike email domain.
+
+**What it found, and the general rule that now covers it**
+- **Approved with something plainly wrong.** 'LLC' selected for a company named '... Inc.'; a W-9 whose tax-number box was
+  empty; a contact email with a comma in it. Now: the dropdown is checked against the legal form in the company's own name;
+  a document must actually show the number it is meant to prove (`DOC_INCOMPLETE`); email addresses are validated properly.
+- **A look-alike contact domain** ('carro11ton' for Carrollton) was approved. Now a domain that becomes a word of the company
+  name once digits are read as letters goes to a reviewer (`EMAIL_LOOKALIKE_DOMAIN`). 'carrollton24.com' is not flagged.
+- **Fraud-shaped cases went back to the vendor**, which tells a fraudster what to fix:
+  - a bank letter dated in the future (it was treated like an old letter) -> reviewer (`DOC_FUTURE_DATED`);
+  - two different *valid* tax IDs on form and certificate -> reviewer (`TAXID_DIFFERENT_DOC`). A keying slip fails the check
+    digit, so two valid numbers cannot be a slip. The same PAN inside two GSTINs is the same company's other-state
+    registration and stays a vendor fix;
+  - a cheque in a sister company's name ('... Agro Foods' vs '... Agro Trading') -> third-party payee. A whole word swapped
+    is another legal entity; a typo or an abbreviation is not;
+  - a franchisee using the franchisor's tax certificate -> reviewer, when the registered name lacks a word of the vendor's
+    name *and* is registered in another town (two independent signs);
+  - an Indian supplier asking for dollars into a US account -> reviewer (`OFFSHORE_PAYMENT`): bank abroad *and* not the
+    vendor's home currency.
+- **Honest spellings were held.** 'Mueller und Soehne' vs 'Müller & Söhne', 'AG' vs 'Aktiengesellschaft', '3S' vs '3 S'
+  are now the same name.
+
+**Kept as a policy difference (1):** N22, a German company with German documents that picked 'United Kingdom' in the
+dropdown. The author would ask the vendor; this system sends any country contradiction to a person. Wrong queue, safe direction.
+
+**Two of the 13 misses were partly my test harness, not the rules** (fixed in `synthetic/holdout.py`, labels untouched): it
+generated an Indian tax number with a digit where a letter must be (company name '3S ...'), and gave N22 British instead
+of German numbers. Both cases still failed for a real reason, so the first-look score is unchanged.
+
+**Side effects, caught by re-running everything before shipping**
+- The different-valid-tax-ID rule changed my own label for one scenario (`taxid_form_vs_cert`, 29 vendors in dev/test) from
+  "ask the vendor" to "reviewer", and demo case V4 was rebuilt as the honest version (same company, other-state
+  registration). This is a **policy change**, made openly, like the third-party-payee one.
+- The name-vs-dropdown rule flagged 10 of my own stress vendors. It was right: the generator had named them 'GmbH' while
+  leaving 'AG' in the dropdown. Fixed in the generator, not the rule.
+- The first version of the swapped-word rule treated 'Tech' vs 'Technik' as different words (1 false alarm in the test
+  set). It now compares names both as written and with abbreviations expanded.
+- A personal SSN typed in the EIN box (blind case B26) briefly went to a reviewer; an SSN-shaped number is now a format
+  error the vendor fixes.
+
+**Did the fixes memorise the 44 cases?** `scripts/generalization_check.py` now builds 133 fresh vendors (new random names,
+all four countries): for every rule, the situation it is for *and* a near-miss it must leave alone. **132 / 133.** The one
+miss is the known seed-data quirk (Acme has a Karnataka GSTIN but a Mumbai address). Dev, test, stress (1,900 vendors),
+blind, messy-documents and the 29 demo cases are all at 100%; ChatGPT holdout 35/37 as before.
+
+**The pattern across the three unseen sets** (62.5%, 78.4%, 70.5% on first look): every new author finds new gaps. The
+dangerous kind is shrinking (10 -> 3 -> 1 fraud-shaped approvals), but a fourth author would find more. That is the honest
+state of a rule-based system, and it is why every doubtful case goes to a person and bank details are confirmed by phone.
+
+## What happens when the AI is unavailable, or the input is nonsense (2026-11-12)
+- **AI quota used up or an outage.** Before: every run was held for a reviewer ("step failed"), safe but useless. Now a text
+  PDF is read by the built-in reader, *only if* it finds every critical field; the values are verified against the file as
+  usual and the run says so in an amber notice. Photos, scans and unusual layouts are never read this way and still wait
+  for a person. With the AI switched off, all 29 demo cases reach the same decision or a human; none is approved that
+  should not be (`tests/test_ai_backup.py`).
+- **Anything typed or uploaded by a stranger.** Empty form, a random PDF, a corrupt or empty file, a password-protected PDF,
+  a 20,000-character name, script tags: each ends in a clear "here is what we need" to the vendor or a reviewer hold,
+  never a crash. A file that cannot be opened is not sent to the AI at all.
+- **A restart wipes the free host's data.** Ten example vendors are generated and run through the real pipeline at start-up
+  (offline reader, no AI quota), marked "example", so the dashboard and review queue are never empty.
+
 ## Limits (say these before you're asked)
 - **I wrote both the generator and the rules.** The stress set and the first-look numbers are how I guard against fooling myself, but synthetic data is cleaner than real inboxes. The real test is a pilot on a few hundred historic submissions with known outcomes.
 - **Offline mode simulates the document reader.** `scripts/live_check.py` measures the live model:

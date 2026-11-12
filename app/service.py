@@ -18,7 +18,12 @@ FORM_KEYS = ["legal_name", "trade_name", "entity_type", "country", "address", "c
 
 
 def normalize_form(raw: dict) -> dict:
-    f = {k: (str(raw.get(k, "") or "").strip()) for k in FORM_KEYS}
+    # anyone can type anything into a public form: keep scalars only, drop control characters, cap the length
+    def clean(v, k):
+        v = "" if v is None or isinstance(v, (dict, list)) else str(v)
+        v = "".join(ch for ch in v if ch.isprintable() or ch == " ").strip()
+        return v[:300 if k == "address" else 160]
+    f = {k: clean(raw.get(k, ""), k) for k in FORM_KEYS}
     f["country"] = f["country"].upper()
     f["entity_type"] = f["entity_type"].lower().replace(" ", "_")
     f["currency"] = f["currency"].upper()

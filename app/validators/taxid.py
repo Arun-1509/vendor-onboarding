@@ -128,6 +128,9 @@ def validate_us_ein(raw: str) -> Check:
     d = re.sub(r"\D", "", raw or "")
     if len(d) != 9:
         return Check(False, "format", "US EIN is 9 digits, written XX-XXXXXXX.", d)
+    if re.fullmatch(r"\s*\d{3}-\d{2}-\d{4}\s*", raw or ""):
+        # grouped 3-2-4 is how a personal Social Security number is written, not a company EIN
+        return Check(False, "format", "This is written like a personal SSN (XXX-XX-XXXX); a company EIN is written XX-XXXXXXX.", d)
     norm = f"{d[:2]}-{d[2:]}"
     if d[:2] not in US_EIN_PREFIXES:
         return Check(False, "format", f"'{d[:2]}' is not an IRS-issued EIN prefix.", norm)
@@ -168,7 +171,7 @@ def pan_name_initial_ok(pan: str, legal_name: str) -> bool | None:
         return None
     from .names import split_name
     core = [t for t in split_name(re.sub(r"(?i)^m\s*/\s*s\.?\s+", "", legal_name))[0] if t not in ("the", "ms")]
-    if not core:
+    if not core or not core[0][0].isalpha():                    # '3S Engineering': no letter to compare with
         return None
     return core[0][0].upper() == pan[4]
 

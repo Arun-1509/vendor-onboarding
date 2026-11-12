@@ -1,4 +1,4 @@
-"""Do the rules added after the ChatGPT holdout GENERALISE, or did they memorise those 37 cases?
+"""Do the rules added after the two unseen sets (ChatGPT holdout, 'fresh') GENERALISE, or did they memorise those cases?
 
 For every new rule this builds fresh vendors that share nothing with the holdout (new random names,
 all four countries, other banks, other phrasings) in two kinds:
@@ -35,13 +35,17 @@ def form_of(idn):
     return f
 
 
-def docs_of(f, *, cert_name=None, cert_addr=None, holder=None, bank_kind="bank_letter", edited=None):
-    bank = {k: f[k] for k in ("bank_name", "account_number", "iban", "ifsc", "sort_code", "routing_number") if f.get(k)}
+def docs_of(f, *, cert_name=None, cert_addr=None, holder=None, bank_kind="bank_letter", edited=None,
+            cert_tax=None, bank_days=None, bank_drop=()):
+    """cert_tax='' prints no tax number; bank_days sets the letter's age (negative = future); bank_drop omits fields."""
+    bank = {k: f[k] for k in ("bank_name", "account_number", "iban", "ifsc", "sort_code", "routing_number") if f.get(k) and k not in bank_drop}
     bank["account_holder"] = holder or f["account_holder"]
     addr = cert_addr or (f"{f['address']}, {f['postal_code']} {f['city']}" if f["country"] == "DE" else f"{f['address']}, {f['city']} {f['postal_code']}")
-    return {"tax_cert": {"kind": TAX_KIND[f["country"]], "printed": {"legal_name": cert_name or f["legal_name"], "tax_id": f["tax_id"], "address": addr},
+    printed = {"legal_name": cert_name or f["legal_name"], "tax_id": f["tax_id"] if cert_tax is None else cert_tax, "address": addr}
+    printed = {k: v for k, v in printed.items() if v}
+    return {"tax_cert": {"kind": TAX_KIND[f["country"]], "printed": printed,
                          "issued_days_ago": R.randint(30, 600), "language": "en", "format": "pdf", "quality": "clear", "edited": None},
-            "bank_proof": {"kind": bank_kind, "printed": bank, "issued_days_ago": R.randint(3, 80), "language": "en", "format": "pdf",
+            "bank_proof": {"kind": bank_kind, "printed": bank, "issued_days_ago": R.randint(3, 80) if bank_days is None else bank_days, "language": "en", "format": "pdf",
                            "quality": "clear", "edited": edited}}
 
 
@@ -53,6 +57,143 @@ def case(cid, rule, kind, title, f, docs, expected):
 def fresh(cc):
     idn = G.identity(cc)
     return form_of(idn)
+
+
+SWIFT = {"IN": "HDFCINBB", "DE": "DEUTDEFF", "GB": "BARCGB22", "US": "BOFAUS3N"}
+CUR = {"IN": "INR", "DE": "EUR", "GB": "GBP", "US": "USD"}
+OTHER_TAX = {"DE": ids.de_vat, "GB": ids.gb_vat, "US": ids.us_ein}
+WRONG_TYPE = {"pvt_ltd": "llp", "ltd": "llp", "llp": "pvt_ltd", "gmbh": "ag", "ag": "gmbh", "plc": "llp", "llc": "inc", "inc": "llc"}
+FAR_CITY = {"DE": ("Hamburg", "20095"), "GB": ("Glasgow", "G1 1AA"), "US": ("Portland, OR", "97201")}
+
+
+def build_fresh_rules(nid_start: int) -> list:
+    """Probes for the rules added after the 'fresh' unseen set (2026-11-12). New random companies each run of the
+    seed; every rule gets the situation it is for AND a near-miss it must leave alone."""
+    out = []
+    nid = lambda: f"G{nid_start + len(out) + 1:03d}"  # noqa: E731
+    add = lambda *a: out.append(case(nid(), *a))  # noqa: E731
+    for cc in ["IN", "DE", "GB", "US"]:
+        # a. contact email that is not an address
+        f = fresh(cc)
+        local, dom = f["contact_email"].split("@")
+        f["contact_email"] = R.choice([f"{local}@{dom.replace('.', ',', 1)}", f"{local}@{dom.replace('.', ' ', 1)}", f"{local}@{dom.split('.')[0]}", f"{local}@@{dom}"])
+        add("email_invalid", "positive", f"contact email '{f['contact_email']}'", f, docs_of(f), "awaiting_vendor")
+        f = fresh(cc)
+        local, dom = f["contact_email"].split("@")
+        f["contact_email"] = R.choice([f"{local}+invoices@{dom}", f"{local}.ap@mail.{dom}", f"{local}_1@{dom}"])
+        add("email_invalid", "negative", f"unusual but valid address '{f['contact_email']}'", f, docs_of(f), "approved")
+        # b. bank letter dated in the future
+        f = fresh(cc)
+        ahead = R.randint(3, 40)
+        add("future_date", "positive", f"bank letter dated {ahead} days ahead", f, docs_of(f, bank_days=-ahead), "awaiting_reviewer")
+        f = fresh(cc)
+        add("future_date", "negative", "bank letter dated today", f, docs_of(f, bank_days=0), "approved")
+        # c. a document that does not show the number it should prove
+        f = fresh(cc)
+        add("doc_incomplete", "positive", "tax document without a tax number", f, docs_of(f, cert_tax=""), "awaiting_vendor")
+        f = fresh(cc)
+        add("doc_incomplete", "positive", "bank letter without an account number", f, docs_of(f, bank_drop=("account_number", "iban")), "awaiting_vendor")
+        # d. dropdown contradicts the legal form in the name
+        f = fresh(cc)
+        if f["entity_type"] in WRONG_TYPE:
+            was = f["entity_type"]
+            f["entity_type"] = WRONG_TYPE[was]
+            add("entity_dropdown", "positive", f"name says {was}, dropdown says {f['entity_type']}", f, docs_of(f), "awaiting_vendor")
+        if cc != "IN":                                           # (in India the PAN also encodes the entity type)
+            f = fresh(cc)
+            core = f["legal_name"].rsplit(" ", 1)[0]
+            f["legal_name"] = f["account_holder"] = core          # no legal form in the name at all: nothing to contradict
+            add("entity_dropdown", "negative", "name carries no legal form", f, docs_of(f), "approved")
+        # e. two different valid tax numbers vs a slip
+        f = fresh(cc)
+        other = fresh(cc)["tax_id"] if cc == "IN" else OTHER_TAX[cc](R)
+        add("taxid_different", "positive", "certificate shows an unrelated valid tax ID", f, docs_of(f, cert_tax=other), "awaiting_reviewer")
+        if cc == "IN":
+            f = fresh(cc)
+            st = "29" if f["tax_id"][:2] != "29" else "27"
+            add("taxid_different", "negative", "same PAN, the company's registration in another state", f,
+                docs_of(f, cert_tax=ids.gstin(st, f["tax_id"][2:12])), "awaiting_vendor")
+        if cc == "US":
+            f = fresh(cc)
+            add("taxid_different", "negative", "certificate differs from the form by one digit", f,
+                docs_of(f, cert_tax=ids.typo(R, f["tax_id"], digits_only=True)), "awaiting_vendor")
+        # f. account in a sister company's name vs a misspelt holder
+        f = fresh(cc)
+        from app.validators import names as _nm
+        n_core = len(_nm.split_name(f["legal_name"], expand=False)[0])       # words before the legal form ('Private Limited' is two)
+        words = f["legal_name"].split()
+        sister = (" ".join(words[:n_core - 1] + [R.choice(["Trading", "Holdings", "Logistics", "Ventures", "Realty"])] + words[n_core:])
+                  if 2 <= n_core <= len(words) else None)
+        if sister and sister != f["legal_name"]:
+            add("sister_payee", "positive", f"cheque in the name of '{sister}'", f, docs_of(f, holder=sister), "awaiting_reviewer")
+        f = fresh(cc)
+        w = f["legal_name"].split()
+        i = max(range(len(w) - 1), key=lambda k: len(w[k]))
+        typo = w[i][:2] + w[i][3] + w[i][2] + w[i][4:] if len(w[i]) > 4 else w[i]
+        # a spelling slip on the bank's side is recorded as a variant and approved; it must never be read as another payee
+        add("sister_payee", "negative", "holder name has two letters swapped", f, docs_of(f, holder=" ".join(w[:i] + [typo] + w[i + 1:])), "approved")
+        # g. another entity's tax registration (parent / franchisor) vs a harmless extra word
+        if cc in FAR_CITY:
+            f = fresh(cc)
+            words = f["legal_name"].split()
+            parent = f["legal_name"]
+            place = R.choice(["North", "Midlands", "West", "Central"])
+            f["legal_name"] = f["account_holder"] = " ".join(words[:-1] + [f"({place})"] + words[-1:])
+            city, pc = FAR_CITY[cc]
+            add("other_entity_cert", "positive", "certificate is the parent's, registered in another town", f,
+                docs_of(f, cert_name=parent, cert_addr=f"12 Registry Road, {city} {pc}"), "awaiting_reviewer")
+            f = fresh(cc)
+            words = f["legal_name"].split()
+            parent = f["legal_name"]
+            f["legal_name"] = f["account_holder"] = " ".join(words[:-1] + [f"({place})"] + words[-1:])
+            add("other_entity_cert", "negative", "extra word, but the certificate is at the vendor's own address", f,
+                docs_of(f, cert_name=parent), "awaiting_vendor")
+        # h. paid abroad in a foreign currency vs a normal SWIFT code
+        f = fresh(cc)
+        abroad = R.choice([x for x in SWIFT if x != cc])
+        f.update(swift=SWIFT[abroad], currency=CUR[abroad] if CUR[abroad] != CUR[cc] else "USD", ifsc="", iban="", sort_code="", routing_number="",
+                 bank_name={"IN": "HDFC Bank", "DE": "Deutsche Bank", "GB": "Barclays", "US": "Bank of America"}[abroad],
+                 account_number=f.get("account_number") or "4400129987")
+        if f["currency"] != CUR[cc]:
+            add("offshore", "positive", f"{cc} vendor paid in {f['currency']} via {f['swift']}", f, docs_of(f), "awaiting_reviewer")
+        f = fresh(cc)
+        f["swift"] = SWIFT[cc]
+        add("offshore", "negative", "own-country SWIFT code, home currency", f, docs_of(f), "approved")
+        # i. contact domain spelling the company name with digits
+        f = fresh(cc)
+        tok = max((t for t in f["legal_name"].split()[:-1]), key=len).lower()
+        swaps = [(a, b) for a, b in (("l", "1"), ("o", "0"), ("e", "3"), ("s", "5"), ("i", "1"), ("a", "4")) if a in tok]
+        if swaps and len(tok) >= 5:
+            a, b = R.choice(swaps)
+            f["contact_email"] = f"accounts@{tok.replace(a, b)}-{R.choice(['group', 'pay', 'billing'])}.com"
+            add("lookalike_domain", "positive", f"domain '{f['contact_email'].split('@')[1]}' for '{tok}'", f, docs_of(f), "awaiting_reviewer")
+        f = fresh(cc)
+        tok = max((t for t in f["legal_name"].split()[:-1]), key=len).lower()
+        f["contact_email"] = f"accounts@{tok}{R.choice(['24', '365', '2000'])}.com"
+        add("lookalike_domain", "negative", f"genuine digits in the domain '{f['contact_email'].split('@')[1]}'", f, docs_of(f), "approved")
+        # j. the same name with the spaces elsewhere
+        f = fresh(cc)
+        w = f["legal_name"].split()
+        if len(w) >= 3:
+            add("spacing", "positive", "certificate joins two words of the name", f, docs_of(f, cert_name=" ".join([w[0] + w[1]] + w[2:])), "approved")
+    # k. German spellings (umlauts typed out, 'und', legal form written in full)
+    for word, typed in (("Müller", "Mueller"), ("Schröder", "Schroeder"), ("Jäger", "Jaeger"), ("Weiß", "Weiss")):
+        f = fresh("DE")
+        tail = f["legal_name"].split()[-2]
+        suffix = f["legal_name"].split()[-1]
+        official = f"{word} & Söhne {tail} {suffix}"
+        f["legal_name"] = f["account_holder"] = f"{typed} und Soehne {tail} {suffix}"
+        add("german_spelling", "positive", f"'{f['legal_name']}' vs '{official}'", f, docs_of(f, cert_name=official, holder=official), "approved")
+        f = fresh("DE")
+        long = {"GmbH": "Gesellschaft mit beschränkter Haftung", "AG": "Aktiengesellschaft"}.get(f["legal_name"].split()[-1])
+        if long:
+            full = f["legal_name"].rsplit(" ", 1)[0] + " " + long
+            add("german_spelling", "positive", f"legal form written in full: '{full}'", f, docs_of(f, cert_name=full, holder=full), "approved")
+        f = fresh("DE")
+        w = f["legal_name"].split()
+        add("german_spelling", "negative", "certificate names a different company with the same surname", f,
+            docs_of(f, cert_name=f"{w[0]} {R.choice(['Immobilien', 'Gastronomie', 'Reisen'])} {w[-1]}"), "not_approved")
+    return out
 
 
 def build():
@@ -109,6 +250,7 @@ def build():
         cert = f"{f['address'].upper().replace('STREET', 'ST.')}, {f['city']} {f['postal_code']}"
         cases.append(case(nid(), "street_number", "negative", "same address written differently (caps, abbreviations)", f,
                           docs_of(f, cert_addr=cert), "approved"))
+    cases += build_fresh_rules(nid_start=len(cases))
     # 3. contact change on each EXISTING approved vendor (same data otherwise)
     for m in MASTER:
         f = {**{k: m.get(k) or "" for k in form_of({}).keys()}, "swift": ""}

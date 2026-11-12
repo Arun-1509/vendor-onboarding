@@ -74,6 +74,39 @@ const STAGES = Object.keys(STAGE_INFO);
 let RULES = null;
 async function rulebook() { if (!RULES) { const r = await api('/rulebook'); RULES = { map: Object.fromEntries(r.rules.map(x => [x.code, x])), raw: r }; } return RULES; }
 
+// ===================================================================== tour ===
+// The guide asks for a happy path plus 2-4 deliberate edge cases. These five are the ones to watch first.
+const TOUR = [
+  { id: 'H1_happy_india', name: 'Happy path', expect: 'approved', watch: 'Nine stages run in order. The AI reads both documents, code verifies every value against the file, and the vendor is approved with the reasons written out.' },
+  { id: 'E1b_bank_change_request', name: 'Payment-fraud attempt', expect: 'awaiting_reviewer', watch: 'An approved vendor "updates" its bank account. Every field is valid, so only comparing with what is on file catches it. Held for two reviewers; the vendor is not told why.' },
+  { id: 'E5a_edited_bank_letter', name: 'A document that lies', expect: 'awaiting_reviewer', watch: 'The bank letter looks perfect, but a new account number was pasted over the original. Look for the red box on the document.' },
+  { id: 'tour_missing_doc', url: '/tour/missing-doc', reply: true, name: 'Missing document, then the reply', expect: 'awaiting_vendor', watch: 'A brand-new company forgets its bank letter. It gets a precise email saying what to send. Then press "Simulate the vendor replying": only the failed check is re-run and version 2 is approved.' },
+  { id: 'E2c_variant_abbreviation_ai', name: 'Looks wrong, is fine', expect: 'approved', watch: '"Fab" on one document, "Fabrication" on another. The AI judge explains why they are the same company, and the rulebook accepts it. No false alarm.' },
+];
+const tourDone = () => { try { return JSON.parse(ls.get('tour', '[]')); } catch (_) { return []; } };
+const tourMark = id => { const d = tourDone(); if (!d.includes(id)) { d.push(id); ls.set('tour', JSON.stringify(d)); } };
+async function tourRun(i, btn) {
+  if (btn) btn.disabled = true;
+  try { const t = TOUR[i]; const r = await api(t.url || `/samples/${t.id}/submit`, { method: 'POST' }); tourMark(t.id);
+    location.hash = `#/run/${r.submission_id}?tour=${i}`; }
+  catch (e) { toast(e.message, true); if (btn) btn.disabled = false; }
+}
+function tourCard(compact) {
+  const done = tourDone(), next = TOUR.findIndex(t => !done.includes(t.id));
+  if (compact) return h('div', { class: 'hero', style: 'margin-bottom:16px' }, h('div', { style: 'flex:1;min-width:240px' },
+    h('h2', {}, next === 0 ? 'New here? Take the 5-step tour' : next < 0 ? 'Tour complete' : `Tour: step ${next + 1} of ${TOUR.length} is next`),
+    h('p', {}, next < 0 ? 'You have seen the happy path and four edge cases. Try an unseen vendor, or enter one by hand.' : 'One happy path and four edge cases, each run live through the real process. About two minutes.')),
+    h('div', { class: 'steps-mini' }, TOUR.map((t, i) => h('i', { class: done.includes(t.id) ? 'on' : '', title: t.name }, done.includes(t.id) ? '✓' : String(i + 1)))),
+    next < 0 ? h('a', { class: 'btn', href: '#/new' }, 'Try your own') : h('button', { class: 'btn', onclick: e => tourRun(next, e.currentTarget) }, next === 0 ? 'Start the tour' : 'Continue'));
+  return h('div', { class: 'tour' }, TOUR.map((t, i) => h('div', { class: 'tstep' + (done.includes(t.id) ? ' done' : i === next ? ' next' : '') },
+    h('span', { class: 'n' }, done.includes(t.id) ? '✓' : String(i + 1)),
+    h('div', { class: 'tb' }, h('div', { class: 'row', style: 'gap:8px' }, h('b', {}, t.name), pill(t.expect)), h('p', {}, t.watch)),
+    h('button', { class: 'btn sm ' + (i === next ? 'primary' : ''), onclick: e => tourRun(i, e.currentTarget) }, done.includes(t.id) ? 'Run again' : 'Run'))));
+}
+function applyTheme() { const t = ls.get('theme', ''); if (t) document.documentElement.setAttribute('data-theme', t); else document.documentElement.removeAttribute('data-theme'); }
+applyTheme();
+const isDark = () => (ls.get('theme', '') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')) === 'dark';
+
 // ===================================================================== shell ===
 let HEALTH = null;
 async function updateRail() {
@@ -84,7 +117,8 @@ async function updateRail() {
     $('#railfoot').replaceChildren(
       h('span', { class: 'chip ' + (st.llm_mode === 'mock' ? 'mock' : 'live'), title: st.llm_mode === 'mock' ? 'No API key set: document reading is simulated offline' : 'Real model calls' },
         st.llm_mode === 'mock' ? 'Offline AI (simulated)' : 'Live AI · ' + st.provider),
-      st.clock_offset_days ? h('span', { class: 'chip', title: 'Demo clock moved forward' }, `Demo clock +${st.clock_offset_days} days`) : null);
+      st.clock_offset_days ? h('span', { class: 'chip', title: 'Demo clock moved forward' }, `Demo clock +${st.clock_offset_days} days`) : null,
+      h('button', { class: 'btn quiet sm', style: 'justify-content:flex-start;padding:0 4px', 'aria-label': 'Switch between light and dark', onclick: () => { ls.set('theme', isDark() ? 'light' : 'dark'); applyTheme(); updateRail(); } }, isDark() ? '☀ Light mode' : '☾ Dark mode'));
   } catch (_) {}
 }
 function markNav(name) { document.querySelectorAll('[data-nav]').forEach(a => a.getAttribute('data-nav') === name ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')); }
@@ -175,8 +209,8 @@ async function dashboard(view) {
   view.replaceChildren(
     h('div', { class: 'head' }, h('div', {}, h('h1', {}, 'Overview'), h('p', { class: 'sub' }, 'Every submission is read, cross-checked, screened and decided. People only see what needs a person.')),
       h('div', { class: 'actions' }, reset, week, h('a', { class: 'btn primary', href: '#/new' }, '+ New submission'))),
-    !st.processed ? h('div', { class: 'hero', style: 'margin-bottom:16px' }, h('div', { style: 'flex:1' }, h('h2', {}, 'Nothing processed yet'),
-      h('p', {}, 'Run the prepared demo pack (happy path + edge cases), or generate an unseen synthetic vendor.')), h('a', { class: 'btn', href: '#/new' }, 'Open the demo pack')) : null,
+    tourCard(true),
+    st.example_runs ? h('p', { class: 'xs muted', style: 'margin:-6px 0 12px' }, `Includes ${st.example_runs} example vendors that are generated and run automatically after each restart (the free host does not keep data), so this page is never empty. They are marked "example"; everything you run appears on top.`) : null,
     h('div', { class: 'kpis' },
       kpi(st.processed, 'Submissions decided', `${st.runs} run${st.runs === 1 ? '' : 's'} in total`, 'var(--accent)'),
       kpi(st.processed ? st.handled_pct + '%' : '–', 'Handled without a person', st.processed ? `≈ ${st.est_hours_saved} h of review saved` : 'approved, asked or rejected automatically', 'var(--ok)'),
@@ -200,7 +234,7 @@ async function dashboard(view) {
           : h('div', { class: 'empty' }, 'Nothing needs a person right now. Suspicious submissions appear here with the evidence and the safe next step.')),
       h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, 'Recent runs'), h('a', { href: '#/vendors', class: 'sm' }, 'All vendors →')),
         runs.length ? h('div', { class: 'tablewrap', style: 'border:0' }, h('table', {}, h('tbody', {}, runs.map(r => h('tr', { class: 'click', onclick: () => location.hash = '#/run/' + r.submission_id },
-          h('td', {}, h('b', {}, r.legal_name), h('div', { class: 'id' }, `${r.run_id} · v${r.version || 1} · ${(r.source || '').replace('synthetic:', 'synthetic · ')}`)),
+          h('td', {}, h('b', {}, r.legal_name), h('div', { class: 'id' }, `${r.run_id} · v${r.version || 1} · ${(r.source || '').replace('synthetic:', 'synthetic · ').replace(/^example:.*/, 'example')}`)),
           h('td', {}, pill(r.substatus)), h('td', {}, riskEl(r.risk_score || 0)), h('td', { class: 'xs faint' }, ago(r.finished_at))))))) : h('div', { class: 'empty' }, 'No runs yet.'))));
 }
 
@@ -407,16 +441,23 @@ async function newView(view) {
   } }, f.root, h('fieldset', {}, h('legend', {}, 'Documents'), h('div', { class: 'fgrid' }, slots)), submit);
 
   view.replaceChildren(
-    h('div', { class: 'head' }, h('div', {}, h('h1', {}, 'New submission'), h('p', { class: 'sub' }, 'Run a prepared case, generate a vendor the system has never seen, or enter one by hand.'))),
-    h('div', { class: 'hero' }, h('div', { style: 'flex:1;min-width:260px' }, h('h2', {}, 'Surprise me: an unseen synthetic vendor'),
+    h('div', { class: 'head' }, h('div', {}, h('h1', {}, 'New submission'), h('p', { class: 'sub' }, 'Take the tour, generate a vendor the system has never seen, or enter one by hand.')),
+      h('div', { class: 'actions' }, h('a', { class: 'btn sm', href: '#/new', onclick: e => { e.preventDefault(); const d = $('#manual'); d.open = true; d.scrollIntoView({ behavior: 'smooth' }); } }, 'Enter my own vendor ↓'))),
+    h('h2', { style: 'margin:0 0 4px' }, 'Start here: the happy path and four edge cases'),
+    h('p', { class: 'muted sm', style: 'margin:0 0 12px' }, 'Each one runs live through the real process. The label shows the outcome to expect.'),
+    tourCard(false),
+    h('div', { class: 'hero', style: 'margin-top:22px' }, h('div', { style: 'flex:1;min-width:260px' }, h('h2', {}, 'Surprise me: an unseen synthetic vendor'),
       h('p', {}, 'Generates a brand-new company with valid IDs and freshly rendered documents, runs it, and shows the ground-truth label next to the decision.')),
       h('div', { class: 'row' }, sel, surprise)),
-    h('h2', { style: 'margin:26px 0 12px' }, 'Demo pack'),
+    h('h2', { style: 'margin:26px 0 4px' }, 'All prepared cases'),
+    h('p', { class: 'muted sm', style: 'margin:0 0 12px' }, `${samples.length} cases in ${Object.keys(groups).length} groups, for going deeper after the tour.`),
     h('div', { class: 'packs' }, Object.entries(PACKS).filter(([g]) => groups[g]).map(([g, [title, desc, icon]]) => h('div', { class: 'pack' },
       h('h3', {}, h('span', {}, icon), title), h('p', { class: 'desc' }, desc),
       groups[g].map(c => h('div', { class: 'case' }, h('div', { class: 'ct' }, c.title, h('small', {}, `${c.id} · ${FLAG[c.form.country] || ''} ${c.form.legal_name}`)),
         h('button', { class: 'btn sm primary', onclick: e => run(e.currentTarget, `/samples/${c.id}/submit`, c.has_follow_up ? `sample=${c.id}` : '') }, 'Run')))))),
-    h('details', { class: 'card', style: 'margin-top:20px' }, h('summary', { style: 'cursor:pointer;font-weight:650' }, 'Enter a vendor manually (with your own PDFs or photos)'), h('div', { style: 'margin-top:14px' }, manual)));
+    h('details', { class: 'card', id: 'manual', style: 'margin-top:20px' }, h('summary', { style: 'cursor:pointer;font-weight:650' }, 'Enter a vendor manually (with your own PDFs or photos)'),
+      h('p', { class: 'muted sm', style: 'margin:10px 0 0' }, 'Anything works, including a blank form, the wrong file or a made-up company: the process says exactly what is missing or wrong. Files: PDF or image, up to 6 MB.'),
+      h('div', { style: 'margin-top:14px' }, manual)));
 }
 
 // ======================================================= document rendering ===
@@ -493,6 +534,10 @@ function stageDetails(name, d) {
 
 async function runView(view, sid) {
   const qp = hashQuery(), exp = qp.get('exp'), sc = qp.get('sc'), sample = qp.get('sample');
+  const ti = qp.get('tour') == null ? -1 : +qp.get('tour'), tstep = TOUR[ti];
+  const tourNext = h('span', { class: 'row' });
+  const tourStrip = tstep ? h('div', { class: 'tourstrip' }, h('span', { class: 'n' }, String(ti + 1)), h('div', { style: 'flex:1;min-width:220px' },
+    h('b', {}, `Tour ${ti + 1} of ${TOUR.length}: ${tstep.name}`), h('div', { class: 'sm' }, tstep.watch)), tourNext) : null;
   const info = await api(`/submissions/${sid}/run`);
   const sub = info.submission || {};
   const els = {}, bar = h('b'), started = Date.now();
@@ -545,13 +590,21 @@ async function runView(view, sid) {
         h('span', {}, `expected: ${(STATUS[exp] || [exp])[0]} · decided: ${(STATUS[res.substatus] || [res.substatus])[0]}`)));
     }
     const emails = r.run.emails || [];
-    const follow = sample && res.substatus === 'awaiting_vendor' ? h('button', { class: 'btn primary', onclick: async e => {
+    if (tstep) {
+      const isReplyCase = !!tstep.reply, waitReply = isReplyCase && res.substatus === 'awaiting_vendor';
+      const want = isReplyCase && sub.version > 1 ? 'approved' : tstep.expect;
+      tourNext.replaceChildren(want === res.substatus ? h('span', { class: 'sm', style: 'font-weight:650' }, '✓ as expected') : null,
+        waitReply ? h('span', { class: 'sm' }, 'Now simulate the reply, below →') : ti + 1 < TOUR.length ? h('button', { class: 'btn sm primary', onclick: e => tourRun(ti + 1, e.currentTarget) }, `Next: ${TOUR[ti + 1].name} →`) : h('a', { class: 'btn sm primary', href: '#/' }, 'Finish: see the dashboard →'));
+    }
+    const tourReply = tstep && tstep.reply;
+    const follow = (sample || tourReply) && res.substatus === 'awaiting_vendor' ? h('button', { class: 'btn primary', onclick: async e => {
       e.currentTarget.disabled = true;
-      try { const x = await api(`/samples/${sample}/submit?follow_up=true&vendor_id=${sub.vendor_id}`, { method: 'POST' }); location.hash = '#/run/' + x.submission_id; } catch (err) { toast(err.message, true); }
+      try { const x = await api(tourReply ? `/tour/missing-doc/reply?vendor_id=${sub.vendor_id}` : `/samples/${sample}/submit?follow_up=true&vendor_id=${sub.vendor_id}`, { method: 'POST' }); location.hash = '#/run/' + x.submission_id + (tstep ? '?tour=' + ti : ''); } catch (err) { toast(err.message, true); }
     } }, '↩ Simulate the vendor replying') : null;
     decisionBox.replaceChildren(h('div', { class: 'decision ' + cls },
       h('div', { class: 'row', style: 'justify-content:space-between;margin-bottom:10px' }, pill(res.substatus, true), h('span', { class: 'xs faint' }, `${r.run.run_id} · ${res.seconds}s · ${res.llm_mode} AI`)),
       h('div', { class: 'gauge' }, gauge(res.risk_score, res.risk_limit), h('p', { style: 'margin:0' }, res.explanation)),
+      res.ai_backup && res.ai_backup.length ? h('div', { class: 'note warn', style: 'margin-top:10px' }, h('b', {}, 'AI model unavailable for this run. '), `The built-in reader read the text of: ${res.ai_backup.join(', ')}. Every value was still verified against the file, and the same rules decided. Photos and scans are never read this way; they wait for a person.`) : null,
       res.resolved_since_last_run && res.resolved_since_last_run.length ? h('div', { class: 'note ok', style: 'margin-top:10px' }, 'Resolved since the last version: ' + res.resolved_since_last_run.join(', ')) : null,
       h('h3', { style: 'margin-top:14px' }, 'Path to approval'), actionsEl(res.next_actions),
       emails.length ? [h('h3', { style: 'margin-top:14px' }, 'Drafted message'), emails.map(mailEl)] : null,
@@ -559,10 +612,10 @@ async function runView(view, sid) {
     updateRail();
   }
   view.replaceChildren(
-    h('div', { class: 'runhead' }, h('div', {}, h('div', { class: 'row', style: 'margin-bottom:6px' }, h('a', { href: '#/new', class: 'sm' }, '← New submission'), h('span', { class: 'id' }, sid), sub.version > 1 ? h('span', { class: 'tag' }, 'version ' + sub.version) : null),
+    h('div', { class: 'runhead' }, h('div', {}, h('div', { class: 'row', style: 'margin-bottom:6px' }, h('a', { href: '#/new', class: 'sm' }, '← New submission'), h('span', { class: 'id' }, sid), /^example/.test(sub.source || '') ? h('span', { class: 'tag' }, 'example') : null, sub.version > 1 ? h('span', { class: 'tag' }, 'version ' + sub.version) : null),
       h('h1', {}, sub.legal_name || 'Submission'), sc ? h('p', { class: 'sub muted', style: 'margin-top:4px' }, 'Unseen synthetic vendor · ' + sc) : null),
       h('div', { class: 'actions' }, HEALTH ? h('span', { class: 'chip ' + (HEALTH.llm_mode === 'mock' ? 'mock' : 'live') }, HEALTH.llm_mode === 'mock' ? `Offline AI · paced ${HEALTH.stage_pace_ms} ms/stage` : 'Live AI · ' + HEALTH.provider) : null)),
-    h('div', { class: 'progress' }, bar), banner,
+    tourStrip, h('div', { class: 'progress' }, bar), banner,
     h('div', { class: 'split' }, h('div', {}, list), h('div', { class: 'sticky' }, decisionBox, h('div', { style: 'height:16px' }), docsBox)));
   showDocs(null);
 
@@ -607,7 +660,7 @@ async function outboxView(view) {
 async function benchCard(host) {
   let b; try { b = await api('/benchmark'); } catch (e) { host.replaceChildren(); return; }
   const sets = b.sets || {}; const live = (b.live && b.live.sets) || {};
-  const NAME = { blind: 'Blind answer key', diverse: 'Messy documents', holdout: 'ChatGPT holdout (unseen)' };
+  const NAME = { blind: 'Blind answer key', diverse: 'Messy documents', holdout: 'ChatGPT holdout (unseen)', fresh: 'Second unseen set (new author)' };
   const acc = m => m ? pct(m.decision_accuracy) : '–', uns = m => m ? String(m.errors.unsafe_approvals + m.errors.missed_rejects) : '–';
   const rows = Object.entries(sets).map(([k, v]) => h('tr', {}, h('td', {}, h('b', {}, NAME[k] || k)),
     h('td', { class: 'num' }, v.n), h('td', { class: 'num b' }, acc(v.first_look)), h('td', { class: 'num v' }, acc(v.after_fixes)), h('td', { class: 'num v', title: live[k] && live[k].quota_held ? `${live[k].quota_held} vendors hit the free Gemini quota and were safely held for a reviewer; accuracy is over the ${live[k].answered} the model answered` : '' }, live[k] ? (live[k].answered_accuracy != null ? pct(live[k].answered_accuracy) : acc(live[k].metrics)) + (live[k].quota_held ? ` (${live[k].answered} answered)` : '') : '–'),

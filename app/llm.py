@@ -455,7 +455,81 @@ def vendor_mail_is_safe(text: str) -> bool:
     return not _BANNED_IN_VENDOR_MAIL.search(text or "")
 
 
-def get_llm():
+# ============================================================ backup ====
+# What each document must yield before the built-in reader's answer is trusted.
+_BACKUP_NEEDS = {"tax_cert": [("legal_name",), ("tax_id",)],
+                 "bank_proof": [("account_holder",), ("account_number", "iban"), ("issue_date",)],
+                 "incorporation": [("legal_name",)]}
+
+
+class _TextOnlyReader(MockLLM):
+    """The built-in reader restricted to what is really on the page: the text layer of a PDF.
+    (No simulated OCR: a photo or scan cannot be read without the AI.)"""
+
+    def _text_for(self, path: str) -> tuple[str, bool]:
+        return pdf_text(path), True
+
+
+class ResilientLLM:
+    """The live model, with a safe plan B for when it cannot answer (free-tier quota used up, outage).
+
+    Plan B never guesses. A document is read by the built-in reader ONLY if it is a text PDF and the
+    reader finds every critical field in it; the values are then grounded against the page like any
+    AI answer. Anything else (photos, scans, unusual layouts) still fails, which holds the vendor for
+    a person, exactly as before. Every use is recorded on the run, so nothing is passed off as AI."""
+    mode = "live"
+    _down_until = 0.0                                           # shared: skip the live model while it is out of quota
+
+    def __init__(self, live):
+        self.live = live
+        self.backup_used: list[str] = []
+        self._plain = _TextOnlyReader()
+
+    def __getattr__(self, name):                                # provider, trace, ... come from the live client
+        return getattr(self.live, name)
+
+    def _live(self, fn, *a):
+        import time
+        if time.time() < ResilientLLM._down_until:
+            raise LLMError("the AI model is out of quota (checked moments ago)")
+        try:
+            return fn(*a)
+        except Exception as e:
+            if "429" in str(e):                                 # quota: don't make the next runs wait for it too
+                ResilientLLM._down_until = time.time() + 180
+            raise
+
+    def extract_document(self, doc_type: str, path: str) -> dict:
+        try:
+            return self._live(self.live.extract_document, doc_type, path)
+        except Exception as e:
+            if not pdf_text(path).strip():
+                raise
+            r = self._plain.extract_document(doc_type, path)
+            got = r.get("fields") or {}
+            complete = r.get("doc_type_detected") == doc_type and all(any(k in got for k in alt) for alt in _BACKUP_NEEDS.get(doc_type, []))
+            # a recognised wrong document (a statement, another slot's file) is also a safe, complete answer
+            if not complete and r.get("doc_type_detected") in ("other", doc_type):
+                raise
+            self.backup_used.append(doc_type)
+            return {**r, "backup": True, "backup_reason": str(e)[:160]}
+
+    def judge_names(self, a: str, b: str, context: dict) -> dict:
+        try:
+            return self._live(self.live.judge_names, a, b, context)
+        except Exception as e:
+            self.backup_used.append("name_judgment")
+            j = self._plain.judge_names(a, b, context)          # rule-based and conservative
+            return {**j, "backup": True, "reasoning": j["reasoning"] + " (AI unavailable: decided by the built-in name rules.)",
+                    "backup_reason": str(e)[:160]}
+
+    def draft_email(self, audience: str, kind: str, ctx: dict) -> dict:
+        return self._live(self.live.draft_email, audience, kind, ctx)   # the pipeline already falls back to a template
+
+
+def get_llm(backup: bool = False):
+    """`backup=True` (interactive runs) adds the safe plan B; benchmarks measure the bare model."""
     if config.MOCK_LLM:
         return MockLLM()
-    return GeminiLLM() if config.PROVIDER == "gemini" else AnthropicLLM()
+    live = GeminiLLM() if config.PROVIDER == "gemini" else AnthropicLLM()
+    return ResilientLLM(live) if backup else live

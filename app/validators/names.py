@@ -22,7 +22,11 @@ _FORM_WORDS = {
     "llc": "llc", "inc": "inc", "incorporated": "inc", "corp": "corp", "corporation": "corp",
     "co": "co", "company": "co", "plc": "plc", "sarl": "sarl", "bv": "bv", "nv": "nv",
     "pty": "pty", "lp": "lp", "haftungsbeschrankt": "ug",
+    "aktiengesellschaft": "ag", "kommanditgesellschaft": "kg", "unternehmergesellschaft": "ug",
 }
+# legal forms written out in full ('Aktiengesellschaft' is 'AG'; this is vocabulary, not judgment)
+_FORM_PHRASES = [("gesellschaft mit beschrankter haftung", "gmbh"), ("limited liability company", "llc"),
+                 ("limited liability partnership", "llp"), ("public limited company", "plc")]
 # 'M/s Sharma & Sons' (Indian honorific for firms) and 'Acme Inc DBA Acme Direct' (US 'doing business as')
 _HONORIFIC = re.compile(r"^\s*(m/s\.?|messrs\.?)\s+", re.I)
 _TRADE_OF = re.compile(r"^.*?,?\s+(?:an?\s+)?(?:trade|trading|business)\s+name\s+of\s+(.+)$", re.I)
@@ -45,7 +49,7 @@ _FORM_CLASS = [
     ({"llc"}, "llc"), ({"inc"}, "inc"), ({"corp"}, "inc"), ({"plc"}, "plc"),
     ({"co"}, "co"), ({"lp"}, "lp"),
 ]
-_STOP = {"and", "the", "of"}
+_STOP = {"and", "the", "of", "und"}
 # Standard business abbreviations, expanded before comparing (deterministic; no AI needed).
 ABBREVIATIONS = {
     "engg": "engineering", "eng": "engineering", "mfg": "manufacturing", "mfrs": "manufacturers", "intl": "international",
@@ -57,12 +61,15 @@ ABBREVIATIONS = {
 
 
 def normalize(name: str) -> str:
-    s = unicodedata.normalize("NFKD", strip_decorations(name or ""))
+    s = unicodedata.normalize("NFKD", strip_decorations(name or "").replace("ß", "ss").replace("ẞ", "ss"))
     s = "".join(c for c in s if not unicodedata.combining(c)).lower()
     s = s.replace("&", " and ")
     s = re.sub(r"['’`´]", "", s)                 # O'Connell == OConnell: an apostrophe joins, it does not split
     s = re.sub(r"[^a-z0-9 ]+", " ", s)
-    return re.sub(r"\s+", " ", s).strip()
+    s = re.sub(r"\s+", " ", s).strip()
+    for phrase, short in _FORM_PHRASES:
+        s = s.replace(phrase, short)
+    return s
 
 
 def split_name(name: str, expand: bool = True) -> tuple[list[str], str]:
@@ -106,7 +113,7 @@ def compare_names(a: str, b: str) -> dict:
         return {**out, "verdict": "different", "why": "one name is empty"}
     if na == nb:
         return {**out, "verdict": "exact", "why": "identical after normalisation"}
-    if sorted(ca) == sorted(cb):
+    if _same_core(ca, cb):
         if fa == fb or not fa or not fb:
             return {**out, "verdict": "equivalent",
                     "why": "same company name; only the legal-form wording or punctuation differs"}
@@ -123,6 +130,48 @@ def compare_names(a: str, b: str) -> dict:
     return {**out, "verdict": "different", "why": f"core names are only {sim:.0%} similar"}
 
 
+def _fold_de(tokens: list[str]) -> list[str]:
+    """German names typed without umlauts: 'Mueller' = 'Müller' (which normalises to 'muller')."""
+    return sorted(t.replace("ae", "a").replace("oe", "o").replace("ue", "u") for t in tokens)
+
+
+def _same_core(ca: list[str], cb: list[str]) -> bool:
+    """Same words, in any order; or the same letters with the spaces elsewhere ('3S' / '3 S');
+    or the same German name typed with and without umlauts."""
+    return sorted(ca) == sorted(cb) or "".join(ca) == "".join(cb) or _fold_de(ca) == _fold_de(cb)
+
+
+def replaced_word(a: str, b: str) -> tuple[list[str], list[str]] | None:
+    """'Vistara Agro FOODS' vs 'Vistara Agro TRADING': the names share their distinctive part but one whole
+    word is a DIFFERENT word (not a typo, not an abbreviation). That is how sister companies and
+    look-alike entities are named, so it is a different legal entity, not a spelling variant."""
+    out = None
+    for expand in (True, False):                                # as written AND with standard abbreviations spelled out
+        ca, cb = split_name(a, expand)[0], split_name(b, expand)[0]
+        ra, rb = list(ca), list(cb)
+        for t in ca:
+            if t in rb:
+                ra.remove(t)
+                rb.remove(t)
+        if not ra or not rb or len(ra) == len(ca):              # nothing replaced, or nothing in common
+            return None
+        for x in ra:
+            for y in rb:
+                if fuzz.ratio(x, y) >= 75 or x.startswith(y) or y.startswith(x):
+                    return None                                 # a typo or an abbreviation of the same word
+        out = out or (ra, rb)
+    return out
+
+
+def _vowels_dropped(short: str, word: str) -> bool:
+    """'cmpnts' for 'components': an abbreviation made by dropping vowels keeps the first and last letter,
+    has no vowels after the first letter, and its letters appear in the word in the same order."""
+    if len(short) < 4 or len(short) >= len(word) or short[0] != word[0] or short[-1] != word[-1] or re.search(r"[aeiou]", short[1:]):
+        return False
+    it = iter(word)
+    return all(ch in it for ch in short)
+
+
 def is_abbreviation_of(short: str, long: str) -> bool:
     """Every token of `short` is a prefix of a distinct token of `long`
     ('delta fab engineering' ~ 'delta fabrication engineering')."""
@@ -133,7 +182,7 @@ def is_abbreviation_of(short: str, long: str) -> bool:
         return False
     pool = list(l)
     for t in s:
-        hit = next((x for x in pool if x.startswith(t)), None)
+        hit = next((x for x in pool if x.startswith(t) or _vowels_dropped(t, x)), None)
         if hit is None:
             return False
         pool.remove(hit)

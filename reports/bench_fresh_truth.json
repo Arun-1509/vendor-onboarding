@@ -1,0 +1,126 @@
+{
+ "set": "fresh",
+ "reader": "truth",
+ "n": 44,
+ "metrics": {
+  "n": 44,
+  "decision_accuracy": 0.9773,
+  "strict_accuracy": 0.9773,
+  "macro_f1": 0.9805,
+  "unsafe_approval_rate": 0.0,
+  "straight_through_rate": 1.0,
+  "errors": {
+   "unsafe_approvals": 0,
+   "missed_rejects": 0,
+   "disclosure_leaks": 0,
+   "over_escalations": 1,
+   "false_holds": 0,
+   "other": 0
+  },
+  "weighted_cost": 2,
+  "confusion": {
+   "approved": {
+    "approved": 12,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_vendor": {
+    "approved": 0,
+    "awaiting_vendor": 11,
+    "awaiting_reviewer": 1,
+    "rejected": 0
+   },
+   "awaiting_reviewer": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 14,
+    "rejected": 0
+   },
+   "rejected": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 6
+   }
+  },
+  "per_class": {
+   "approved": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 12
+   },
+   "awaiting_vendor": {
+    "precision": 1.0,
+    "recall": 0.9167,
+    "f1": 0.9565,
+    "support": 12
+   },
+   "awaiting_reviewer": {
+    "precision": 0.9333,
+    "recall": 1.0,
+    "f1": 0.9655,
+    "support": 14
+   },
+   "rejected": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 6
+   }
+  },
+  "per_scenario": {
+   "approved": {
+    "n": 12,
+    "decision_ok": 12,
+    "strict_ok": 12,
+    "failed_ids": []
+   },
+   "awaiting_reviewer": {
+    "n": 14,
+    "decision_ok": 14,
+    "strict_ok": 14,
+    "failed_ids": []
+   },
+   "awaiting_vendor": {
+    "n": 12,
+    "decision_ok": 11,
+    "strict_ok": 11,
+    "failed_ids": [
+     "N22"
+    ]
+   },
+   "rejected": {
+    "n": 6,
+    "decision_ok": 6,
+    "strict_ok": 6,
+    "failed_ids": []
+   }
+  },
+  "median_ms": 37
+ },
+ "failures": [
+  {
+   "id": "N22",
+   "scenario": "awaiting_vendor",
+   "country": "GB",
+   "title": "German company with 'United Kingdom' selected as country",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_reviewer",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_reviewer != expected awaiting_vendor"
+   ],
+   "risk": 40,
+   "ms": 39,
+   "difficulty": "hard",
+   "codes": [
+    "TAXID_FORMAT",
+    "COUNTRY_CONTRADICTION"
+   ],
+   "why_expected": "Everything says Germany except the dropdown, so the vendor should correct the country rather than us guessing."
+  }
+ ]
+}

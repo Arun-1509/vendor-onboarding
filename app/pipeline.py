@@ -9,6 +9,7 @@ finding (human takes over) instead of a silent failure or a guessed answer."""
 from __future__ import annotations
 
 import json
+from pathlib import Path
 import re
 import time
 import traceback
@@ -39,7 +40,29 @@ FIELD_LABEL = {
 CRITICAL = {"legal_name", "tax_id", "account_holder", "account_number", "iban"}
 COMMON_REQUIRED = ["legal_name", "entity_type", "country", "address", "city", "postal_code", "tax_id",
                    "contact_name", "contact_email", "bank_name", "account_holder", "currency"]
-EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]{2,}$")
+# letters, digits and . _ % + - before the @; dot-separated labels of letters/digits/hyphens after it
+# (so 'name@company,co.uk' is not an address). Unicode letters are allowed (umlaut domains exist).
+EMAIL_RE = re.compile(r"^[\w.%+\-']+@(?:[^\W_](?:[\w\-]*[^\W_])?\.)+[^\W\d_]{2,}$")
+# which entity types on the form fit a legal form written in the company's own name
+_NAME_FORM_FITS = {"private_limited": {"pvt_ltd", "ltd"}, "limited": {"ltd", "pvt_ltd"}, "llp": {"llp"}, "gmbh": {"gmbh"},
+                   "ag": {"ag"}, "ug": {"ug", "gmbh"}, "llc": {"llc"}, "inc": {"inc", "corp"}, "plc": {"plc", "ltd"}}
+_LEET = [str.maketrans("1035478", "loesatb"), str.maketrans("1035478", "ioesatb")]
+
+
+def _lookalike_domain(email: str, *company_names: str) -> str | None:
+    """'ar@carro11ton-fasteners.com' for 'Carrollton ...': the domain spells a word of the company's
+    name with digits in place of letters. Returns that word, or None."""
+    dom = email.rsplit("@", 1)[-1].lower().rsplit(".", 1)[0]
+    if not any(ch.isdigit() for ch in dom):
+        return None
+    raw = re.sub(r"[^a-z0-9]", "", dom)
+    words = {t for n in company_names for t in nm.split_name(n or "", expand=False)[0] if len(t) >= 5 and t.isalpha()}
+    for table in _LEET:
+        fixed = raw.translate(table)
+        hit = next((w for w in sorted(words) if w in fixed and w not in raw), None)
+        if hit:
+            return hit
+    return None
 
 
 # ================================================================ context ====
@@ -166,14 +189,41 @@ def _looks_like_statement(path: str) -> bool:
     return any(m in t for m in _STATEMENT_MARKERS)
 
 
+def _unopenable(path: str) -> str:
+    """'' if the file opens as what its extension says; otherwise the reason."""
+    p = Path(path)
+    try:
+        if not p.exists() or p.stat().st_size < 64:
+            return "the file is empty"
+        if p.suffix.lower() == ".pdf":
+            from pypdf import PdfReader
+            r = PdfReader(str(p))
+            if r.is_encrypted:
+                return "the PDF is password-protected"
+            if len(r.pages) == 0:
+                return "the PDF has no pages"
+            r.pages[0].get_contents()                          # forces the page to be parsed
+            return ""
+        from PIL import Image
+        with Image.open(p) as im:
+            im.verify()
+        return ""
+    except Exception as e:
+        return f"the file could not be opened ({type(e).__name__})"
+
+
 def s_read_documents(ctx: Ctx):
     summaries = {}
     todo = [(t, ctx.paths[t]) for t in ("tax_cert", "bank_proof", "incorporation") if ctx.paths.get(t)]
     # Read all documents at once (each is an independent AI call); results are then checked in a fixed order.
     from concurrent.futures import ThreadPoolExecutor
+    # A file that cannot even be opened (empty, corrupt, password-protected, not really a PDF/image) is the
+    # vendor's to fix; it is not sent to the AI, which would only fail on it or, worse, invent content.
+    broken = {t: why for t, p in todo if (why := _unopenable(p))}
     with ThreadPoolExecutor(max_workers=max(1, len(todo))) as ex:
-        futs = {t: ex.submit(ctx.llm.extract_document, t, p) for t, p in todo}
+        futs = {t: ex.submit(ctx.llm.extract_document, t, p) for t, p in todo if t not in broken}
     read = {t: f.result() for t, f in futs.items()}            # re-raises an AI failure -> STAGE_ERROR, as before
+    read.update({t: {"doc_type_detected": "other", "legible": False, "fields": {}, "notes": why} for t, why in broken.items()})
     tc, bp = read.get("tax_cert", {}), read.get("bank_proof", {})
     if tc.get("doc_type_detected") == "bank_proof" and bp.get("doc_type_detected") == "tax_cert":
         # both documents are here, just in each other's upload slots: read each as what it is
@@ -209,6 +259,8 @@ def s_read_documents(ctx: Ctx):
     for dtype, path in todo:
         label = DOC_LABEL[dtype]
         res = read[dtype]
+        if res.get("backup"):
+            ctx.facts.setdefault("ai_backup", []).append(label)
         d = {"path": path, "detected": res.get("doc_type_detected"), "legible": res.get("legible", True),
              "raw": res.get("fields", {}), "values": {}, "usable": False, "grounding": "n/a",
              "second_read": res.get("second_read")}
@@ -268,7 +320,8 @@ def s_read_documents(ctx: Ctx):
         _integrity(ctx, dtype, label, path, d)
         summaries[dtype] = f"{len(d['values'])} fields read" + (" (scan)" if d["scanned"] else "")
     n = len(ctx.docs)
-    return {"headline": f"Read {n} document(s): " + ", ".join(f"{k}: {v}" for k, v in summaries.items()) if n else "No documents to read.",
+    note = " (AI model unavailable: the built-in reader read the text of " + ", ".join(ctx.facts["ai_backup"]) + ")" if ctx.facts.get("ai_backup") else ""
+    return {"headline": (f"Read {n} document(s): " + ", ".join(f"{k}: {v}" for k, v in summaries.items()) if n else "No documents to read.") + note,
             "details": {"documents": {k: {"detected_as": v["detected"], "legible": v["legible"], "grounding": v["grounding"],
                                           "fields": v["values"]} for k, v in ctx.docs.items()}}}
 
@@ -351,9 +404,9 @@ def s_validate(ctx: Ctx):
         except ValueError:
             continue
         age = (ctx.now.replace(tzinfo=None) - d).days
-        if age < -1:
-            ctx.add(finding("DOC_STALE", f"The {dtype} is dated in the future ({iso}).", field=dtype,
-                            ask=f"The date on your {DOC_LABEL[dtype]} ({iso}) is in the future. Please send the correct document."))
+        if age < -1:                                            # one day of slack for time zones
+            ctx.add(finding("DOC_FUTURE_DATED", f"The {DOC_LABEL[dtype]} is dated {iso}, which is {-age} days in the future.",
+                            field=dtype, evidence={"date_on_document": iso, "days_ahead": -age}))
         elif maxage and age > maxage:
             ctx.add(finding("DOC_STALE", f"The bank letter is {age} days old (limit {maxage}).", field=dtype,
                             ask=f"Your {DOC_LABEL[dtype]} is dated {iso}, which is more than {maxage} days ago. Please send one issued in the last {maxage} days."))
@@ -436,6 +489,11 @@ def s_cross_check(ctx: Ctx):
                         points=30 + (5 if len(others) > 1 else 0)))
     elif c in config.COUNTRIES and bank_country and bank_country != c:
         ctx.add(finding("BANK_COUNTRY_DIFFERS", f"Vendor is in {c} but the bank is in {bank_country}.", field="bank", evidence=ctx.facts["signals"]))
+        home = config.COUNTRIES[c]["currency"]
+        if ctx.has_field("currency") and f["currency"].upper() != home:
+            # abroad AND not in the vendor's own currency: the money leaves the country it was earned in
+            ctx.add(finding("OFFSHORE_PAYMENT", f"A vendor in {c} asks to be paid in {f['currency'].upper()} into an account in {bank_country}.",
+                            field="bank", evidence={**ctx.facts["signals"], "currency": f["currency"].upper(), "home_currency": home}))
     cur_ok = {config.COUNTRIES.get(c, {}).get("currency"), config.COUNTRIES.get(bank_country or "", {}).get("currency")}
     if ctx.has_field("currency") and c in config.COUNTRIES and f["currency"].upper() not in cur_ok:
         if not f.get("iban") and not f.get("swift"):            # a domestic-only account cannot receive this currency
@@ -461,6 +519,15 @@ def s_cross_check(ctx: Ctx):
                             f"The PAN inside the GSTIN ({ctx.tax.info['pan']}) has type '{ch}' = {tx.PAN_ENTITY[ch]}, but the vendor declares '{f.get('entity_type')}'.",
                             field="tax_id", evidence={"pan": ctx.tax.info["pan"], "pan_char": ch, "pan_means": tx.PAN_ENTITY[ch],
                                                       "declared": f.get("entity_type")}))
+    # ---- 2a. entity type vs the legal form in the company's own name ----------------
+    name_form = nm.split_name(f.get("legal_name", ""))[1]
+    et = f.get("entity_type", "")
+    if name_form in _NAME_FORM_FITS and et and et not in _NAME_FORM_FITS[name_form] \
+            and not any(x["code"] in ("ENTITY_TYPE_FORM_ERROR", "ENTITY_TYPE_MISMATCH_PAN") for x in ctx.findings):
+        ctx.add(finding("ENTITY_TYPE_FORM_ERROR", f"The name '{f.get('legal_name')}' is a {name_form.replace('_', ' ')} company, but the form says '{et}'.",
+                        field="entity_type", evidence={"name_says": name_form, "declared": et},
+                        ask=f"Your company name ('{f.get('legal_name')}') shows a different business type from the one selected on the form "
+                            f"('{et.replace('_', ' ')}'). Please correct the business type."))
     # ---- 2b. India: PAN initial vs name, GSTIN state vs addresses ----------------
     if c == "IN" and ctx.tax and ctx.tax.ok and ctx.tax.info.get("kind") == "GSTIN":
         pan = ctx.tax.info["pan"]
@@ -500,16 +567,35 @@ def s_cross_check(ctx: Ctx):
             fn_ = (ctx.tax.normalized if ctx.tax else re.sub(r"[\s\-]", "", f["tax_id"]).upper())
             if dn != fn_ and _ocr_reconcile(ctx, "tax_cert", "tax_id", dt, fn_):
                 pass
+            elif dn != fn_ and not _looks_like_typo(dn, fn_) and tx.validate_tax_id(c, dt).ok and (ctx.tax and ctx.tax.ok)                     and not (c == "IN" and len(dn) == 15 and len(fn_) == 15 and dn[2:12] == fn_[2:12]):
+                # (same PAN inside two GSTINs = the SAME company's registration in another state: the vendor's to fix)
+                # two VALID, unrelated numbers: not a keying slip, one of them is somebody else's registration
+                ctx.add(finding("TAXID_DIFFERENT_DOC", f"Form tax ID {fn_} and certificate tax ID {dn} are two different valid numbers.",
+                                field="tax_id", evidence={"form": fn_, "certificate": dn}))
             elif dn != fn_:
                 ctx.add(finding("TAXID_MISMATCH_DOC", f"Form tax ID {fn_} differs from certificate {dn}.", field="tax_id",
                                 evidence={"form": fn_, "certificate": dn},
                                 ask=f"The tax ID on your form ({fn_}) is different from the one on your certificate ({dn}). Please confirm which is correct and send the matching certificate."))
+        if not dt and ctx.has_field("tax_id") and not any(x.get("field") == "tax_cert.tax_id" for x in ctx.findings):
+            # the certificate is readable but shows no tax number at all: it cannot back up the one typed in
+            ctx.add(finding("DOC_INCOMPLETE", "The tax document does not show a tax number.", field="tax_cert",
+                            ask=f"Your {DOC_LABEL['tax_cert']} does not show your tax number. Please send a completed copy that shows it."))
         cn = ctx.doc_val("tax_cert", "legal_name")
         if cn and legal:
             cmpd = _compare_into(ctx, legal, cn, "tax_cert", "NAME_MISMATCH_TAXCERT",
                                  f"The company name on your form ('{legal}') does not match your tax certificate ('{cn}'). Please send the certificate for the company you are registering, or correct the name.",
                                  "legal_name", grey_code="NAME_UNRESOLVED")
-            same_id = dt and ctx.has_field("tax_id") and not any(x["code"] == "TAXID_MISMATCH_DOC" for x in ctx.findings)
+            same_id = dt and ctx.has_field("tax_id") and not any(x["code"] in ("TAXID_MISMATCH_DOC", "TAXID_DIFFERENT_DOC") for x in ctx.findings)
+            cert_addr0 = ctx.doc_val("tax_cert", "address") or ""
+            sq = lambda s: re.sub(r"[^a-z0-9]", "", (s or "").lower())  # noqa: E731
+            here = [x for x in (f.get("postal_code"), f.get("city")) if sq(x)]
+            elsewhere = bool(cert_addr0) and bool(here) and not any(sq(x) in sq(cert_addr0) for x in here)
+            if cmpd["verdict"] == "grey" and same_id and elsewhere and nm.extra_words(legal, cn):
+                # two independent signs of ANOTHER entity: its name lacks a word of ours ('... (Leeds) Ltd' vs '... Ltd')
+                # and it is registered in a different town. A parent's or franchisor's registration is not ours.
+                ctx.grey[:] = [g for g in ctx.grey if not (g["field"] == "legal_name" and g["b"] == cn)]
+                ctx.add(finding("TAXCERT_OTHER_ENTITY", f"The tax ID on the form is registered to '{cn}' at {cert_addr0}, not to '{legal}'.",
+                                field="tax_id", evidence={"form_name": legal, "registered_name": cn, "registered_address": cert_addr0, **cmpd}))
             if cmpd["verdict"] == "different" and same_id:
                 # the form's tax ID is registered to this OTHER company: borrowed identity, not an upload slip
                 ctx.add(finding("TAXCERT_OTHER_ENTITY", f"The tax ID on the form is registered to '{cn}', not to '{legal}'.",
@@ -562,12 +648,21 @@ def s_cross_check(ctx: Ctx):
         elif vs_legal and vs_legal["verdict"] == "form_mismatch":
             ctx.add(finding("FORM_LEGAL_FORM_MISMATCH", f"Account holder '{holder}' vs '{authority}': {vs_legal['why']}.", field="account_holder", evidence=vs_legal,
                             ask=f"The account holder '{holder}' and your registered name '{authority}' differ in legal form. Please confirm the exact registered name."))
+        elif vs_legal and vs_legal["verdict"] == "grey" and nm.replaced_word(holder, authority):
+            # same family name, one whole word swapped ('... Foods' / '... Trading'): a sister company, not a spelling
+            ctx.add(finding("THIRD_PARTY_PAYEE", f"Account holder '{holder}' is a different company from the vendor '{authority}' "
+                            f"(the names differ by a whole word: {' / '.join(' '.join(x) for x in nm.replaced_word(holder, authority))}).",
+                            field="account_holder", evidence={"holder": holder, "legal_name": authority, **vs_legal}))
         elif vs_legal and vs_legal["verdict"] == "grey":
             ctx.grey.append({"a": holder, "b": authority, "field": "account_holder", "code": "ACCOUNT_HOLDER_MISMATCH", "ask": ask, "cmp": vs_legal})
         elif vs_legal:
             # a clearly different company or a private person: payments would leave the vendor
             ctx.add(finding("THIRD_PARTY_PAYEE", f"Account holder '{holder}' is not the vendor '{authority}': {vs_legal['why']}.",
                             field="account_holder", evidence={"holder": holder, "legal_name": authority, **vs_legal}))
+    if ctx.usable("bank_proof") and not (ctx.doc_val("bank_proof", "account_number") or ctx.doc_val("bank_proof", "iban")) \
+            and not any(str(x.get("field", "")).startswith("bank_proof.") for x in ctx.findings):
+        ctx.add(finding("DOC_INCOMPLETE", "The bank document does not show an account number or IBAN.", field="bank_proof",
+                        ask=f"Your {DOC_LABEL['bank_proof']} does not show the account number. Please send one that shows the account number or IBAN."))
     # ---- 5b. street number: form vs the tax certificate (text-layer documents only) ------
     cert_addr = ctx.doc_val("tax_cert", "address") if ctx.usable("tax_cert") and not ctx.docs["tax_cert"].get("scanned") else None
     form_no, cert_nos = _street_numbers(f.get("address", "")), _street_numbers(cert_addr or "")
@@ -583,6 +678,10 @@ def s_cross_check(ctx: Ctx):
     dom = (f.get("contact_email", "").split("@")[-1] or "").lower()
     if dom in config.FREE_EMAIL_DOMAINS and f.get("entity_type") not in ("sole_prop", ""):
         ctx.add(finding("FREE_EMAIL_DOMAIN", f"Company contact uses a free email domain ({dom}).", field="contact_email"))
+    fake = _lookalike_domain(f.get("contact_email", ""), f.get("legal_name", ""), f.get("trade_name", "")) if "@" in f.get("contact_email", "") else None
+    if fake:
+        ctx.add(finding("EMAIL_LOOKALIKE_DOMAIN", f"The contact domain '{dom}' spells '{fake}' with digits in place of letters.",
+                        field="contact_email", evidence={"domain": dom, "imitates": fake}))
     new = [x["code"] for x in ctx.findings if x["category"] in ("consistency",)]
     return {"headline": f"Cross-referenced form, documents and bank details: {len(new)} observation(s)." if new else "Form, documents and bank details are consistent.",
             "details": {"signals": ctx.facts["signals"], "authoritative_legal_name": authority, "account_holder_used": holder,
@@ -604,6 +703,8 @@ def s_name_judgment(ctx: Ctx):
                  "reasoning": f"The AI said 'same company', but one name has an extra word ({', '.join(extra)}) that can "
                               f"denote a different registered company, so the rulebook does not accept it without confirmation. "
                               f"AI said: {j.get('reasoning', '')}"}
+        if j.get("backup"):
+            ctx.facts.setdefault("ai_backup", []).append("name comparison")
         out.append({"a": g["a"], "b": g["b"], **j, "accepted": yes})
         if yes:
             ctx.add(finding("NAME_VARIANT_AI", f"'{g['a']}' and '{g['b']}' judged the same company ({j.get('confidence'):.0%}): {j.get('reasoning')}",
@@ -781,6 +882,7 @@ def process_submission(conn, submission_id: str, llm=None, emit=None) -> dict:
     result = {"status": d["status"], "substatus": d["substatus"], "risk_score": d["risk_score"], "risk_limit": d["risk_limit"],
               "explanation": explanation, "rule_trace": d["trace"], "driving": d["driving"], "findings": d["findings"],
               "resolved_since_last_run": resolved, "emails": ctx.emails, "llm_mode": llm.mode,
+              "ai_backup": ctx.facts.get("ai_backup", []),
               "next_actions": workflow.next_actions(d["findings"], d["status"], d["substatus"]),
               "documents": {k: {"detected_as": v.get("detected"), "grounding": v.get("grounding"), "fields": v.get("values")} for k, v in ctx.docs.items()},
               "seconds": round(time.time() - t0, 2)}

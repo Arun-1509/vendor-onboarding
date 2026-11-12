@@ -20,7 +20,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 
-from . import config, db, emailer, evaluation, pipeline, rules, service, workflow
+from . import config, db, emailer, evaluation, examples, pipeline, rules, service, workflow
 from .llm import get_llm
 
 def _refresh_samples_if_stale(max_age_days: int = 30):
@@ -39,6 +39,18 @@ def _refresh_samples_if_stale(max_age_days: int = 30):
         print(f"sample refresh skipped: {e}")
 
 
+def _seed_examples():
+    """A restart wipes the free host's disk: refill the dashboard with example runs (see app/examples.py)."""
+    if not EXAMPLE_HISTORY:
+        return
+    try:
+        c = db.connect()
+        examples.seed(c)
+        c.close()
+    except Exception as e:
+        print(f"example history skipped: {e}")
+
+
 @asynccontextmanager
 async def _lifespan(_app):
     _refresh_samples_if_stale()
@@ -46,12 +58,14 @@ async def _lifespan(_app):
     if c.execute("SELECT COUNT(*) n FROM vendors").fetchone()["n"] == 0:
         service.seed_vendor_master(c)
     c.close()
+    _seed_examples()                                # a few seconds, before the first request can race it
     yield
 
 
 app = FastAPI(title="Vendor Onboarding", version="0.1", lifespan=_lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
+EXAMPLE_HISTORY = __import__("os").getenv("EXAMPLE_HISTORY", "1") not in ("0", "false", "no")
 MAX_FILE_BYTES = 6 * 1024 * 1024
 ALLOWED_EXT = {".pdf", ".png", ".jpg", ".jpeg", ".webp"}
 RATE_PER_HOUR = int(__import__("os").getenv("RATE_PER_HOUR", "30"))
@@ -101,7 +115,7 @@ def _run_in_background(sid: str):
     def work():
         conn = _conn()
         try:
-            pipeline.process_submission(conn, sid, get_llm(), emit)
+            pipeline.process_submission(conn, sid, get_llm(backup=True), emit)
         except Exception as e:                      # last-resort guard: tell the UI, never hang
             emit({"type": "run_failed", "error": str(e)[:300]})
         finally:
@@ -288,7 +302,7 @@ def quality_spotcheck(request: Request, n: int = 12):
             case = {"id": f"spot-{i}", "scenario": sc, "title": SCENARIOS[sc][4] + (f" ({res['note']})" if res.get("note") else ""),
                     "country": res["form"]["country"], "form": res["form"], "docs": {k: str(v) for k, v in res["docs"].items()},
                     "expect": {"status": st, "substatus": sub}}
-            rows.append(quality.run_case(case, config.DATA_DIR / "seed_vendors.json", get_llm()))
+            rows.append(quality.run_case(case, config.DATA_DIR / "seed_vendors.json", get_llm(backup=True)))
     return {"seed": seed, "n": n, "correct": sum(r["decision_ok"] for r in rows), "rows": rows}
 
 
@@ -481,7 +495,7 @@ def stats():
            "manual_minutes_assumption": config.ESTIMATED_MANUAL_MINUTES,
            "awaiting_second_approval": by.get("awaiting_second_approval", 0),
            "review_overdue": sum(1 for q in workflow.review_queue(c) if q["overdue"]),
-           "clock_offset_days": db.clock_offset_days(c), "llm_mode": "mock" if config.MOCK_LLM else "live", "provider": config.PROVIDER_LABEL}
+           "clock_offset_days": db.clock_offset_days(c), "example_runs": examples.count(c), "llm_mode": "mock" if config.MOCK_LLM else "live", "provider": config.PROVIDER_LABEL}
     c.close()
     return out
 
@@ -537,14 +551,15 @@ def run_tick():
 
 
 @app.post("/api/admin/reset")
-def reset(x_admin_key: str | None = Header(None)):
+def reset(examples_too: bool = True, x_admin_key: str | None = Header(None)):
     if config.ADMIN_KEY and x_admin_key != config.ADMIN_KEY:
         raise HTTPException(403, "Wrong or missing admin key.")
     c = _conn()
     n = service.reset_demo(c)
+    ex = examples.seed(c) if EXAMPLE_HISTORY and examples_too else 0
     c.close()
     _bus.clear()
-    return {"ok": True, "seeded_vendors": n}
+    return {"ok": True, "seeded_vendors": n, "example_runs": ex}
 
 
 # ===================================================== vendor-facing response page ====
@@ -689,6 +704,46 @@ def synthetic_submit(request: Request, scenario: str = "random"):
     st, sub = SCENARIOS[sc][1]
     return {"vendor_id": vid, "submission_id": sid, "scenario": sc, "title": SCENARIOS[sc][4], "note": res.get("note", ""),
             "expected": sub, "seed": seed}
+
+
+# ===================================================== tour: wait-and-resume, repeatable ====
+# The 'missing document, then the reply' story must work for EVERY visitor, so it cannot reuse one fixed
+# vendor (after the first visitor that vendor has already replied). Each call makes a brand-new company.
+@app.post("/api/tour/missing-doc")
+def tour_missing_doc(request: Request):
+    import random as _r
+    from synthetic.generator import Generator
+    _guard(request)
+    seed = _r.randint(1, 10**9)
+    g = Generator(seed, config.VAR_DIR / "synthetic_live")
+    c = _conn()
+    g.used_names |= {r["legal_name"].lower() for r in c.execute("SELECT legal_name FROM vendors") if r["legal_name"]}
+    g.used_names |= {x["form"].get("legal_name", "").lower() for x in evaluation.load_cases()}
+    idn = g.identity()
+    docs = g.write_docs(f"tour-{seed}", idn)                    # both documents exist; the bank letter is held back
+    vid, sid = service.create_submission(c, g.form(idn), {"tax_cert": str(docs["tax_cert"])}, source=f"tour:missing_doc:{seed}")
+    c.close()
+    _run_in_background(sid)
+    return {"vendor_id": vid, "submission_id": sid}
+
+
+@app.post("/api/tour/missing-doc/reply")
+def tour_missing_doc_reply(vendor_id: str, request: Request):
+    """The vendor 'replies' with the bank letter that was held back; the same form, one new document."""
+    _guard(request)
+    c = _conn()
+    first = db.row(c.execute("SELECT form, source FROM submissions WHERE vendor_id=? ORDER BY version LIMIT 1", (vendor_id,)).fetchone())
+    if not first or not str(first["source"]).startswith("tour:missing_doc:"):
+        c.close()
+        raise HTTPException(404, "not a tour vendor")
+    letter = config.VAR_DIR / "synthetic_live" / "docs" / f"tour-{first['source'].rsplit(':', 1)[1]}" / "bank_proof.pdf"
+    if not letter.exists():
+        c.close()
+        raise HTTPException(410, "This tour vendor's documents are gone (the server restarted). Please run the step again.")
+    vid, sid = service.create_submission(c, first["form"], {"bank_proof": str(letter)}, source="tour:reply", vendor_id=vendor_id)
+    c.close()
+    _run_in_background(sid)
+    return {"vendor_id": vid, "submission_id": sid}
 
 
 # ===================================================== files the UI needs ====

@@ -1,7 +1,7 @@
 {
  "total": [
-  49,
-  50
+  132,
+  133
  ],
  "by_rule": {
   "apostrophe/positive": [
@@ -41,6 +41,86 @@
    4
   ],
   "street_number/negative": [
+   4,
+   4
+  ],
+  "email_invalid/positive": [
+   4,
+   4
+  ],
+  "email_invalid/negative": [
+   4,
+   4
+  ],
+  "future_date/positive": [
+   4,
+   4
+  ],
+  "future_date/negative": [
+   4,
+   4
+  ],
+  "doc_incomplete/positive": [
+   8,
+   8
+  ],
+  "entity_dropdown/positive": [
+   4,
+   4
+  ],
+  "taxid_different/positive": [
+   4,
+   4
+  ],
+  "taxid_different/negative": [
+   2,
+   2
+  ],
+  "sister_payee/positive": [
+   4,
+   4
+  ],
+  "sister_payee/negative": [
+   4,
+   4
+  ],
+  "offshore/positive": [
+   4,
+   4
+  ],
+  "offshore/negative": [
+   4,
+   4
+  ],
+  "lookalike_domain/positive": [
+   4,
+   4
+  ],
+  "lookalike_domain/negative": [
+   4,
+   4
+  ],
+  "spacing/positive": [
+   4,
+   4
+  ],
+  "entity_dropdown/negative": [
+   3,
+   3
+  ],
+  "other_entity_cert/positive": [
+   3,
+   3
+  ],
+  "other_entity_cert/negative": [
+   3,
+   3
+  ],
+  "german_spelling/positive": [
+   8,
+   8
+  ],
+  "german_spelling/negative": [
    4,
    4
   ],

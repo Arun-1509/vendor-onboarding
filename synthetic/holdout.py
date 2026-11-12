@@ -23,6 +23,9 @@ IN_STATE = {"mumbai": "27", "pune": "27", "vadodara": "24", "mysuru": "29", "ben
             "chennai": "33", "hyderabad": "36"}
 MASTER = [v["form"] for v in json.loads((ROOT / "data" / "seed_vendors.json").read_text(encoding="utf-8"))["vendors"]]
 KIND = {"ust_certificate": "vat_certificate"}
+# The country whose ID formats a case's placeholders stand for, where it is not the form's dropdown value.
+# N22's story: a German company (German tax ID and bank) that picked 'United Kingdom' in the dropdown.
+ORIGIN = {"N22": "DE"}
 
 
 def _pick(table: dict, bank_name: str):
@@ -30,8 +33,9 @@ def _pick(table: dict, bank_name: str):
 
 
 def _values(c: dict, rng: random.Random) -> dict:
-    f, cc = c["form"], c["form"]["country"]
+    f, cc = c["form"], ORIGIN.get(c["id"], c["form"]["country"])
     name, et = f["legal_name"], f["entity_type"]
+    name = re.sub(r"^[^A-Za-z]+", "", name) or name               # a PAN's 5th character is a letter ('3S ...' -> 'S')
     if cc == "IN":
         mk_tax = lambda: ids.gstin(IN_STATE.get(f["city"].lower(), "27"), ids.pan(rng, ids.PAN_FOR_ENTITY.get(et, "C"), name[0]))  # noqa: E731
         code = _pick(ids.IN_BANKS, f["bank_name"]) or "HDFC"
@@ -71,24 +75,34 @@ def _fill(obj, vals: dict, field: str = "", cc: str = ""):
     return obj
 
 
-def build(seed: int = 37) -> Path:
-    raw = json.loads((OUT / "chatgpt_raw.json").read_text(encoding="utf-8"))
+def build(seed: int = 37, out: Path | None = None, raw_name: str = "chatgpt_raw.json", note: str | None = None) -> Path:
+    OUT = out or globals()["OUT"]
+    raw = json.loads((OUT / raw_name).read_text(encoding="utf-8"))
     rng = random.Random(seed)
     cases = []
     for c in raw["cases"]:
         vals = _values(c, rng)
-        c = _fill(c, vals, cc=c["form"]["country"])
+        c = _fill(c, vals, cc=ORIGIN.get(c["id"], c["form"]["country"]))
         for d in (c.get("documents") or {}).values():
             if d:
                 d["kind"] = KIND.get(d["kind"], d["kind"])
                 d["printed"] = {k: v for k, v in d["printed"].items() if v}
         cases.append(c)
-    spec = {"author_note": "Written by ChatGPT from bench/holdout/CHATGPT_PROMPT.md, without access to the code or rules. "
-                           "Expected outcomes are ChatGPT's, unchanged.", "cases": cases}
+    spec = {"author_note": note or ("Written by ChatGPT from bench/holdout/CHATGPT_PROMPT.md, without access to the code or rules. "
+                                    "Expected outcomes are ChatGPT's, unchanged."), "cases": cases}
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "spec.json").write_text(json.dumps(spec, indent=1, ensure_ascii=False), encoding="utf-8")
     return blind.build(OUT / "spec.json", out=OUT)
 
 
+def build_fresh() -> Path:
+    """A second unseen set (2026-11-12): a new independent author, told to avoid the patterns already covered."""
+    raw = json.loads((ROOT / "bench" / "fresh" / "author_raw.json").read_text(encoding="utf-8"))
+    return build(seed=53, out=ROOT / "bench" / "fresh", raw_name="author_raw.json",
+                 note="Written by an independent AI author given only bench/fresh/BRIEF.md (no code, no rules). "
+                      "Expected outcomes are the author's, unchanged. Author's note: " + raw.get("author_note", ""))
+
+
 if __name__ == "__main__":
-    print(build())
+    import sys
+    print(build_fresh() if "fresh" in sys.argv else build())

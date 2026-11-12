@@ -1,0 +1,383 @@
+{
+ "set": "fresh",
+ "reader": "truth",
+ "n": 44,
+ "metrics": {
+  "n": 44,
+  "decision_accuracy": 0.7045,
+  "strict_accuracy": 0.7045,
+  "macro_f1": 0.7468,
+  "unsafe_approval_rate": 0.125,
+  "straight_through_rate": 0.75,
+  "errors": {
+   "unsafe_approvals": 4,
+   "missed_rejects": 0,
+   "disclosure_leaks": 5,
+   "over_escalations": 1,
+   "false_holds": 3,
+   "other": 0
+  },
+  "weighted_cost": 255,
+  "confusion": {
+   "approved": {
+    "approved": 9,
+    "awaiting_vendor": 3,
+    "awaiting_reviewer": 0,
+    "rejected": 0
+   },
+   "awaiting_vendor": {
+    "approved": 3,
+    "awaiting_vendor": 8,
+    "awaiting_reviewer": 1,
+    "rejected": 0
+   },
+   "awaiting_reviewer": {
+    "approved": 1,
+    "awaiting_vendor": 5,
+    "awaiting_reviewer": 8,
+    "rejected": 0
+   },
+   "rejected": {
+    "approved": 0,
+    "awaiting_vendor": 0,
+    "awaiting_reviewer": 0,
+    "rejected": 6
+   }
+  },
+  "per_class": {
+   "approved": {
+    "precision": 0.6923,
+    "recall": 0.75,
+    "f1": 0.72,
+    "support": 12
+   },
+   "awaiting_vendor": {
+    "precision": 0.5,
+    "recall": 0.6667,
+    "f1": 0.5714,
+    "support": 12
+   },
+   "awaiting_reviewer": {
+    "precision": 0.8889,
+    "recall": 0.5714,
+    "f1": 0.6957,
+    "support": 14
+   },
+   "rejected": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 6
+   }
+  },
+  "per_scenario": {
+   "approved": {
+    "n": 12,
+    "decision_ok": 9,
+    "strict_ok": 9,
+    "failed_ids": [
+     "N02",
+     "N09",
+     "N11"
+    ]
+   },
+   "awaiting_reviewer": {
+    "n": 14,
+    "decision_ok": 8,
+    "strict_ok": 8,
+    "failed_ids": [
+     "N25",
+     "N26",
+     "N30",
+     "N36",
+     "N37"
+    ]
+   },
+   "awaiting_vendor": {
+    "n": 12,
+    "decision_ok": 8,
+    "strict_ok": 8,
+    "failed_ids": [
+     "N16",
+     "N21",
+     "N22",
+     "N23"
+    ]
+   },
+   "rejected": {
+    "n": 6,
+    "decision_ok": 6,
+    "strict_ok": 6,
+    "failed_ids": []
+   }
+  },
+  "median_ms": 118
+ },
+ "failures": [
+  {
+   "id": "N02",
+   "scenario": "approved",
+   "country": "DE",
+   "title": "German umlauts typed as ue/oe, '&' typed as 'und'",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 132,
+   "difficulty": "medium",
+   "codes": [
+    "NAME_UNRESOLVED"
+   ],
+   "why_expected": "ue/oe/ss and 'und' are standard ways of typing the same German name; tax ID and IBAN match."
+  },
+  {
+   "id": "N09",
+   "scenario": "approved",
+   "country": "IN",
+   "title": "Name starting with a number, spaced differently",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 50,
+   "ms": 117,
+   "difficulty": "medium",
+   "codes": [
+    "TAXID_FORMAT",
+    "NAME_UNRESOLVED",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "A space between a digit and a letter does not make it a different company."
+  },
+  {
+   "id": "N11",
+   "scenario": "approved",
+   "country": "DE",
+   "title": "Very old German tax certificate, bank letter 89 days old",
+   "expected": "approved",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status pending != expected approved",
+    "substatus awaiting_vendor != expected approved"
+   ],
+   "risk": 20,
+   "ms": 126,
+   "difficulty": "hard",
+   "codes": [
+    "NAME_UNRESOLVED"
+   ],
+   "why_expected": "Tax registrations do not expire with age; only the bank proof has a 90-day limit and it is met."
+  },
+  {
+   "id": "N16",
+   "scenario": "awaiting_vendor",
+   "country": "US",
+   "title": "Wrong entity type picked in the dropdown",
+   "expected": "awaiting_vendor",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_vendor"
+   ],
+   "risk": 0,
+   "ms": 133,
+   "difficulty": "medium",
+   "codes": [],
+   "why_expected": "The entity type contradicts the vendor's own name and tax form, which is a simple dropdown mistake for the vendor to correct."
+  },
+  {
+   "id": "N21",
+   "scenario": "awaiting_vendor",
+   "country": "US",
+   "title": "W-9 with the tax number box left empty",
+   "expected": "awaiting_vendor",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_vendor"
+   ],
+   "risk": 0,
+   "ms": 85,
+   "difficulty": "medium",
+   "codes": [],
+   "why_expected": "The tax document does not actually show the tax number, so it cannot back up what was typed; the vendor should send a completed W-9."
+  },
+  {
+   "id": "N22",
+   "scenario": "awaiting_vendor",
+   "country": "GB",
+   "title": "German company with 'United Kingdom' selected as country",
+   "expected": "awaiting_vendor",
+   "got": "awaiting_reviewer",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_reviewer != expected awaiting_vendor"
+   ],
+   "risk": 20,
+   "ms": 119,
+   "difficulty": "hard",
+   "codes": [
+    "BANK_COUNTRY_DIFFERS",
+    "CURRENCY_UNUSUAL",
+    "RISK_OVER_LIMIT"
+   ],
+   "why_expected": "Everything says Germany except the dropdown, so the vendor should correct the country rather than us guessing."
+  },
+  {
+   "id": "N23",
+   "scenario": "awaiting_vendor",
+   "country": "GB",
+   "title": "Contact email typed with a comma",
+   "expected": "awaiting_vendor",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_vendor"
+   ],
+   "risk": 0,
+   "ms": 142,
+   "difficulty": "medium",
+   "codes": [],
+   "why_expected": "We cannot send remittances or queries to an invalid address; the vendor needs to give a working email."
+  },
+  {
+   "id": "N25",
+   "scenario": "awaiting_reviewer",
+   "country": "IN",
+   "title": "Bank account belongs to a sister company",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 25,
+   "ms": 67,
+   "difficulty": "hard",
+   "codes": [
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "Money would go to a different legal entity than the one we are contracting with, which a person must assess even if the companies are related."
+  },
+  {
+   "id": "N26",
+   "scenario": "awaiting_reviewer",
+   "country": "GB",
+   "title": "Franchisee using the franchisor's VAT registration",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 45,
+   "ms": 68,
+   "difficulty": "hard",
+   "codes": [
+    "NAME_UNRESOLVED",
+    "ACCOUNT_HOLDER_MISMATCH"
+   ],
+   "why_expected": "The vendor is presenting another company's tax identity as its own; the trailing place name hides that these are two different legal entities."
+  },
+  {
+   "id": "N30",
+   "scenario": "awaiting_reviewer",
+   "country": "US",
+   "title": "Bank letter dated in the future",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 5,
+   "ms": 113,
+   "difficulty": "hard",
+   "codes": [
+    "DOC_STALE"
+   ],
+   "why_expected": "A bank cannot issue a letter that has not been written yet, so the document may be fabricated and should not be queried with the sender first."
+  },
+  {
+   "id": "N36",
+   "scenario": "awaiting_reviewer",
+   "country": "DE",
+   "title": "Tax number on the form is a completely different valid number from the certificate",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 15,
+   "ms": 122,
+   "difficulty": "hard",
+   "codes": [
+    "TAXID_MISMATCH_DOC"
+   ],
+   "why_expected": "Two unrelated valid tax numbers for one company cannot be explained as a typo; the certificate may carry someone else's registration."
+  },
+  {
+   "id": "N37",
+   "scenario": "awaiting_reviewer",
+   "country": "IN",
+   "title": "Indian domestic company wants payment to a US bank account in dollars",
+   "expected": "awaiting_reviewer",
+   "got": "awaiting_vendor",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "substatus awaiting_vendor != expected awaiting_reviewer"
+   ],
+   "risk": 15,
+   "ms": 120,
+   "difficulty": "hard",
+   "codes": [
+    "MISSING_FIELD",
+    "BANK_COUNTRY_DIFFERS"
+   ],
+   "why_expected": "A domestic supplier asking to be paid offshore in a foreign currency raises tax-evasion and money-laundering questions that need a human decision."
+  },
+  {
+   "id": "N38",
+   "scenario": "awaiting_reviewer",
+   "country": "US",
+   "title": "Contact email domain swaps letters for digits",
+   "expected": "awaiting_reviewer",
+   "got": "approved",
+   "decision_ok": false,
+   "strict_ok": false,
+   "fails": [
+    "status approved != expected pending",
+    "substatus approved != expected awaiting_reviewer"
+   ],
+   "risk": 0,
+   "ms": 133,
+   "difficulty": "hard",
+   "codes": [],
+   "why_expected": "A real company would not register its own name misspelled with digits; this is the mark of someone impersonating the company by email."
+  }
+ ]
+}

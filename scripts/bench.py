@@ -43,6 +43,14 @@ FINDINGS = [
      "fix": "Recognised as variants or form slips (vendor asked to correct the type); swapped documents are read as what they are."},
     {"set": "blind", "found": "A bank statement was accepted as bank proof; a US domestic account in EUR was accepted.",
      "fix": "Statements are recognised and the vendor is asked for a bank letter; a foreign currency on a domestic-only account asks the vendor to confirm."},
+    {"set": "fresh", "found": "Three vendors were approved with something plainly wrong on the form: 'LLC' selected for a company named '... Inc.', a W-9 with the tax-number box empty, and a contact email with a comma in it.",
+     "fix": "The dropdown is checked against the legal form in the company's own name; a document must actually show the number it is meant to prove; email addresses are validated properly."},
+    {"set": "fresh", "found": "A contact domain spelling the company's name with digits ('carro11ton' for Carrollton) was approved.",
+     "fix": "A domain that turns into a word of the company name once digits are read as letters goes to a reviewer."},
+    {"set": "fresh", "found": "Fraud-shaped cases were sent back to the vendor: a future-dated bank letter, two different VALID tax IDs for one company, a cheque in a sister company's name, a franchisor's tax certificate, an Indian supplier asking for dollars into a US account.",
+     "fix": "Future dates, different valid tax IDs (a slip fails the check digit), a holder name with a whole word swapped, another entity's registration from another town, and offshore payment in a foreign currency all go to a reviewer."},
+    {"set": "fresh", "found": "Honest German and Indian spellings were held: 'Mueller und Soehne' vs 'Müller & Söhne', 'AG' vs 'Aktiengesellschaft', '3S' vs '3 S'.",
+     "fix": "Umlauts typed out, 'und' / '&', legal forms written in full and moved spaces are recognised as the same name."},
 ]
 
 
@@ -69,6 +77,7 @@ def summarize():
             "n": data["n"], "description": {
                 "blind": "Written by an independent author who never saw the code or rules: 56 scenarios with expected outcomes from business judgment.",
                 "diverse": "60 vendors whose documents come in many shapes: tables, prose letters, multi-page, stamps, German, country date formats, phone photos, value-only edits.",
+                "fresh": "44 vendors by a second independent author (2026-11-12) told to avoid every pattern already covered: boundary dates, sister companies, German spellings, look-alike email domains, offshore payment. Scored once before any change.",
                 "holdout": "37 vendors written by ChatGPT (a different AI company) from a description of the process only: no code, no rules. Scored once before any change."}[name],
             "document_styles": layouts,
             "first_look": first["metrics"], "first_look_failures": [{k: f[k] for k in ("id", "title", "expected", "got")} for f in first["failures"]],
