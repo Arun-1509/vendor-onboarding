@@ -718,11 +718,11 @@ async function qualityView(view) {
   const tv = test.first_look || test.v2, tb = test.baseline;
   const big = (label, v, b, fmtf, good) => h('div', { class: 'kpi' }, h('div', { class: 'l', style: 'margin:0 0 6px' }, label), h('div', { class: 'bigstat' }, fmtf(v)),
     h('div', { class: 's' }, 'my first version: ', h('b', {}, fmtf(b)), ' ', h('span', { class: 'delta up' }, good)));
-  const metricRows = [['Decision accuracy', m => pct(m.decision_accuracy)], ['Right decision for the right reason', m => pct(m.strict_accuracy)], ['Macro F1 (4 outcomes)', m => m.macro_f1.toFixed(3)],
-    ['Unsafe approvals (should not have been approved)', m => m.errors.unsafe_approvals], ['Disclosure leaks (fraud case emailed to vendor)', m => m.errors.disclosure_leaks],
-    ['Missed sanctions rejects', m => m.errors.missed_rejects], ['False holds (clean vendor not approved)', m => m.errors.false_holds], ['Straight-through rate (clean vendors)', m => pct(m.straight_through_rate)]];
+  const metricRows = [['Correct decisions', m => pct(m.decision_accuracy)], ['Wrongly approved', m => m.errors.unsafe_approvals],
+    ['Fraud cases that tipped off the vendor', m => m.errors.disclosure_leaks], ['Sanctioned parties not rejected', m => m.errors.missed_rejects],
+    ['Honest vendors held up', m => m.errors.false_holds]];
   const cmp = (name, sp) => h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, `${name} · ${sp.v2 ? sp.v2.n : ''} vendors`), h('span', { class: 'xs muted' }, sp.description)),
-    h('div', { class: 'tablewrap', style: 'border:0' }, h('table', { class: 'cmp' }, h('thead', {}, h('tr', {}, h('th', {}, 'Metric'), h('th', { class: 'num' }, 'Original'), sp.first_look ? h('th', { class: 'num' }, 'v2 first look') : null, h('th', { class: 'num' }, 'v2'))),
+    h('div', { class: 'tablewrap', style: 'border:0' }, h('table', { class: 'cmp' }, h('thead', {}, h('tr', {}, h('th', {}, ''), h('th', { class: 'num' }, 'First version'), sp.first_look ? h('th', { class: 'num' }, 'Current, first try') : null, h('th', { class: 'num' }, 'Current, after fixes'))),
       h('tbody', {}, metricRows.map(([l, f]) => h('tr', {}, h('td', {}, l), h('td', { class: 'num b' }, sp.baseline ? f(sp.baseline) : '–'), sp.first_look ? h('td', { class: 'num v' }, f(sp.first_look)) : null, h('td', { class: 'num v' }, sp.v2 ? f(sp.v2) : '–')))))));
   const CL = ['approved', 'awaiting_vendor', 'awaiting_reviewer', 'rejected'], CLN = ['Approve', 'Ask vendor', 'Review', 'Reject'];
   const heat = (m, title) => { const max = Math.max(...CL.map(e => Math.max(...CL.map(g => m.confusion[e][g])))); return h('div', {}, h('h3', {}, title),
@@ -751,19 +751,21 @@ async function qualityView(view) {
       big('Fraud cases that tipped off the vendor', tv.errors.disclosure_leaks, tb.errors.disclosure_leaks, x => String(x), ''),
       big('Accuracy on variations I had not planned for', (stress.first_look || stress.v2).decision_accuracy, stress.baseline.decision_accuracy, x => pct(x), '')),
     benchHost,
-    h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, 'Validate on vendors generated right now'), spotBtn),
-      h('p', { class: 'muted sm', style: 'margin:0' }, 'Each click generates fresh companies (random names, valid IDs, newly rendered PDFs and scans) across 25 scenarios, runs them, and scores them against their labels.'), spotOut),
-    h('div', { class: 'grid2' }, h('div', { class: 'card' }, h('h2', {}, 'Where decisions land (held-out set)'), h('div', { class: 'row', style: 'gap:24px;align-items:flex-start' }, heat(tb, 'Original engine'), heat(test.v2, 'v2'))),
+    h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, 'Try it: test on companies generated right now'), spotBtn),
+      h('p', { class: 'muted sm', style: 'margin:0' }, 'Each click invents new companies with valid IDs and freshly made documents, runs them, and checks each decision against the known right answer.'), spotOut),
+    h('details', { class: 'card' }, h('summary', { style: 'cursor:pointer;font-weight:650' }, 'More detail on my own 1,900 test vendors'), h('div', { style: 'margin-top:14px' },
+    h('p', { class: 'sm muted', style: 'margin:0 0 12px' }, '"First version" is the first engine I built. "Current" is the one running now: "first try" is its score the first time it saw the data, "after fixes" is after I fixed what that run showed.'),
+    cmp('Held-out test set', test), cmp('Stress set', stress), cmp('Tuning set', S.dev),
+    h('div', { class: 'grid2', style: 'margin-top:16px' }, h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, 'Stress set by scenario'), h('div', { class: 'legend' }, h('span', {}, h('i', { style: 'background:var(--faint)' }), 'first version'), h('span', {}, h('i', { style: 'background:var(--accent)' }), 'current'))), bars(stress)),
+      h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, 'Held-out set by scenario'), h('div', { class: 'legend' }, h('span', {}, h('i', { style: 'background:var(--faint)' }), 'first version'), h('span', {}, h('i', { style: 'background:var(--accent)' }), 'current'))), bars(test))),
+    h('div', { class: 'grid2', style: 'margin-top:16px' }, h('div', { class: 'card' }, h('h2', {}, 'Where decisions land (held-out 800)'), h('div', { class: 'row', style: 'gap:24px;align-items:flex-start' }, heat(tb, 'First version'), heat(test.v2, 'Current version'))),
       h('div', { class: 'card' }, h('h2', {}, 'How the errors are weighted'), h('table', { class: 'mini' }, h('tbody', {},
         [['Unsafe approval', '50', 'Fraud or compliance loss'], ['Missed sanctions reject', '50', 'Legal exposure'], ['Disclosure leak', '10', 'Tells a fraudster which detail to forge'], ['Over-escalation', '2', 'Reviewer time'], ['False hold', '1', 'Vendor friction']].map(r => h('tr', {}, h('td', {}, h('b', {}, r[0])), h('td', { class: 'num mono' }, '×' + r[1]), h('td', { class: 'muted' }, r[2]))))),
-        h('p', { class: 'sm muted', style: 'margin-top:10px' }, `Weighted error cost on the held-out set: ${tb.weighted_cost} → ${tv.weighted_cost}.`))),
-    h('details', { class: 'card' }, h('summary', { style: 'cursor:pointer;font-weight:650' }, 'Full tables: every metric and every scenario for the 1,900 vendors'), h('div', { style: 'margin-top:14px' },
-    cmp('Held-out test set', test), cmp('Stress set', stress), cmp('Tuning set', S.dev),
-    h('div', { class: 'grid2', style: 'margin-top:16px' }, h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, 'Stress set by scenario'), h('div', { class: 'legend' }, h('span', {}, h('i', { style: 'background:var(--faint)' }), 'original'), h('span', {}, h('i', { style: 'background:var(--accent)' }), 'v2'))), bars(stress)),
-      h('div', { class: 'card' }, h('div', { class: 'card-h' }, h('h2', {}, 'Held-out set by scenario'), h('div', { class: 'legend' }, h('span', {}, h('i', { style: 'background:var(--faint)' }), 'original'), h('span', {}, h('i', { style: 'background:var(--accent)' }), 'v2'))), bars(test))))),
-    h('div', { class: 'card' }, h('h2', {}, 'How to read this honestly'), h('ul', { style: 'margin:0;padding-left:18px' }, q.notes.concat([
-      'The same person wrote the generator and the rules, so the stress set was written before measuring, to probe what the rules were not designed for. Its first-look score is reported, not just the final one.',
-      'Real-world inputs will be messier than synthetic ones. The next step is a pilot on a few hundred historic submissions with known outcomes.']).map(n => h('li', { class: 'sm', style: 'margin:4px 0' }, n)))));
+        h('p', { class: 'sm muted', style: 'margin-top:10px' }, `Weighted error cost on the held-out set: ${tb.weighted_cost} → ${tv.weighted_cost}.`))))),
+    h('div', { class: 'card' }, h('h2', {}, 'Limits'), h('ul', { style: 'margin:0;padding-left:18px' }, [
+      'All test data is synthetic. Real submissions will be messier, so the next step is a pilot on a few hundred past submissions with known outcomes.',
+      'Every independent test found something new, so a further one would too. That is why anything doubtful goes to a person.',
+      'A document forged from scratch leaves no trace in the file. Only the bank can confirm an account, which is why new and changed bank details need a call-back.'].map(n => h('li', { class: 'sm', style: 'margin:4px 0' }, n)))));
 }
 
 // ================================================================= rulebook ===
